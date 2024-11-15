@@ -1,8 +1,9 @@
 import React from 'react'
 import Header from '../layout/Header'
 import {motion} from "framer-motion"
-import StatCard from '../components/common/StatCard'
+import StatCard from '../components/StatCard'
 import { BarChart2, Zap, Users, ShoppingBag } from 'lucide-react';
+import SingleFileUploader from '../components/SingleFileUploader';
 
 export default function OverviewPage () {
   return (
@@ -24,7 +25,8 @@ export default function OverviewPage () {
 
 				{/* CHARTS */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-          <SalesOverviewChart />
+          			{ /* <SalesOverviewChart /> */ }
+					<SingleFileUploader/>
 				</div>
 			</main>
     </div>

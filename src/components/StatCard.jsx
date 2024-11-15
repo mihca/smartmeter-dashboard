@@ -12,6 +12,7 @@ export default function StatCard ({ name, icon: Icon, value, color }) {
 					{name}
 				</span>
 				<p className='mt-1 text-3xl font-semibold text-gray-100'>{value}</p>
+				<p><button>Halloe</button></p>
 			</div>
 		</motion.div>
 	);
