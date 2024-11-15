@@ -1,4 +1,4 @@
-import OverviewPage from "./pages/OverviewPage"
+import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
 import { Route } from "react-router-dom"
 import { Routes } from "react-router-dom"
@@ -15,7 +15,7 @@ function App() {
 
       		<Sidebar />
 			<Routes>
-				<Route path='/' element={<OverviewPage />} />
+				<Route path='/' element={<UploadPage />} />
 				<Route path='/marketprice' element={<MarketpricePage />} />
 			</Routes>
 		</div>
