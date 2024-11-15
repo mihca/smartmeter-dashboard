@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from "framer-motion"
-import { Button } from 'primereact/button';   
+import { Toast } from 'primereact/toast';
+import { FileUpload } from 'primereact/fileupload';
 
-export default function SingleFileUploader({title}) {
+export default function SingleFileUploader({title, description}) {
+  const toast = useRef(null);
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
 
@@ -26,6 +28,11 @@ export default function SingleFileUploader({title}) {
     reader.readAsText(file);
   };
 
+  function onUpload (e) {
+    setFile(e.target.files[0]);
+    toast.current.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+  };
+
   return (
 		<motion.div
 			className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700'
@@ -33,30 +40,21 @@ export default function SingleFileUploader({title}) {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.2 }}
 		>
-			<h2 className='text-lg font-medium mb-4 text-gray-100'>Sales Overview</h2>
+			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
 			<div className='h-80'>
-      <input id="file" type="file" onChange={handleFileChange} />
-          {file && (
-            <section>
-              File details:
-              <ul>
-                <li>Name: {file.name}</li>
-                <li>Type: {file.type}</li>
-                <li>Size: {file.size} bytes</li>
-                <li>Content: {file.target}</li>
-              </ul>
-            </section>
-          )}
-          {file && (
-            <Button
-              onClick={handleUpload}
-              className="submit"
-            >Upload a file</Button>
-          )}
-          {fileContent && (
-            <pre>{fileContent}</pre>
-          )}
+        <Toast ref={toast}></Toast>
+        <FileUpload 
+          chooseLabel="Datei auswählen" 
+          mode="basic" 
+          name="demo[]" 
+          uploadHandler={ handleUpload }
+          accept="csv/*" 
+          maxFileSize={1000000} 
+          onUpload={onUpload} 
+          auto/>
+        <p className="">{ file }</p>
+        <p className="">{ description }</p>
 			</div>
 		</motion.div>
   );

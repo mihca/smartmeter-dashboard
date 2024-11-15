@@ -3,7 +3,7 @@ import Header from '../layout/Header'
 import {motion} from "framer-motion"
 import StatCard from '../components/StatCard'
 import { BarChart2, Zap, Users, ShoppingBag } from 'lucide-react';
-import SingleFileUploader from '../components/SingleFileUploader';
+import FileUploader from '../components/FileUploader';
 
 export default function UploadPage () {
   return (
@@ -17,16 +17,17 @@ export default function UploadPage () {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 1 }}
 			>
-				<StatCard name='Total Sales' icon={Zap} value='$12,345' color='#6366F1' />
-				<StatCard name='New Users' icon={Users} value='1,234' color='#8B5CF6' />
-				<StatCard name='Total Products' icon={ShoppingBag} value='567' color='#EC4899' />
-				<StatCard name='Conversion Rate' icon={BarChart2} value='12.5%' color='#10B981' />
+				<StatCard name='Provider Verbrauch' icon={Zap} value='Netz NÖ' color='#6366F1' />
+				<StatCard name='Zeitraum Verbrauch' icon={Users} value='01.01. - 14.11.2024' color='#8B5CF6' />
+				<StatCard name='Provider Einspeisung' icon={Zap} value='-' color='#6366F1' />
+				<StatCard name='Zeitraum Einspeisung' icon={Users} value='-' color='#8B5CF6' />
 			</motion.div>
 
 			{/* CHARTS */}
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
 				{ /* <SalesOverviewChart /> */ }
-				<SingleFileUploader/>
+				<FileUploader title="Stromverbrauch" description="Hallo"/>
+				<FileUploader title="Stromeinspeisung" description="Bla bla"/>
 			</div>
 		</main>
     </div>

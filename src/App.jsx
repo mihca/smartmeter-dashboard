@@ -3,6 +3,7 @@ import MarketpricePage from "./pages/MarketpricePage"
 import { Route } from "react-router-dom"
 import { Routes } from "react-router-dom"
 import Sidebar from "./layout/Sidebar"
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 
 function App() {
 	return (
@@ -13,14 +14,15 @@ function App() {
 				<div className='absolute inset-0 backdrop-blur-sm' />
 			</div>
 
-      		<Sidebar />
-			<Routes>
-				<Route path='/' element={<UploadPage />} />
-				<Route path='/marketprice' element={<MarketpricePage />} />
-			</Routes>
+			<PrimeReactProvider>
+				<Sidebar />
+				<Routes>
+					<Route path='/' element={<UploadPage />} />
+					<Route path='/marketprice' element={<MarketpricePage />} />
+				</Routes>
+			</PrimeReactProvider>
 		</div>
 	);
 }
-
 
 export default App
