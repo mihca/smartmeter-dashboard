@@ -23,6 +23,9 @@ A utility-first CSS framework
 - [CheatSheet](https://nerdcave.com/tailwind-cheat-sheet)
 - [Responsive Design](https://tailwindcss.com/docs/responsive-design)
 
+## Lucide
+- [Icon reference](https://lucide.dev/icons/)
+
 ## Motion
 A modern animation library for JavaScript and React
 - [Homepage](https://motion.dev/)

@@ -1,10 +1,10 @@
-import { BarChart2, TrendingUp, Menu } from 'lucide-react';
+import { BarChart2, TrendingUp, Menu, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const SIDEBAR_ITEMS = [
-    { name: "Upload", icon: BarChart2, color: "#6366f1", href: "/" },
+    { name: "Upload", icon: Upload, color: "#6366f1", href: "/" },
     { name: "Börsenstrompreis", icon: TrendingUp, color: "#3B82F6", href: "/marketprice" }
 ]
 
@@ -31,7 +31,7 @@ export default function Sidebar () {
 				<nav className='mt-8 flex-grow'>
 					{SIDEBAR_ITEMS.map((item) => (
 						<Link key={item.href} to={item.href}>
-							<motion.div className='flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2'>
+							<motion.div className='flex items-center p-4 text-lg font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2'>
 								<item.icon size={20} style={{ color: item.color, minWidth: "20px" }} />
 								<AnimatePresence>
 									{isSidebarOpen && (

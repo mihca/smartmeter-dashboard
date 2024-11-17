@@ -1,36 +1,22 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion } from "framer-motion"
-import { Toast } from 'primereact/toast';
 import { FileUpload } from 'primereact/fileupload';
 
-export default function SingleFileUploader({title, description}) {
-  const toast = useRef(null);
+export default function FileUploader({title, description, onFileUploaded}) {
+  
   const [file, setFile] = useState(null);
-  const [fileContent, setFileContent] = useState("");
 
-  function handleFileChange(e) {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-      setFileContent("");
-      const reader = new FileReader();
-      reader.onload = (file) => {
-        setFileContent(file.target.result);
-      }
-      reader.readAsText(file);
-      }
-  };
+  function handleUpload(event) {
 
-  function handleUpload() {
+    let uploadedFile = event.files[0];
+    setFile(uploadedFile);
+
     const reader = new FileReader();
     reader.onload = (e) => {
-      setFileContent(e.target.result);
+      onFileUploaded(e.target.result);
     }
-    reader.readAsText(file);
-  };
+    reader.readAsArrayBuffer(uploadedFile);
 
-  function onUpload (e) {
-    setFile(e.target.files[0]);
-    toast.current.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
   };
 
   return (
@@ -43,19 +29,18 @@ export default function SingleFileUploader({title, description}) {
 			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
 			<div className='h-80'>
-        <Toast ref={toast}></Toast>
         <FileUpload 
           chooseLabel="Datei auswählen" 
           mode="basic" 
-          name="demo[]" 
+          accept=".csv" 
+          customUpload 
           uploadHandler={ handleUpload }
-          accept="csv/*" 
-          maxFileSize={1000000} 
-          onUpload={onUpload} 
           auto/>
-        <p className="">{ file }</p>
-        <p className="">{ description }</p>
-			</div>
+        {file && (
+          <p className="py-4">{ file.name }</p>
+        )}
+        <p className="py-2">{ description }</p>
+      </div>
 		</motion.div>
   );
 };
