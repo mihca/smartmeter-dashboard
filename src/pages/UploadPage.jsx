@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Zap, CalendarFold, Sun } from 'lucide-react';
-import Papa from 'papaparse';
 import { motion } from "framer-motion"
 
 import Header from '../layout/Header'
@@ -21,28 +20,22 @@ const EMPTY_POWER_DATA = {
 
 export default function UploadPage() {
 
-	const [consumptionData, setConsumptionData] = useState(EMPTY_POWER_DATA);
+	const [usageData, setUsageData] = useState(EMPTY_POWER_DATA);
 	const [feedinData, setFeedinData] = useState(EMPTY_POWER_DATA);
 
-	function handleFileConsumptionUploaded(fileContent) {
+	function handleFileUsageUploaded(fileContent) {
 
-		fileContent = preprocessFileContent(fileContent);
+		// Input: ByteArray
+		// Output: 
+		var d = preprocessFileContent(fileContent);
+		console.log (d);
+		var provider = selectProvider(PROVIDERS_USAGE, d[0]);
 
-		Papa.parse(fileContent, {
-			header: true,
-			complete: (results) => {
-				var d = results.data;
-				var provider = selectProvider(PROVIDERS_USAGE, d[0]);
-				console.log(d[0]);
-				console.log(provider);
-
-				setConsumptionData({
-					provider: provider ? provider.name : "Unbekannt",
-					dateFrom: "01.01.2024",
-					dateTo: "15.11.2024",
-				});			
-			}
-		});
+		setUsageData({
+			provider: provider ? provider.name : "Unbekannt",
+			dateFrom: "01.01.2024",
+			dateTo: "15.11.2024",
+		});			
 	}
 
 	function handleFileFeedinUploaded(fileContent) {
@@ -64,8 +57,8 @@ export default function UploadPage() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					<StatCard name='Provider Verbrauch' icon={Zap} value={consumptionData.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={consumptionData.dateFrom + "-" + consumptionData.dateTo} color='#8B5CF6' />
+					<StatCard name='Provider Verbrauch' icon={Zap} value={usageData.provider} color='#6366F1' />
+					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={usageData.dateFrom + "-" + usageData.dateTo} color='#8B5CF6' />
 					<StatCard name='Provider Einspeisung' icon={Sun} value={feedinData.provider} color='#6366F1' />
 					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinData.dateFrom + "-" + feedinData.dateTo} color='#8B5CF6' />
 				</motion.div>
@@ -73,7 +66,7 @@ export default function UploadPage() {
 				{/* CHARTS */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
 					{ /* <SalesOverviewChart /> */}
-					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileConsumptionUploaded} />
+					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} />
 					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} />
 				</div>
 			</main>

@@ -4,12 +4,12 @@ import { FileUpload } from 'primereact/fileupload';
 
 export default function FileUploader({title, description, onFileUploaded}) {
   
-  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(null);
 
   function handleUpload(event) {
 
     let uploadedFile = event.files[0];
-    setFile(uploadedFile);
+    setFileName(uploadedFile.name);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -36,8 +36,8 @@ export default function FileUploader({title, description, onFileUploaded}) {
           customUpload 
           uploadHandler={ handleUpload }
           auto/>
-        {file && (
-          <p className="py-4">{ file.name }</p>
+        {fileName && (
+          <p className="py-4">{ fileName }</p>
         )}
         <p className="py-2">{ description }</p>
       </div>

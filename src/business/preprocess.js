@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import Papa from 'papaparse';
 
 export function preprocessFileContent (fileContent) {
 	
@@ -14,8 +15,10 @@ export function preprocessFileContent (fileContent) {
 	console.log("after strip, xls: ", xls);
 	fileContent = XLSX.utils.sheet_to_csv(xls.Sheets[xls.SheetNames[0]]);
 	console.log("csv: ", fileContent);
-	return fileContent;
-}
+
+    let d = Papa.parse(fileContent, {header: true});
+    return d.data;
+ }
 
 function bufferToString(buf) {
     return new Uint8Array(buf)
