@@ -1,7 +1,4 @@
-// Tarif nach Börsenstrompreis, SMARTCONTROL
-// Tarif nach Indices monatlich, SMARTTIMES
-// Tarif nach Uhrzeit, SMARTTIMES
-// Tarif mit Fixpreis, SMARTBASIC
+// ATTENTION: All prices are net prices without tax (ohne MwSt!)
 
 export const TARIFFS = [
     {

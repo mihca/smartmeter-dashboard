@@ -1,36 +1,6 @@
 export const PROVIDERS_USAGE = [
     {
         name: "Netz NÖ",
-        description: "Netz NÖ Einspeiser 1",
-        descriptorUsage: "Gemessene Menge (kWh)",
-        descriptorTimestamp: "Messzeitpunkt",
-        descriptorTimeSub: null,
-        dateFormatString: "dd.MM.yyyy HH:mm",
-        usageParse: (usage) => parseFloat(usage.replace(",", ".")),
-        otherFields: null,
-        shouldSkip: null,
-        fixupTimestamp: true,
-        feedin: true,
-        endDescriptorTimestamp: null,
-        preprocessDateString: (date) => date
-    },
-    {
-        name: "Netz NÖ",
-        description: "Netz NÖ Einspeiser 2",
-        descriptorUsage: "Einspeisung (kWh)",
-        descriptorTimestamp: "Messzeitpunkt",
-        descriptorTimeSub: null,
-        dateFormatString: "dd.MM.yyyy HH:mm",
-        usageParse: (usage) => parseFloat(usage.replace(",", ".")),
-        otherFields: null,
-        shouldSkip: null,
-        fixupTimestamp: true,
-        feedin: true,
-        endDescriptorTimestamp: null,
-        preprocessDateString: (date) => date
-    },
-    {
-        name: "Netz NÖ",
         description: "Netz NÖ Verbrauch 3 EEG",
         descriptorUsage: "Restnetzbezug (kWh)",
         descriptorTimestamp: "Messzeitpunkt",

@@ -5,14 +5,12 @@ import { motion } from "framer-motion"
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import FileUploader from '../components/FileUploader';
-import { preprocessFileContent } from '../business/preprocess';
-import { selectProvider } from '../business/netzbetreiber';
-import { buildTracker } from '../business/netzbetreiber';
+import { importProviderFile } from '../business/smartmeter-file-adapter';
+
 import { PROVIDERS_USAGE } from "../data/providers-usage";
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin";
 
-
-const EMPTY_POWER_DATA = {
+const EMPTY_POWER_RECORD = {
 	provider: "-",
 	dateFrom: "",
 	dateTo: "",
@@ -21,31 +19,17 @@ const EMPTY_POWER_DATA = {
 
 export default function UploadPage() {
 
-	const [usageData, setUsageData] = useState(EMPTY_POWER_DATA);
-	const [feedinData, setFeedinData] = useState(EMPTY_POWER_DATA);
+	const [usageData, setUsageData] = useState(EMPTY_POWER_RECORD);
+	const [feedinData, setFeedinData] = useState(EMPTY_POWER_RECORD);
 
 	function handleFileUsageUploaded(fileContent) {
-
-		// Input: ByteArray
-		// Output: 
-		var d = preprocessFileContent(fileContent);
-		console.log (d);
-		var provider = selectProvider(PROVIDERS_USAGE, d[0]);
-		var entries = buildTracker(provider, d);
-
-		setUsageData({
-			provider: provider ? provider.name : "Unbekannt",
-			dateFrom: "01.01.2024",
-			dateTo: "15.11.2024",
-		});			
+		const usagePowerRecord = importProviderFile(fileContent, PROVIDERS_USAGE);
+		setUsageData(usagePowerRecord);			
 	}
 
 	function handleFileFeedinUploaded(fileContent) {
-		setFeedinData({
-			provider: "Netz NÖ",
-			dateFrom: "01.01.2024",
-			dateTo: "15.11.2024",
-		});
+		const feedinPowerRecord = importProviderFile(fileContent, PROVIDERS_FEEDIN);
+		setFeedinData(feedinPowerRecord);
 	}
 
 	return (

@@ -15,7 +15,7 @@ export default function FileUploader({title, description, onFileUploaded}) {
     reader.onload = (e) => {
       onFileUploaded(e.target.result);
     }
-    reader.readAsArrayBuffer(uploadedFile);
+    reader.readAsText(uploadedFile);
 
   };
 
@@ -39,7 +39,6 @@ export default function FileUploader({title, description, onFileUploaded}) {
         {fileName && (
           <p className="py-4">{ fileName }</p>
         )}
-        <p className="py-2">{ description }</p>
       </div>
 		</motion.div>
   );
