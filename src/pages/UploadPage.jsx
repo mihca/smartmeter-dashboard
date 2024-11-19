@@ -7,6 +7,7 @@ import StatCard from '../components/StatCard'
 import FileUploader from '../components/FileUploader';
 import { preprocessFileContent } from '../business/preprocess';
 import { selectProvider } from '../business/netzbetreiber';
+import { buildTracker } from '../business/netzbetreiber';
 import { PROVIDERS_USAGE } from "../data/providers-usage";
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin";
 
@@ -30,6 +31,7 @@ export default function UploadPage() {
 		var d = preprocessFileContent(fileContent);
 		console.log (d);
 		var provider = selectProvider(PROVIDERS_USAGE, d[0]);
+		var entries = buildTracker(provider, d);
 
 		setUsageData({
 			provider: provider ? provider.name : "Unbekannt",

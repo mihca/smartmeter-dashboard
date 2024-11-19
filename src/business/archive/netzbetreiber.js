@@ -12,7 +12,7 @@ export function selectProvider(providers, sample) {
     return null;
 }
 
-function processEntry(provider, entry) {
+export function processEntry(provider, entry) {
     
     if (!probe(provider, entry)) {
         return null;
