@@ -1,6 +1,39 @@
 export const PROVIDERS_USAGE = [
     {
         name: "Netz NÖ",
+        description: "Netz NÖ Verbrauch 2",
+        // "Messzeitpunkt;Verbrauch (kWh);Qualität;"
+        match: (fileContent) => {fileContent.startsWith("Messzeitpunkt;Verbrauch (kWh)")},
+        // Input:
+        // {
+        //   Messzeitpunkt: "01.01.2024 00:15",
+        //   Qualität: "G",
+        //   Verbrauch (kWh): "0,079000"
+        // }
+        // Output:
+        // { 
+        //   hour: "2024-11-19T02:00", 
+        //   value: 3.5 
+        // }
+        transform: (lineObject) => ({ 
+            hour: lineObject['Messzeitpunkt'].parseDate("DD.MM.YYYY HH:MM"),
+            value: lineObject['Vebrauch (kWh)'].replace(",", ".").parseFloat()
+        }),
+
+        descriptorUsage: "Verbrauch (kWh)",
+        descriptorTimestamp: "Messzeitpunkt",
+        descriptorTimeSub: null,
+        dateFormatString: "dd.MM.yyyy HH:mm",
+        usageParse: (usage) => parseFloat(usage.replace(",", ".")),
+        otherFields: ["Qualität"],
+        shouldSkip: null,
+        fixupTimestamp: true,
+        feedin: false,
+        endDescriptorTimestamp: null,
+        preprocessDateString: (date) => date
+    },
+    {
+        name: "Netz NÖ",
         description: "Netz NÖ Verbrauch 3 EEG",
         descriptorUsage: "Restnetzbezug (kWh)",
         descriptorTimestamp: "Messzeitpunkt",
@@ -23,21 +56,6 @@ export const PROVIDERS_USAGE = [
         dateFormatString: "dd.MM.yyyy HH:mm",
         usageParse: (usage) => parseFloat(usage.replace(",", ".")),
         otherFields: ["Ersatzwert"],
-        shouldSkip: null,
-        fixupTimestamp: true,
-        feedin: false,
-        endDescriptorTimestamp: null,
-        preprocessDateString: (date) => date
-    },
-    {
-        name: "Netz NÖ",
-        description: "Netz NÖ Verbrauch 2",
-        descriptorUsage: "Verbrauch (kWh)",
-        descriptorTimestamp: "Messzeitpunkt",
-        descriptorTimeSub: null,
-        dateFormatString: "dd.MM.yyyy HH:mm",
-        usageParse: (usage) => parseFloat(usage.replace(",", ".")),
-        otherFields: ["Qualität"],
         shouldSkip: null,
         fixupTimestamp: true,
         feedin: false,
