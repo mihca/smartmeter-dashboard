@@ -1,9 +1,11 @@
+import {parse} from "date-fns"
+
 export const PROVIDERS_USAGE = [
     {
         name: "Netz NÖ",
         description: "Netz NÖ Verbrauch 2",
         // "Messzeitpunkt;Verbrauch (kWh);Qualität;"
-        match: (fileContent) => {fileContent.startsWith("Messzeitpunkt;Verbrauch (kWh)")},
+        match: (fileContent) => fileContent.includes("Messzeitpunkt;Verbrauch (kWh)"),
         // Input:
         // {
         //   Messzeitpunkt: "01.01.2024 00:15",
@@ -16,7 +18,7 @@ export const PROVIDERS_USAGE = [
         //   value: 3.5 
         // }
         transform: (lineObject) => ({ 
-            hour: lineObject['Messzeitpunkt'].parseDate("DD.MM.YYYY HH:MM"),
+            hour: parse ("DD.MM.YYYY HH:MM", lineObject['Messzeitpunkt']),
             value: lineObject['Vebrauch (kWh)'].replace(",", ".").parseFloat()
         }),
 
