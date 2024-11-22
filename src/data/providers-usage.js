@@ -18,8 +18,8 @@ export const PROVIDERS_USAGE = [
         //   value: 3.5 
         // }
         transform: (lineObject) => ({ 
-            hour: parse ("DD.MM.YYYY HH:MM", lineObject['Messzeitpunkt']),
-            value: lineObject['Vebrauch (kWh)'].replace(",", ".").parseFloat()
+            hour: parse (lineObject['Messzeitpunkt'], "dd.MM.yyyy HH:mm", new Date()),
+            value: parseFloat(lineObject['Verbrauch (kWh)'].replace(",", "."))
         }),
 
         descriptorUsage: "Verbrauch (kWh)",

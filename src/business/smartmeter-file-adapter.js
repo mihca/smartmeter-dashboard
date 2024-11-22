@@ -20,13 +20,15 @@ export function importProviderFile (fileContentText, providers) {
     // Strip unnecessary data
 
     // Parse csv
-    const csvObjectLines = Papa.parse(fileContentText, {header: true}).data;
+    const csvObjectLines = Papa.parse(fileContentText, {header: true, skipEmptyLines: true}).data;
 
     // Sum up hourly
     let data = [];
     csvObjectLines.forEach((lineObject) => {
         data.push (provider.transform(lineObject));
     });
+
+    console.log(data);
 
     return {
         provider: provider.name,
