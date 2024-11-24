@@ -44,9 +44,9 @@ export default function UploadPage() {
 					transition={{ duration: 1 }}
 				>
 					<StatCard name='Provider Verbrauch' icon={Zap} value={usageData.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={usageData.dateFrom + "-" + usageData.dateTo} color='#8B5CF6' />
+					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={usageData.dateFrom + " - " + usageData.dateTo} color='#8B5CF6' />
 					<StatCard name='Provider Einspeisung' icon={Sun} value={feedinData.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinData.dateFrom + "-" + feedinData.dateTo} color='#8B5CF6' />
+					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinData.dateFrom + " - " + feedinData.dateTo} color='#8B5CF6' />
 				</motion.div>
 
 				{/* CHARTS */}

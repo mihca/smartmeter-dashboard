@@ -1,11 +1,12 @@
 import Papa from "papaparse"
 
 import { findProvider } from "./provider-selector";
+import { format } from "date-fns";
 
 export function importProviderFile (fileContentText, providers) {
 
     // Convert to string[]
-    const lines = fileContentText.split (/\r?\n/);
+    // const lines = fileContentText.split (/\r?\n/);
 
     // Find provider
     const provider = findProvider(providers, fileContentText);
@@ -23,17 +24,12 @@ export function importProviderFile (fileContentText, providers) {
     const csvObjectLines = Papa.parse(fileContentText, {header: true, skipEmptyLines: true}).data;
 
     // Sum up hourly
-    let data = [];
-    csvObjectLines.forEach((lineObject) => {
-        data.push (provider.transform(lineObject));
-    });
-
-    console.log(data);
+    const data = sumUpHourly (provider, csvObjectLines);
 
     return {
         provider: provider.name,
-        dateFrom: "2024-01-01",
-        dateTo: "2024-11-19",
+        dateFrom: format(data[0].hour, "dd.MM.yyyy"),
+        dateTo: format(data[data.length-1].hour, "dd.MM.yyyy"),
         data: data 
         /*
         [
@@ -42,4 +38,21 @@ export function importProviderFile (fileContentText, providers) {
         ]
         */
     }
+}
+
+function sumUpHourly (provider, csvObjectLines) {
+    let data = [];
+    let hourSum = 0.0;
+    csvObjectLines.forEach((lineObject) => {
+        let dataset = provider.transform(lineObject);
+        hourSum += dataset.value;
+        if (dataset.timestamp.getMinutes() == 0) {
+            data.push ({
+                hour: dataset.timestamp,
+                value: hourSum
+            });
+            hourSum = 0.0;
+        }
+    });
+    return data;
 }
