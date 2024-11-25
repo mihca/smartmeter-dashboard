@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import FileUploader from '../components/FileUploader'
+import UsageChart from '../charts/UsageChart'
+
 import { importProviderFile } from '../business/smartmeter-file-adapter'
 
 import { PROVIDERS_USAGE } from "../data/providers-usage"
@@ -27,7 +29,7 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 			<Header title="Upload" />
 			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
 				
-				{/* UOLOADER */}
+				{/* UPLOADER */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
 					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} />
 					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} />
@@ -46,6 +48,12 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinPDR.dateFrom + " - " + feedinPDR.dateTo} color='#8B5CF6' />
 				</motion.div>
 
+				{/* CHARTS */}
+				{ usagePDR.data && (
+				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
+					<UsageChart data={usagePDR.data}/>
+				</div>
+				)}
 			</main>
 		</div>
 	)

@@ -10,7 +10,7 @@ const EMPTY_PDR = {
 	provider: "-",
 	dateFrom: "",
 	dateTo: "",
-	data: []
+	data: null
 }
 
 function App() {

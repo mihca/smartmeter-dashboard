@@ -24,7 +24,7 @@ export function importProviderFile (fileContentText, providers) {
     const csvObjectLines = Papa.parse(fileContentText, {header: true, skipEmptyLines: true}).data;
 
     // Sum up hourly
-    const data = sumUpHourly (provider, csvObjectLines);
+    const data = transformHourly (provider, csvObjectLines);
 
     return {
         provider: provider.name,
@@ -40,7 +40,7 @@ export function importProviderFile (fileContentText, providers) {
     }
 }
 
-function sumUpHourly (provider, csvObjectLines) {
+function transformHourly (provider, csvObjectLines) {
     let data = [];
     let hourSum = 0.0;
     csvObjectLines.forEach((lineObject) => {
