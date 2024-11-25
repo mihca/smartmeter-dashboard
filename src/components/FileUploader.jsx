@@ -28,7 +28,8 @@ export default function FileUploader({title, description, onFileUploaded}) {
 		>
 			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
-			<div className='h-80'>
+			<div className='h-10'>
+        {!fileName && (
         <FileUpload 
           chooseLabel="Datei auswählen" 
           mode="basic" 
@@ -36,6 +37,7 @@ export default function FileUploader({title, description, onFileUploaded}) {
           customUpload 
           uploadHandler={ handleUpload }
           auto/>
+        )}
         {fileName && (
           <p className="py-4">{ fileName }</p>
         )}

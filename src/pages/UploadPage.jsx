@@ -36,6 +36,13 @@ export default function UploadPage() {
 		<div className='flex-1 overflow-auto realtive z-10'>
 			<Header title="Upload" />
 			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
+				
+				{/* UOLOADER */}
+				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
+					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} />
+					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} />
+				</div>
+				
 				{/* STATS */}
 				<motion.div
 					className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8'
@@ -49,12 +56,6 @@ export default function UploadPage() {
 					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinData.dateFrom + " - " + feedinData.dateTo} color='#8B5CF6' />
 				</motion.div>
 
-				{/* CHARTS */}
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-					{ /* <SalesOverviewChart /> */}
-					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} />
-					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} />
-				</div>
 			</main>
 		</div>
 	)

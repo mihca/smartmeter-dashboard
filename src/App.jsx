@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
 import { Route } from "react-router-dom"
@@ -18,7 +19,7 @@ function App() {
 				<Sidebar />
 				<Routes>
 					<Route path='/' element={<UploadPage />} />
-					<Route path='/marketprice' element={<MarketpricePage />} />
+					<Route path='/marketprice' element={<MarketpricePage/>} />
 				</Routes>
 			</PrimeReactProvider>
 		</div>
