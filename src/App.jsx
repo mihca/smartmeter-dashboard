@@ -10,6 +10,7 @@ const EMPTY_PDR = {
 	provider: "-",
 	dateFrom: "",
 	dateTo: "",
+	fileName: null,
 	data: null
 }
 

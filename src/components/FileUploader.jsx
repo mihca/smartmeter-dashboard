@@ -2,18 +2,15 @@ import React, { useState } from 'react';
 import { motion } from "framer-motion"
 import { FileUpload } from 'primereact/fileupload';
 
-export default function FileUploader({title, description, onFileUploaded}) {
+export default function FileUploader({title, description, pdr, onFileUploaded}) {
   
-  const [fileName, setFileName] = useState(null);
-
   function handleUpload(event) {
 
     let uploadedFile = event.files[0];
-    setFileName(uploadedFile.name);
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      onFileUploaded(e.target.result);
+      onFileUploaded(uploadedFile.name, e.target.result);
     }
     reader.readAsText(uploadedFile);
 
@@ -29,7 +26,7 @@ export default function FileUploader({title, description, onFileUploaded}) {
 			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
 			<div className='h-10'>
-        {!fileName && (
+        {!pdr.fileName && (
         <FileUpload 
           chooseLabel="Datei auswählen" 
           mode="basic" 
@@ -38,8 +35,8 @@ export default function FileUploader({title, description, onFileUploaded}) {
           uploadHandler={ handleUpload }
           auto/>
         )}
-        {fileName && (
-          <p className="py-4">{ fileName }</p>
+        {pdr.fileName && (
+          <p className="py-4">{ pdr.fileName }</p>
         )}
       </div>
 		</motion.div>

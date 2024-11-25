@@ -14,13 +14,15 @@ import { PROVIDERS_FEEDIN } from "../data/providers-feedin"
 
 export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFeedinPDRChanged}) {
 
-	function handleFileUsageUploaded(fileContent) {
+	function handleFileUsageUploaded(fileName, fileContent) {
 		const usagePDRFound = importProviderFile(fileContent, PROVIDERS_USAGE);
+		usagePDRFound.fileName = fileName;
 		onUsagePDRChanged(usagePDRFound);			
 	}
 
-	function handleFileFeedinUploaded(fileContent) {
+	function handleFileFeedinUploaded(fileName, fileContent) {
 		const feedinPDRFound = importProviderFile(fileContent, PROVIDERS_FEEDIN);
+		feedinPDRFound.fileName = fileName;
 		onFeedinPDRChanged(feedinPDRFound);
 	}
 
@@ -31,8 +33,8 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				
 				{/* UPLOADER */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} />
-					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} />
+					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} pdr={usagePDR}/>
+					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR}/>
 				</div>
 				
 				{/* STATS */}
