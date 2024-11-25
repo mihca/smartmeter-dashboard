@@ -1,35 +1,25 @@
-import React, { useState } from 'react'
-import { Zap, CalendarFold, Sun } from 'lucide-react';
+import React from 'react'
+import { Zap, CalendarFold, Sun } from 'lucide-react'
 import { motion } from "framer-motion"
 
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
-import FileUploader from '../components/FileUploader';
-import { importProviderFile } from '../business/smartmeter-file-adapter';
+import FileUploader from '../components/FileUploader'
+import { importProviderFile } from '../business/smartmeter-file-adapter'
 
-import { PROVIDERS_USAGE } from "../data/providers-usage";
-import { PROVIDERS_FEEDIN } from "../data/providers-feedin";
+import { PROVIDERS_USAGE } from "../data/providers-usage"
+import { PROVIDERS_FEEDIN } from "../data/providers-feedin"
 
-const EMPTY_POWER_RECORD = {
-	provider: "-",
-	dateFrom: "",
-	dateTo: "",
-	data: []
-}
-
-export default function UploadPage() {
-
-	const [usageData, setUsageData] = useState(EMPTY_POWER_RECORD);
-	const [feedinData, setFeedinData] = useState(EMPTY_POWER_RECORD);
+export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFeedinPDRChanged}) {
 
 	function handleFileUsageUploaded(fileContent) {
-		const usagePowerRecord = importProviderFile(fileContent, PROVIDERS_USAGE);
-		setUsageData(usagePowerRecord);			
+		const usagePDRFound = importProviderFile(fileContent, PROVIDERS_USAGE);
+		onUsagePDRChanged(usagePDRFound);			
 	}
 
 	function handleFileFeedinUploaded(fileContent) {
-		const feedinPowerRecord = importProviderFile(fileContent, PROVIDERS_FEEDIN);
-		setFeedinData(feedinPowerRecord);
+		const feedinPDRFound = importProviderFile(fileContent, PROVIDERS_FEEDIN);
+		onFeedinPDRChanged(feedinPDRFound);
 	}
 
 	return (
@@ -50,10 +40,10 @@ export default function UploadPage() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					<StatCard name='Provider Verbrauch' icon={Zap} value={usageData.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={usageData.dateFrom + " - " + usageData.dateTo} color='#8B5CF6' />
-					<StatCard name='Provider Einspeisung' icon={Sun} value={feedinData.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinData.dateFrom + " - " + feedinData.dateTo} color='#8B5CF6' />
+					<StatCard name='Provider Verbrauch' icon={Zap} value={usagePDR.provider} color='#6366F1' />
+					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={usagePDR.dateFrom + " - " + usagePDR.dateTo} color='#8B5CF6' />
+					<StatCard name='Provider Einspeisung' icon={Sun} value={feedinPDR.provider} color='#6366F1' />
+					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinPDR.dateFrom + " - " + feedinPDR.dateTo} color='#8B5CF6' />
 				</motion.div>
 
 			</main>

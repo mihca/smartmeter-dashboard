@@ -6,7 +6,26 @@ import { Routes } from "react-router-dom"
 import Sidebar from "./layout/Sidebar"
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 
+const EMPTY_PDR = {
+	provider: "-",
+	dateFrom: "",
+	dateTo: "",
+	data: []
+}
+
 function App() {
+
+	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
+	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
+
+	function usagePDRChanged(pdr) {
+		setUsagePDR(pdr);			
+	}
+
+	function feedinPDRChanged(pdr) {
+		setFeedinPDR(pdr);			
+	}
+
 	return (
 		<div className='flex h-screen bg-gray-900 text-gray-100 overflow-hidden'>
 			{/* BG */}
@@ -18,7 +37,14 @@ function App() {
 			<PrimeReactProvider>
 				<Sidebar />
 				<Routes>
-					<Route path='/' element={<UploadPage />} />
+					<Route path='/' element={
+						<UploadPage 
+							usagePDR={usagePDR} 
+							feedinPDR={feedinPDR}
+							onUsagePDRChanged={usagePDRChanged}
+							onFeedinPDRChanged={feedinPDRChanged}
+						/>} 
+					/>
 					<Route path='/marketprice' element={<MarketpricePage/>} />
 				</Routes>
 			</PrimeReactProvider>
