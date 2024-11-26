@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import UsageChart from '../charts/UsageChart'
+import TarrifsTable from '../tables/TarrifsTable'
 
 export default function UsageCalcuclatorPage({pdr}) {
 
@@ -20,6 +21,8 @@ export default function UsageCalcuclatorPage({pdr}) {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
+					<StatCard name='Fix Tarif' icon={Zap} value={pdr.provider} color='#6366F1' />
+					<StatCard name='Netzgebühren' icon={CalendarFold} value={pdr.dateFrom + " - " + pdr.dateTo} color='#8B5CF6' />
 					<StatCard name='Provider Verbrauch' icon={Zap} value={pdr.provider} color='#6366F1' />
 					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={pdr.dateFrom + " - " + pdr.dateTo} color='#8B5CF6' />
 				</motion.div>
@@ -28,6 +31,12 @@ export default function UsageCalcuclatorPage({pdr}) {
 				{ pdr.hourData && (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
 					<UsageChart hourData={pdr.hourData}/>
+				</div>
+				)}
+
+				{ pdr.hourData && (
+				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
+					<TarrifsTable/>
 				</div>
 				)}
 			</main>
