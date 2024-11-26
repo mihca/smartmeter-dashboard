@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
+import UsageCalculatorPage from './pages/UsageCalculatorPage'
 import { Route } from "react-router-dom"
 import { Routes } from "react-router-dom"
 import Sidebar from "./layout/Sidebar"
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+import { PrimeReactProvider } from 'primereact/api';
 
 const EMPTY_PDR = {
 	provider: "-",
 	dateFrom: "",
 	dateTo: "",
 	fileName: null,
-	data: null
+	hourData: null
 }
 
 function App() {
@@ -46,8 +47,13 @@ function App() {
 							onFeedinPDRChanged={feedinPDRChanged}
 						/>} 
 					/>
+					<Route path='/usage-calculator' element={
+						<UsageCalculatorPage
+							pdr={usagePDR} 
+						/>} 
+					/>
 					<Route path='/marketprice' element={<MarketpricePage/>} />
-				</Routes>
+					</Routes>
 			</PrimeReactProvider>
 		</div>
 	);

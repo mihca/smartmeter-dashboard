@@ -30,7 +30,7 @@ export function importProviderFile (fileContentText, providers) {
         provider: provider.name,
         dateFrom: format(data[0].hour, "dd.MM.yyyy"),
         dateTo: format(data[data.length-1].hour, "dd.MM.yyyy"),
-        data: data 
+        hourData: data 
         /* will be like:
         [
             {hour: "2024-11-19T01:00", value: 1.5},

@@ -1,12 +1,10 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
 
-export default function UsageChart ({data}) {
-
-	console.log (data);
+export default function UsageChart ({hourData}) {
 
 	function groupByMonth(hourData) {
-		let data = [];
+		let dataByMonth = [];
 		let monthSum = 0.0;
 		let month = 0;
 
@@ -14,7 +12,7 @@ export default function UsageChart ({data}) {
 			hourData.forEach((record) => {
 				monthSum += record.value;
 				if (record.hour.getMonth() != month) {
-					data.push ({
+					dataByMonth.push ({
 						month: month + 1,
 						kWh: monthSum
 					});
@@ -22,13 +20,13 @@ export default function UsageChart ({data}) {
 					month += 1;
 				}
 			});
-			data.push ({
+			dataByMonth.push ({
 				month: month + 1,
 				kWh: monthSum
 		});
 		}
 
-		return data;
+		return dataByMonth;
 	}
 
 	return (
@@ -41,7 +39,7 @@ export default function UsageChart ({data}) {
 			<h2 className='text-xl font-semibold text-gray-100 mb-4'>Verbrauch pro Monat</h2>
 			<div style={{ width: "100%", height: 300 }}>
 				<ResponsiveContainer>
-					<BarChart data={groupByMonth(data)}>
+					<BarChart data={groupByMonth(hourData)}>
 						<CartesianGrid strokeDasharray='3 3' stroke='#374151' />
 						<XAxis dataKey='month' stroke='#9CA3AF' />
 						<YAxis stroke='#9CA3AF' />

@@ -51,9 +51,9 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				</motion.div>
 
 				{/* CHARTS */}
-				{ usagePDR.data && (
+				{ usagePDR.hourData && (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<UsageChart data={usagePDR.data}/>
+					<UsageChart hourData={usagePDR.hourData}/>
 				</div>
 				)}
 			</main>
