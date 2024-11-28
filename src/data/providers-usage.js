@@ -14,7 +14,7 @@ export const PROVIDERS_USAGE = [
         // }
         // Output:
         // { 
-        //   hour: "2024-11-19T02:00", 
+        //   utc: "2024-11-19T02:00", 
         //   value: 3.5 
         // }
         transform: (lineObject) => ({ 

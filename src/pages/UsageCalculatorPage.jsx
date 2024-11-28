@@ -30,12 +30,6 @@ export default function UsageCalcuclatorPage({pdr}) {
 				{/* CHARTS */}
 				{ pdr.hourData && (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<UsageChart hourData={pdr.hourData}/>
-				</div>
-				)}
-
-				{ pdr.hourData && (
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
 					<TarrifsTable/>
 				</div>
 				)}

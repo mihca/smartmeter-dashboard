@@ -11,10 +11,10 @@ export default function UsageChart ({hourData}) {
 		if (hourData) {
 			hourData.forEach((record) => {
 				monthSum += record.value;
-				if (record.hour.getMonth() != month) {
+				if (new Date(record.utcHour).getMonth() != month) {
 					dataByMonth.push ({
 						month: month + 1,
-						kWh: monthSum
+						kWh: Math.round(monthSum * 1000) / 1000
 					});
 					monthSum = 0.0;
 					month += 1;
@@ -22,7 +22,7 @@ export default function UsageChart ({hourData}) {
 			});
 			dataByMonth.push ({
 				month: month + 1,
-				kWh: monthSum
+				kWh: Math.round(monthSum * 1000) / 1000
 		});
 		}
 

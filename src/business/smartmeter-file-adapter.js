@@ -28,8 +28,8 @@ export function importProviderFile (fileContentText, providers) {
 
     return {
         provider: provider.name,
-        dateFrom: format(data[0].hour, "dd.MM.yyyy"),
-        dateTo: format(data[data.length-1].hour, "dd.MM.yyyy"),
+        dateFrom: format(data[0].utcHour, "dd.MM.yyyy"),
+        dateTo: format(data[data.length-1].utcHour, "dd.MM.yyyy"),
         hourData: data 
         /* will be like:
         [
@@ -41,18 +41,47 @@ export function importProviderFile (fileContentText, providers) {
 }
 
 function transformHourly (provider, csvObjectLines) {
+    
     let data = [];
     let hourSum = 0.0;
+    let prevTimestamp = new Date();
+
     csvObjectLines.forEach((lineObject) => {
+        
         let dataset = provider.transform(lineObject);
         hourSum += dataset.value;
+        // console.log (dataset.timestamp, dataset.timestamp.getTime(), dataset.timestamp.getTime(), dataset.value);
+        
+        // We have a full hour
         if (dataset.timestamp.getMinutes() == 0) {
+            
+            let hourTimestamp = dataset.timestamp.getTime();
+            if (hourTimestamp === prevTimestamp) {
+                hourTimestamp += 1000*60*60;
+                console.log("Found summertime backswitch: ", prevTimestamp, " shift to ", hourTimestamp);
+            }
+            
+            console.log (hourTimestamp, new Date(hourTimestamp), hourSum);
+            
             data.push ({
-                hour: dataset.timestamp,
+                utcHour: hourTimestamp,
                 value: hourSum
             });
+            
             hourSum = 0.0;
+            prevTimestamp = hourTimestamp;
         }
     });
     return data;
 }
+
+function local2UTC(date) {
+    return new Date(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds(),
+    );
+};
