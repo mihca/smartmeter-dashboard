@@ -1,30 +1,29 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { round1Digit } from "../scripts/round";
 
 export default function UsageChart ({hourData}) {
 
 	function groupByMonth(hourData) {
+
 		let dataByMonth = [];
 		let monthSum = 0.0;
 		let month = 0;
 
-		if (hourData) {
-			hourData.forEach((record) => {
-				monthSum += record.value;
-				if (new Date(record.utcHour).getMonth() != month) {
+		hourData.forEach((hourEntry, idx, array) => {
+
+			monthSum += hourEntry.value;
+
+			if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 					dataByMonth.push ({
-						month: month + 1,
-						kWh: Math.round(monthSum * 1000) / 1000
-					});
-					monthSum = 0.0;
-					month += 1;
-				}
-			});
-			dataByMonth.push ({
-				month: month + 1,
-				kWh: Math.round(monthSum * 1000) / 1000
+					month: month + 1,
+					kwh: round1Digit(monthSum)
+				});
+				monthSum = 0.0;
+				month += 1;
+			}
 		});
-		}
 
 		return dataByMonth;
 	}
@@ -51,7 +50,7 @@ export default function UsageChart ({hourData}) {
 							itemStyle={{ color: "#E5E7EB" }}
 						/>
 						<Legend />
-						<Bar dataKey='kWh' fill='#F59E0B' />
+						<Bar dataKey='kwh' fill='#F59E0B' />
 					</BarChart>
 				</ResponsiveContainer>
 			</div>

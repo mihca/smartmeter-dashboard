@@ -1,23 +1,39 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Eye } from "lucide-react";
+import { round3Digits } from "../scripts/round";
+import { format } from "date-fns";
 
-const orderData = [
-	{ id: "ORD001", customer: "John Doe", total: 235.4, status: "Delivered", date: "2023-07-01" },
-	{ id: "ORD002", customer: "Jane Smith", total: 412.0, status: "Processing", date: "2023-07-02" },
-	{ id: "ORD003", customer: "Bob Johnson", total: 162.5, status: "Shipped", date: "2023-07-03" },
-	{ id: "ORD004", customer: "Alice Brown", total: 750.2, status: "Pending", date: "2023-07-04" },
-	{ id: "ORD005", customer: "Charlie Wilson", total: 95.8, status: "Delivered", date: "2023-07-05" },
-	{ id: "ORD006", customer: "Eva Martinez", total: 310.75, status: "Processing", date: "2023-07-06" },
-	{ id: "ORD007", customer: "David Lee", total: 528.9, status: "Shipped", date: "2023-07-07" },
-	{ id: "ORD008", customer: "Grace Taylor", total: 189.6, status: "Delivered", date: "2023-07-08" },
-];
-
-export default function TarrifsTable () {
+export default function TarrifsTable ({usagePDR}) {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredOrders, setFilteredOrders] = useState(orderData);
+	// const [filteredOrders, setFilteredOrders] = useState(tariffData);
 
-	const handleSearch = (e) => {
+	console.log(usagePDR);
+
+	function tariffData (usagePDR) {
+
+		let dataByMonth = [];
+		let monthSum = 0.0;
+		let month = 0;
+
+		usagePDR.hourData.forEach((hourEntry, idx, array) => {
+
+			monthSum += hourEntry.value;
+
+			if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
+				dataByMonth.push ({
+					yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
+					kwh: round3Digits(monthSum)
+				});
+				monthSum = 0.0;
+				month += 1;
+			}
+		});
+
+		return dataByMonth;
+	}
+
+	function handleSearch (e) {
 		const term = e.target.value.toLowerCase();
 		setSearchTerm(term);
 		const filtered = orderData.filter(
@@ -34,7 +50,7 @@ export default function TarrifsTable () {
 			transition={{ delay: 0.4 }}
 		>
 			<div className='flex justify-between items-center mb-6'>
-				<h2 className='text-xl font-semibold text-gray-100'>Order List</h2>
+				<h2 className='text-xl font-semibold text-gray-100'>Kosten monatlich</h2>
 				<div className='relative'>
 					<input
 						type='text'
@@ -52,10 +68,10 @@ export default function TarrifsTable () {
 					<thead>
 						<tr>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Order ID
+								Monat
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Customer
+								Energie
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
 								Total
@@ -73,38 +89,25 @@ export default function TarrifsTable () {
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{filteredOrders.map((order) => (
+						{tariffData(usagePDR).map((monthData) => (
 							<motion.tr
-								key={order.id}
+								key={monthData.yearMonth}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{order.id}
+									{monthData.yearMonth}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{order.customer}
+									{monthData.kwh.toFixed(1)} kWh
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									${order.total.toFixed(2)}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									<span
-										className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-											order.status === "Delivered"
-												? "bg-green-100 text-green-800"
-												: order.status === "Processing"
-												? "bg-yellow-100 text-yellow-800"
-												: order.status === "Shipped"
-												? "bg-blue-100 text-blue-800"
-												: "bg-red-100 text-red-800"
-										}`}
-									>
-										{order.status}
-									</span>
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>{order.date}</td>
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 									<button className='text-indigo-400 hover:text-indigo-300 mr-2'>
 										<Eye size={18} />
