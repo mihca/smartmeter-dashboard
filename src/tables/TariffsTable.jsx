@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Eye } from "lucide-react";
-import { round3Digits } from "../scripts/round.js";
+import { round1Digit, round3Digits } from "../scripts/round.js";
 import { format } from "date-fns";
 import { TARIFFS } from "../data/tariffs.js";
 import { calculateHour } from "../scripts/tariffs/calculator.js";
@@ -15,7 +15,7 @@ function tariffData (usagePDR) {
 
 	usagePDR.hourData.forEach((hourEntry, idx, array) => {
 
-		monthSum += hourEntry.value;
+		monthSum += hourEntry.kwh;
 		priceSum += calculateHour (TARIFFS[2], hourEntry);
 
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
@@ -23,7 +23,8 @@ function tariffData (usagePDR) {
 			dataByMonth.push ({
 				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
 				kwh: round3Digits(monthSum),
-				netPricePerKwh: priceSum
+				netPriceEUR: priceSum,
+				netPriceCtPerKwh: round1Digit (priceSum / monthSum * 100)
 			});
 			
 			monthSum = 0.0;
@@ -112,7 +113,7 @@ export default function TariffsTable ({usagePDR}) {
 									{monthData.kwh.toFixed(1)} kWh
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{monthData.netPricePerKwh.toFixed(1)} kWh
+									{monthData.netPriceEUR.toFixed(2)} EUR ({monthData.netPriceCtPerKwh.toFixed(1)} ct/kWh)
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>

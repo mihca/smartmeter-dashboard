@@ -33,8 +33,8 @@ export function importProviderFile (fileContentText, providers) {
         hourData: data 
         /* will be like:
         [
-            {hour: "2024-11-19T01:00", value: 1.5},
-            {hour: "2024-11-19T02:00", value: 3.5}
+            {utcHour: 1732658400000, kwh: 1.5},
+            {utcHour: 1732662000000, kwh: 3.5}
         ]
         */
     }
@@ -49,8 +49,8 @@ function transformHourly (provider, csvObjectLines) {
     csvObjectLines.forEach((lineObject) => {
         
         let dataset = provider.transform(lineObject);
-        hourSum += dataset.value;
-        // console.log (dataset.timestamp, dataset.timestamp.getTime(), dataset.timestamp.getTime(), dataset.value);
+        hourSum += dataset.kwh;
+        // console.log (dataset.timestamp, dataset.timestamp.getTime(), dataset.timestamp.getTime(), dataset.kwh);
         
         // We have a full hour
         if (dataset.timestamp.getMinutes() == 0) {
@@ -65,7 +65,7 @@ function transformHourly (provider, csvObjectLines) {
             
             data.push ({
                 utcHour: hourTimestamp,
-                value: hourSum
+                kwh: hourSum
             });
             
             hourSum = 0.0;

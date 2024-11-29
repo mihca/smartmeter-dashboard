@@ -1,6 +1,5 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
 import { round1Digit } from "../scripts/round";
 
 export default function UsageChart ({hourData}) {
@@ -13,7 +12,7 @@ export default function UsageChart ({hourData}) {
 
 		hourData.forEach((hourEntry, idx, array) => {
 
-			monthSum += hourEntry.value;
+			monthSum += hourEntry.kwh;
 
 			if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 					dataByMonth.push ({
