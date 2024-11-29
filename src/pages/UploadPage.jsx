@@ -7,7 +7,7 @@ import StatCard from '../components/StatCard'
 import FileUploader from '../components/FileUploader'
 import UsageChart from '../charts/UsageChart'
 
-import { importProviderFile } from '../scripts/smartmeter-file-adapter'
+import { importProviderFile } from '../scripts/import/smartmeter-file-adapter'
 
 import { PROVIDERS_USAGE } from "../data/providers-usage"
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin"

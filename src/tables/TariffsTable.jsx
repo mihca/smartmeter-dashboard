@@ -1,37 +1,46 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Eye } from "lucide-react";
-import { round3Digits } from "../scripts/round";
+import { round3Digits } from "../scripts/round.js";
 import { format } from "date-fns";
+import { TARIFFS } from "../data/tariffs.js";
+import { calculateHour } from "../scripts/tariffs/calculator.js";
 
-export default function TarrifsTable ({usagePDR}) {
+function tariffData (usagePDR) {
+
+	let dataByMonth = [];
+	let monthSum = 0.0;
+	let month = 0;
+	let priceSum = 0.0;
+
+	usagePDR.hourData.forEach((hourEntry, idx, array) => {
+
+		monthSum += hourEntry.value;
+		priceSum += calculateHour (TARIFFS[2], hourEntry);
+
+		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
+			
+			dataByMonth.push ({
+				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
+				kwh: round3Digits(monthSum),
+				netPricePerKwh: priceSum
+			});
+			
+			monthSum = 0.0;
+			priceSum = 0.0;
+			month += 1;
+		}
+	});
+
+	return dataByMonth;
+}
+
+export default function TariffsTable ({usagePDR}) {
+
 	const [searchTerm, setSearchTerm] = useState("");
 	// const [filteredOrders, setFilteredOrders] = useState(tariffData);
 
 	console.log(usagePDR);
-
-	function tariffData (usagePDR) {
-
-		let dataByMonth = [];
-		let monthSum = 0.0;
-		let month = 0;
-
-		usagePDR.hourData.forEach((hourEntry, idx, array) => {
-
-			monthSum += hourEntry.value;
-
-			if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
-				dataByMonth.push ({
-					yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
-					kwh: round3Digits(monthSum)
-				});
-				monthSum = 0.0;
-				month += 1;
-			}
-		});
-
-		return dataByMonth;
-	}
 
 	function handleSearch (e) {
 		const term = e.target.value.toLowerCase();
@@ -67,14 +76,14 @@ export default function TarrifsTable ({usagePDR}) {
 				<table className='min-w-full divide-y divide-gray-700'>
 					<thead>
 						<tr>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Monat
 							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Total
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								{TARIFFS[2].name}
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
 								Status
@@ -103,6 +112,7 @@ export default function TarrifsTable ({usagePDR}) {
 									{monthData.kwh.toFixed(1)} kWh
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
+									{monthData.netPricePerKwh.toFixed(1)} kWh
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>

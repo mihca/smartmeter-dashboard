@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
-import TarrifsTable from '../tables/TarrifsTable'
+import TariffsTable from '../tables/TariffsTable'
 
 export default function UsageCalcuclatorPage({pdr}) {
 
@@ -29,7 +29,7 @@ export default function UsageCalcuclatorPage({pdr}) {
 				{/* CHARTS */}
 				{ pdr.hourData && (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<TarrifsTable usagePDR={pdr}/>
+					<TariffsTable usagePDR={pdr}/>
 				</div>
 				)}
 			</main>
