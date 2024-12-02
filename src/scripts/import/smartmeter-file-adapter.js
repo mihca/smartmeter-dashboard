@@ -1,7 +1,6 @@
 import Papa from "papaparse"
 
 import { findProvider } from "./provider-selector";
-import { format } from "date-fns";
 
 export function importProviderFile (fileContentText, providers) {
 
@@ -12,9 +11,7 @@ export function importProviderFile (fileContentText, providers) {
     const provider = findProvider(providers, fileContentText);
     if (provider == null) {
         return {
-            provider: "Unbekannt",
-            dateFrom: "",
-            dateTo: ""
+            provider: "Unbekannt"
         }
     }
 
@@ -28,8 +25,8 @@ export function importProviderFile (fileContentText, providers) {
 
     return {
         provider: provider.name,
-        dateFrom: format(data[0].utcHour, "dd.MM.yyyy"),
-        dateTo: format(data[data.length-1].utcHour, "dd.MM.yyyy"),
+        utcHourFrom: data[0].utcHour,
+        utcHourTo: data[data.length-1].utcHour,
         hourData: data 
         /* will be like:
         [

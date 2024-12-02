@@ -1,6 +1,7 @@
 import React from 'react'
 import { Zap, CalendarFold, Sun } from 'lucide-react'
 import { motion } from "framer-motion"
+import { format } from "date-fns";
 
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
@@ -45,9 +46,19 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					transition={{ duration: 1 }}
 				>
 					<StatCard name='Provider Verbrauch' icon={Zap} value={usagePDR.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={usagePDR.dateFrom + " - " + usagePDR.dateTo} color='#8B5CF6' />
+					{ !usagePDR.utcHourFrom && (
+						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value="-" color='#8B5CF6' />
+					)}
+					{ usagePDR.utcHourFrom && (
+						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
+					)}
 					<StatCard name='Provider Einspeisung' icon={Sun} value={feedinPDR.provider} color='#6366F1' />
-					<StatCard name='Zeitraum Einspeisung' icon={CalendarFold} value={feedinPDR.dateFrom + " - " + feedinPDR.dateTo} color='#8B5CF6' />
+					{ !feedinPDR.utcHourFrom && (
+						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value="-" color='#8B5CF6' />
+					)}
+					{ feedinPDR.utcHourFrom && (
+						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
+					)}
 				</motion.div>
 
 				{/* CHARTS */}

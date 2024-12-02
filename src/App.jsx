@@ -1,16 +1,20 @@
 import { useState } from 'react'
+import { Route } from "react-router-dom"
+import { Routes } from "react-router-dom"
+
+import { PrimeReactProvider } from 'primereact/api';
+
 import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
 import UsageCalculatorPage from './pages/UsageCalculatorPage'
-import { Route } from "react-router-dom"
-import { Routes } from "react-router-dom"
+
 import Sidebar from "./layout/Sidebar"
-import { PrimeReactProvider } from 'primereact/api';
+import { fetchMarketData } from './scripts/fetch-awattar';
 
 const EMPTY_PDR = {
 	provider: "-",
-	dateFrom: "",
-	dateTo: "",
+	utcHourFrom: null,
+	utcHourTo: null,
 	fileName: null,
 	hourData: null
 }
@@ -19,10 +23,23 @@ function App() {
 
 	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
 	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
-	const [marketPrices, setMarketPrices] = useState(new Map());
+	const [marketData, setMarketData] = useState(new Map());
+	const [isFetching, setIsFetching] = useState(false);
+	const [error, setError] = useState(null);
 
-	function usagePDRChanged(pdr) {
-		setUsagePDR(pdr);			
+	async function usagePDRChanged(pdr) {
+		
+		setUsagePDR(pdr);
+
+		try {
+			const fetchedMarketData = await fetchMarketData (pdr.utcHourFrom, pdr.utcHourTo);
+			console.log(fetchedMarketData);
+			setMarketData(fetchedMarketData);
+			setIsFetching(false);
+		} catch (error) {
+			setError(error.message);
+			setIsFetching(false);
+		}
 	}
 
 	function feedinPDRChanged(pdr) {
@@ -53,7 +70,11 @@ function App() {
 							pdr={usagePDR} 
 						/>} 
 					/>
-					<Route path='/marketprice' element={<MarketpricePage/>} />
+					<Route path='/marketprice' element={
+						<MarketpricePage
+							marketData={marketData}
+						/>} 
+					/>
 					</Routes>
 			</PrimeReactProvider>
 		</div>
