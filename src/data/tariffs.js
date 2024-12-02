@@ -1,7 +1,7 @@
 // ATTENTION: All prices are net prices without tax (ohne MwSt!)
 
-export const TARIFFS = [
-    {
+export const TARIFFS = new Map([
+    ['smartENERGY.smartBASIC', {
         name: 'smartBASIC',
         description: 'Fix Strompreis gültig ab 01/2024-12/2024 mit 18.1833 ct/kWh netto ohne Mwst',
         company: 'smartENERGY',
@@ -16,8 +16,8 @@ export const TARIFFS = [
                 }
             }
         ]
-    },
-    {
+    }],
+    ['smartENERGY.smartCONTROL', {
         name: 'smartCONTROL',
         description: 'Börsenstrompreis mit 1,2 ct netto Aufschlag',
         company: 'smartENERGY',
@@ -32,8 +32,8 @@ export const TARIFFS = [
                 }
             }
         ]
-    },
-    {
+    }],
+    ['smartENERGY.smartTIMES', {
         name: 'smartTIMES',
         description: 'Monatlich angepasster Tarif mit Uhrzeiten',
         company: 'smartENERGY',
@@ -51,6 +51,6 @@ export const TARIFFS = [
                 },
             }
         ]
-    }
-];
+    }]
+]);
 

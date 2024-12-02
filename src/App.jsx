@@ -19,6 +19,7 @@ function App() {
 
 	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
 	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
+	const [marketPrices, setMarketPrices] = useState(new Map());
 
 	function usagePDRChanged(pdr) {
 		setUsagePDR(pdr);			

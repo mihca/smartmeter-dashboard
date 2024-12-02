@@ -16,7 +16,7 @@ function tariffData (usagePDR) {
 	usagePDR.hourData.forEach((hourEntry, idx, array) => {
 
 		monthSum += hourEntry.kwh;
-		priceSum += calculateHour (TARIFFS[2], hourEntry);
+		priceSum += calculateHour (TARIFFS.get("smartENERGY.smartTIMES"), hourEntry);
 
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 			
@@ -84,7 +84,7 @@ export default function TariffsTable ({usagePDR}) {
 								Energie
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								{TARIFFS[2].name}
+								{TARIFFS.get("smartENERGY.smartTIMES").name}
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
 								Status
