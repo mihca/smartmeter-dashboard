@@ -4,19 +4,21 @@ import { Search, Eye } from "lucide-react";
 import { round1Digit, round3Digits } from "../scripts/round.js";
 import { format } from "date-fns";
 import { TARIFFS } from "../data/tariffs.js";
-import { calculateHour } from "../scripts/tariffs/calculator.js";
+import { calculateHour } from "../scripts/calculator.js";
 
-function tariffData (usagePDR) {
+function tariffData (tariff, usagePDR, marketData) {
 
 	let dataByMonth = [];
 	let monthSum = 0.0;
 	let month = 0;
 	let priceSum = 0.0;
 
+	console.log ("Caluclate ", tariff.name);
+
 	usagePDR.hourData.forEach((hourEntry, idx, array) => {
 
 		monthSum += hourEntry.kwh;
-		priceSum += calculateHour (TARIFFS.get("smartENERGY.smartTIMES"), hourEntry);
+		priceSum += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
 
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 			
@@ -36,12 +38,10 @@ function tariffData (usagePDR) {
 	return dataByMonth;
 }
 
-export default function TariffsTable ({usagePDR}) {
+export default function TariffsTable ({usagePDR, marketData}) {
 
 	const [searchTerm, setSearchTerm] = useState("");
 	// const [filteredOrders, setFilteredOrders] = useState(tariffData);
-
-	console.log(usagePDR);
 
 	function handleSearch (e) {
 		const term = e.target.value.toLowerCase();
@@ -83,23 +83,16 @@ export default function TariffsTable ({usagePDR}) {
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								{TARIFFS.get("smartENERGY.smartTIMES").name}
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Status
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Date
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Actions
-							</th>
+							{Array.from(TARIFFS.values()).map((tariff) => (
+								<th key={tariff.name} className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+									{tariff.name}
+								</th>
+							))}
 						</tr>
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{tariffData(usagePDR).map((monthData) => (
+						{ tariffData(TARIFFS.get("smartENERGY.smartCONTROL"), usagePDR, marketData).map((monthData) => (
 							<motion.tr
 								key={monthData.yearMonth}
 								initial={{ opacity: 0 }}

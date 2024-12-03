@@ -6,7 +6,7 @@ import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import TariffsTable from '../tables/TariffsTable'
 
-export default function UsageCalcuclatorPage({pdr}) {
+export default function UsageCalcuclatorPage({pdr, marketData}) {
 
 	return (
 		<div className='flex-1 overflow-auto realtive z-10'>
@@ -29,7 +29,7 @@ export default function UsageCalcuclatorPage({pdr}) {
 				{/* CHARTS */}
 				{ pdr.hourData && (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<TariffsTable usagePDR={pdr}/>
+					<TariffsTable usagePDR={pdr} marketData={marketData}/>
 				</div>
 				)}
 			</main>

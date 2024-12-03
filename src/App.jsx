@@ -33,7 +33,6 @@ function App() {
 
 		try {
 			const fetchedMarketData = await fetchMarketData (pdr.utcHourFrom, pdr.utcHourTo);
-			console.log(fetchedMarketData);
 			setMarketData(fetchedMarketData);
 			setIsFetching(false);
 		} catch (error) {
@@ -67,7 +66,8 @@ function App() {
 					/>
 					<Route path='/usage-calculator' element={
 						<UsageCalculatorPage
-							pdr={usagePDR} 
+							pdr={usagePDR}
+							marketData={marketData}
 						/>} 
 					/>
 					<Route path='/marketprice' element={
