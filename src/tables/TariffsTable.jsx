@@ -6,43 +6,57 @@ import { format } from "date-fns";
 import { TARIFFS } from "../data/tariffs.js";
 import { calculateHour } from "../scripts/calculator.js";
 
-function tariffData (tariff, usagePDR, marketData) {
+function tariffData (tariffs, usagePDR, marketData) {
 
 	let dataByMonth = [];
-	let monthSumKwh = 0.0;
 	let month = 0;
+	let hourIdx = 0;
+	let monthSumKwh = 0.0;
 	let marketPriceSum = 0.0;
+	let marketPriceSumWeighted = 0.0;
 	let tariffPriceSum = 0.0;
-	let tariffPriceHour = 0.0;
+
+	let tariff = tariffs[1];
 
 	console.log ("Caluclate ", tariff.name);
 
 	usagePDR.hourData.forEach((hourEntry, idx, array) => {
 
 		monthSumKwh += hourEntry.kwh;
-		marketPriceSum += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
-		tariffPriceHour = calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
-		tariffPriceSum += tariffPriceHour;
+		marketPriceSum += marketData.get(hourEntry.utcHour);
+		hourIdx = hourIdx + 1;
+		marketPriceSumWeighted += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
 
+		tariffPriceSum += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
+
+		/*
+		tariffs.forEach((tariff, idx, array) => {
+		})
+		*/
+
+		/*
 		if (idx == 0) {
 			console.log (new Date(hourEntry.utcHour), " / ", hourEntry.utcHour, ": ", hourEntry.kwh, " kWh, ", marketData.get(hourEntry.utcHour), " ct/kWh = ", tariffPriceHour );
 		}
+		*/
 
-		// We are calculating in local time with new Date()
+		// Change of month: We are calculating in local time with new Date()
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 			
 			dataByMonth.push ({
 				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
 				kwh: round3Digits(monthSumKwh),
-				averageMarketPricePerKwh: round3Digits (marketPriceSum / monthSumKwh),
-				netPriceEUR: tariffPriceSum,
-				netPriceCtPerKwh: round3Digits (tariffPriceSum / monthSumKwh * 100),
-				grossPriceCtPerKwh: round3Digits (tariffPriceSum / monthSumKwh * 100 * 1.2)
+				averageMarketPricePerKwh: round3Digits (marketPriceSum / hourIdx),
+				averageMarketPricePerKwhWeighted: round3Digits (marketPriceSumWeighted / monthSumKwh),
+				netTariffPriceEUR: tariffPriceSum,
+				netTariffPriceCtPerKwh: round3Digits (tariffPriceSum / monthSumKwh * 100)
 			});
 			
+			hourIdx = 0;
 			monthSumKwh = 0.0;
 			tariffPriceSum = 0.0;
 			marketPriceSum = 0.0;
+			marketPriceSumWeighted = 0.0;
 			month += 1;
 		}
 	});
@@ -96,7 +110,10 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								Energie
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								ct/kWh
+								ct/kWh netto<br/>Durchschnitt
+							</th>
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								ct/kWh netto<br/>nach Verbrauch
 							</th>
 							{Array.from(TARIFFS.values()).map((tariff) => (
 								<th key={tariff.name} className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
@@ -107,7 +124,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{ tariffData(TARIFFS.get("smartENERGY.smartCONTROL"), usagePDR, marketData).map((monthData) => (
+						{ tariffData(Array.from(TARIFFS.values()), usagePDR, marketData).map((monthData) => (
 							<motion.tr
 								key={monthData.yearMonth}
 								initial={{ opacity: 0 }}
@@ -124,7 +141,12 @@ export default function TariffsTable ({usagePDR, marketData}) {
 									{monthData.averageMarketPricePerKwh.toFixed(3)} ct
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									{monthData.netPriceEUR.toFixed(2)} EUR <br/> ({monthData.grossPriceCtPerKwh.toFixed(3)} ct/kWh)
+									{monthData.averageMarketPricePerKwhWeighted.toFixed(3)} ct
+								</td>
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+									{monthData.netTariffPriceEUR.toFixed(2)} EUR <br/> 
+									{monthData.netTariffPriceCtPerKwh.toFixed(3)} ct/kWh <br/> 
+									{(monthData.netTariffPriceCtPerKwh*1.2).toFixed(3)} ct/kWh
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>
