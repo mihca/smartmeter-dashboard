@@ -27,9 +27,9 @@ function tariffData (tariff, usagePDR, marketData) {
 			dataByMonth.push ({
 				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
 				kwh: round3Digits(monthSumKwh),
-				averagePricePerKwh: round1Digit (marketPriceSum / monthSumKwh),
+				averagePricePerKwh: round3Digit (marketPriceSum / monthSumKwh),
 				netPriceEUR: tariffPriceSum,
-				netPriceCtPerKwh: round1Digit (tariffPriceSum / monthSumKwh * 100)
+				netPriceCtPerKwh: round3Digit (tariffPriceSum / monthSumKwh * 100)
 			});
 			
 			monthSumKwh = 0.0;
@@ -113,10 +113,10 @@ export default function TariffsTable ({usagePDR, marketData}) {
 									{monthData.kwh.toFixed(3)} kWh
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{monthData.averagePricePerKwh.toFixed(1)} ct
+									{monthData.averagePricePerKwh.toFixed(3)} ct
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{monthData.netPriceEUR.toFixed(2)} EUR ({monthData.netPriceCtPerKwh.toFixed(1)} ct/kWh)
+									{monthData.netPriceEUR.toFixed(2)} EUR ({monthData.netPriceCtPerKwh.toFixed(3)} ct/kWh)
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>
