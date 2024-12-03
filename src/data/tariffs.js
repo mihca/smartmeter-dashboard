@@ -51,6 +51,22 @@ export const TARIFFS = new Map([
                 },
             }
         ]
-    }]
+    }],
+    ['web.investor', {
+        name: 'Grünstrom Privat investor',
+        description: 'Fix Strompreis gültig ab 01/2024-12/2024 mit 12.90 ct/kWh netto ohne Mwst',
+        company: 'web',
+        link: 'https://www.web.energy/fileadmin/media/documents/Gruenstrom/W.E.B_Gruenstrom_Produktblatt_investor_01.pdf',
+        base_fee_yearly_eur: 42.00,
+        rates_monthly: [
+            {
+                start: "2024-01",
+                end: null,
+                calculate: (hour, market_price_ct, kwh) => {
+                    return kwh * 12.90;
+                }
+            }
+        ]
+    }],
 ]);
 

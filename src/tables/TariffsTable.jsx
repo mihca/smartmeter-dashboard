@@ -10,55 +10,61 @@ function tariffData (tariffs, usagePDR, marketData) {
 
 	let dataByMonth = [];
 	let month = 0;
-	let hourIdx = 0;
+	let monthHourCounter = 0;
 	let monthSumKwh = 0.0;
 	let marketPriceSum = 0.0;
 	let marketPriceSumWeighted = 0.0;
 	let tariffPriceSum = new Array(tariffs.length).fill(0.0);
 
+	let overallSumKwh = 0.0;
+	let overallMarketPriceSum = 0.0;
+	let overallMarketPriceSumWeighted = 0.0;
+	let overallTariffPriceSum = new Array(tariffs.length).fill(0.0);
+
 	usagePDR.hourData.forEach((hourEntry, idx, array) => {
+
+		monthHourCounter = monthHourCounter + 1;
 
 		monthSumKwh += hourEntry.kwh;
 		marketPriceSum += marketData.get(hourEntry.utcHour);
-		hourIdx = hourIdx + 1;
 		marketPriceSumWeighted += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
 
-		tariffs.forEach((tariff, idx, array) => {
-			tariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
-		})
+		overallSumKwh += hourEntry.kwh;
+		overallMarketPriceSum += marketData.get(hourEntry.utcHour);
+		overallMarketPriceSumWeighted += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
 
-		/*
-		if (idx == 0) {
-			console.log (new Date(hourEntry.utcHour), " / ", hourEntry.utcHour, ": ", hourEntry.kwh, " kWh, ", marketData.get(hourEntry.utcHour), " ct/kWh = ", tariffPriceHour );
-		}
-		*/
+		tariffs.forEach((tariff, idx, array) => {
+			const hourPrice = calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
+			tariffPriceSum[idx] += hourPrice;
+			overallTariffPriceSum[idx] += hourPrice;
+		})
 
 		// Change of month: We are calculating in local time with new Date()
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 
-			let tariffPrices = [];
-			tariffs.forEach((tariff, idx, array) => {
-				tariffPrices.push ({
-					netTariffPriceEUR: tariffPriceSum[idx],
-					netTariffPriceCtPerKwh: round3Digits (tariffPriceSum[idx] / monthSumKwh * 100)
-				});
-			});
-
 			dataByMonth.push ({
 				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
 				kwh: round3Digits(monthSumKwh),
-				averageMarketPricePerKwh: round3Digits (marketPriceSum / hourIdx),
+				averageMarketPricePerKwh: round3Digits (marketPriceSum / monthHourCounter),
 				weightedMarketPricePerKwh: round3Digits (marketPriceSumWeighted / monthSumKwh),
-				tariffPrices: tariffPrices
+				tariffPrices: tariffPriceSum
 			});
 			
-			hourIdx = 0;
+			monthHourCounter = 0;
 			monthSumKwh = 0.0;
 			tariffPriceSum = new Array(tariffs.length).fill(0.0);
 			marketPriceSum = 0.0;
 			marketPriceSumWeighted = 0.0;
 			month += 1;
 		}
+	});
+
+	dataByMonth.push ({
+		yearMonth: "Gesamt",
+		kwh: overallSumKwh,
+		averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / usagePDR.hourData.length),
+		weightedMarketPricePerKwh: round3Digits (overallMarketPriceSumWeighted / overallSumKwh),
+		tariffPrices: overallTariffPriceSum
 	});
 
 	return dataByMonth;
@@ -145,16 +151,11 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								</td>
 								{ monthData.tariffPrices.map ( (tariffPrice) => (
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									{tariffPrice.netTariffPriceEUR.toFixed(2)} EUR <br/> 
-									{tariffPrice.netTariffPriceCtPerKwh.toFixed(3)} ct/kWh <br/> 
-									{(tariffPrice.netTariffPriceCtPerKwh*1.2).toFixed(3)} ct/kWh
+									{tariffPrice.toFixed(2)} EUR <br/> 
+									{(tariffPrice/monthData.kwh*100).toFixed(3)} ct/kWh <br/> 
+									{(tariffPrice/monthData.kwh*100*1.2).toFixed(3)} ct/kWh
 								</td>
 								))}
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									<button className='text-indigo-400 hover:text-indigo-300 mr-2'>
-										<Eye size={18} />
-									</button>
-								</td>
 							</motion.tr>
 						))}
 					</tbody>
