@@ -13,6 +13,7 @@ function tariffData (tariff, usagePDR, marketData) {
 	let month = 0;
 	let marketPriceSum = 0.0;
 	let tariffPriceSum = 0.0;
+	let tariffPriceHour = 0.0;
 
 	console.log ("Caluclate ", tariff.name);
 
@@ -20,16 +21,23 @@ function tariffData (tariff, usagePDR, marketData) {
 
 		monthSumKwh += hourEntry.kwh;
 		marketPriceSum += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
-		tariffPriceSum += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
+		tariffPriceHour = calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
+		tariffPriceSum += tariffPriceHour;
 
+		if (idx == 0) {
+			console.log (new Date(hourEntry.utcHour), " / ", hourEntry.utcHour, ": ", hourEntry.kwh, " kWh, ", marketData.get(hourEntry.utcHour), " ct/kWh = ", tariffPriceHour );
+		}
+
+		// We are calculating in local time with new Date()
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 			
 			dataByMonth.push ({
 				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
 				kwh: round3Digits(monthSumKwh),
-				averagePricePerKwh: round3Digit (marketPriceSum / monthSumKwh),
+				averageMarketPricePerKwh: round3Digits (marketPriceSum / monthSumKwh),
 				netPriceEUR: tariffPriceSum,
-				netPriceCtPerKwh: round3Digit (tariffPriceSum / monthSumKwh * 100)
+				netPriceCtPerKwh: round3Digits (tariffPriceSum / monthSumKwh * 100),
+				grossPriceCtPerKwh: round3Digits (tariffPriceSum / monthSumKwh * 100 * 1.2)
 			});
 			
 			monthSumKwh = 0.0;
@@ -109,14 +117,14 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
 									{monthData.yearMonth}
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 									{monthData.kwh.toFixed(3)} kWh
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{monthData.averagePricePerKwh.toFixed(3)} ct
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+									{monthData.averageMarketPricePerKwh.toFixed(3)} ct
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{monthData.netPriceEUR.toFixed(2)} EUR ({monthData.netPriceCtPerKwh.toFixed(3)} ct/kWh)
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+									{monthData.netPriceEUR.toFixed(2)} EUR <br/> ({monthData.grossPriceCtPerKwh.toFixed(3)} ct/kWh)
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>

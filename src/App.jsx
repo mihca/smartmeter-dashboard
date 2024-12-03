@@ -32,7 +32,9 @@ function App() {
 		setUsagePDR(pdr);
 
 		try {
-			const fetchedMarketData = await fetchMarketData (pdr.utcHourFrom, pdr.utcHourTo);
+			// Fetch market data one hour earlier (-3600000) than usage data, 
+			// because usage data shows end of hour and marketprice is valid at start of hour
+			const fetchedMarketData = await fetchMarketData (pdr.utcHourFrom - 3600000, pdr.utcHourTo);
 			setMarketData(fetchedMarketData);
 			setIsFetching(false);
 		} catch (error) {

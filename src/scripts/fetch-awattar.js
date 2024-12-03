@@ -16,7 +16,8 @@ export async function fetchMarketData (start, end) {
     
     let marketData = new Map();
     resData.data.forEach(element => {
-        // Save price at the end of each hour to be conform to usage and feedin data
+        // Save price at the end of each hour to be conform to usage and feedin data.
+        // So for calculation we can just take the usage timestamp and look with same timestamp in market data.
         marketData.set (element.end_timestamp, element.marketprice / 10.0);
     });
 
