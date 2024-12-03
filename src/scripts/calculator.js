@@ -1,5 +1,9 @@
 
-export function calculateHour (tariff, hourEntry, marketPrice) {
-    let hour = new Date(hourEntry.utcHour).getHours();
-    return tariff.rates_monthly[0].calculate(hour, marketPrice, hourEntry.kwh) / 100;
+export function calculateHourEUR (tariff, hourEntry, marketPrice) {
+    const date = new Date(hourEntry.utcHour);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const weekday = date.getDay();
+    const hour = date.getHours();
+    return tariff.calculate(year, month, weekday, hour, marketPrice, hourEntry.kwh) / 100;
 }

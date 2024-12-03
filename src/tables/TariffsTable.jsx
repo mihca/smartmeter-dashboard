@@ -4,7 +4,7 @@ import { Search, Eye } from "lucide-react";
 import { round1Digit, round3Digits } from "../scripts/round.js";
 import { format } from "date-fns";
 import { TARIFFS } from "../data/tariffs.js";
-import { calculateHour } from "../scripts/calculator.js";
+import { calculateHourEUR } from "../scripts/calculator.js";
 
 function tariffData (tariffs, usagePDR, marketData) {
 
@@ -34,7 +34,7 @@ function tariffData (tariffs, usagePDR, marketData) {
 		overallMarketPriceSumWeighted += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
 
 		tariffs.forEach((tariff, idx, array) => {
-			const hourPrice = calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
+			const hourPrice = calculateHourEUR (tariff, hourEntry, marketData.get(hourEntry.utcHour));
 			tariffPriceSum[idx] += hourPrice;
 			overallTariffPriceSum[idx] += hourPrice;
 		})
