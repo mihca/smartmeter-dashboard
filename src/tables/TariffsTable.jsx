@@ -9,28 +9,32 @@ import { calculateHour } from "../scripts/calculator.js";
 function tariffData (tariff, usagePDR, marketData) {
 
 	let dataByMonth = [];
-	let monthSum = 0.0;
+	let monthSumKwh = 0.0;
 	let month = 0;
-	let priceSum = 0.0;
+	let marketPriceSum = 0.0;
+	let tariffPriceSum = 0.0;
 
 	console.log ("Caluclate ", tariff.name);
 
 	usagePDR.hourData.forEach((hourEntry, idx, array) => {
 
-		monthSum += hourEntry.kwh;
-		priceSum += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
+		monthSumKwh += hourEntry.kwh;
+		marketPriceSum += marketData.get(hourEntry.utcHour) * hourEntry.kwh;
+		tariffPriceSum += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour));
 
 		if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
 			
 			dataByMonth.push ({
 				yearMonth: format(new Date(array[idx-1].utcHour), "yyyy-MM"),
-				kwh: round3Digits(monthSum),
-				netPriceEUR: priceSum,
-				netPriceCtPerKwh: round1Digit (priceSum / monthSum * 100)
+				kwh: round3Digits(monthSumKwh),
+				averagePricePerKwh: round1Digit (marketPriceSum / monthSumKwh),
+				netPriceEUR: tariffPriceSum,
+				netPriceCtPerKwh: round1Digit (tariffPriceSum / monthSumKwh * 100)
 			});
 			
-			monthSum = 0.0;
-			priceSum = 0.0;
+			monthSumKwh = 0.0;
+			tariffPriceSum = 0.0;
+			marketPriceSum = 0.0;
 			month += 1;
 		}
 	});
@@ -83,6 +87,9 @@ export default function TariffsTable ({usagePDR, marketData}) {
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								ct/kWh
+							</th>
 							{Array.from(TARIFFS.values()).map((tariff) => (
 								<th key={tariff.name} className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
 									{tariff.name}
@@ -103,12 +110,13 @@ export default function TariffsTable ({usagePDR, marketData}) {
 									{monthData.yearMonth}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{monthData.kwh.toFixed(1)} kWh
+									{monthData.kwh.toFixed(3)} kWh
+								</td>
+								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
+									{monthData.averagePricePerKwh.toFixed(1)} ct
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
 									{monthData.netPriceEUR.toFixed(2)} EUR ({monthData.netPriceCtPerKwh.toFixed(1)} ct/kWh)
-								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 								</td>

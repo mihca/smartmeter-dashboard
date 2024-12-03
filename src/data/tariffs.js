@@ -25,7 +25,7 @@ export const TARIFFS = new Map([
         base_fee_yearly_eur: 29.90,
         rates_monthly: [
             {
-                start: "2023-10",
+                start: "2024-01",
                 end: null,
                 calculate: (hour, market_price_ct, kwh) => {
                     return kwh * ( market_price_ct + 1.2 );
