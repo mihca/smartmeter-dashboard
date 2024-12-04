@@ -12,7 +12,7 @@ export async function fetchMarketData (start, end) {
       throw new Error('Failed to fetch marketdata (' + response.status + ')');          
     }
   
-    console.log(resData.data);
+    console.log("got marketData");
     
     let marketData = new Map();
     resData.data.forEach(element => {

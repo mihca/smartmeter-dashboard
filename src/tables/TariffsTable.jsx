@@ -149,8 +149,9 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 									{monthData.weightedMarketPricePerKwh.toFixed(3)} ct
 								</td>
-								{ monthData.tariffPrices.map ( (tariffPrice) => (
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+								{ monthData.tariffPrices.map ( (tariffPrice, idx) => (
+								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'
+									key={idx}>
 									{tariffPrice.toFixed(2)} EUR <br/> 
 									{(tariffPrice/monthData.kwh*100).toFixed(3)} ct/kWh <br/> 
 									{(tariffPrice/monthData.kwh*100*1.2).toFixed(3)} ct/kWh

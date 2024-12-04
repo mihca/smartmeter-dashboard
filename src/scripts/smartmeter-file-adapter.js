@@ -61,7 +61,7 @@ function transformHourly (provider, csvObjectLines) {
             console.log (hourTimestamp, new Date(hourTimestamp), hourSum);
             
             data.push ({
-                utcHour: hourTimestamp,
+                utcHour: hourTimestamp-3600000,
                 kwh: hourSum
             });
             
