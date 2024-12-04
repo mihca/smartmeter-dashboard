@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import TariffsTable from '../tables/TariffsTable'
+import TariffsDayTable from '../tables/TariffsDayTable'
 
 export default function UsageCalcuclatorPage({pdr, marketData}) {
 
@@ -32,9 +33,14 @@ export default function UsageCalcuclatorPage({pdr, marketData}) {
 
 				{/* CHARTS */}
 				{ pdr.hourData && (
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<TariffsTable usagePDR={pdr} marketData={marketData}/>
-				</div>
+					<>
+						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
+							<TariffsTable usagePDR={pdr} marketData={marketData}/>
+						</div>
+						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
+							<TariffsDayTable usagePDR={pdr} marketData={marketData}/>
+						</div>
+					</>
 				)}
 			</main>
 		</div>

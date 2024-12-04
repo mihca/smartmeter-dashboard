@@ -40,17 +40,16 @@ export function importProviderFile (fileContentText, providers) {
 function transformHourly (provider, csvObjectLines) {
     
     let data = [];
-    let hourSum = 0.0;
+    let hourSumKwh = 0.0;
     let prevTimestamp = new Date();
 
     csvObjectLines.forEach((lineObject) => {
         
         let dataset = provider.transform(lineObject);
-        hourSum += dataset.kwh;
-        // console.log (dataset.timestamp, dataset.timestamp.getTime(), dataset.timestamp.getTime(), dataset.kwh);
+        hourSumKwh += dataset.kwh;
         
         // We have a full hour
-        if (dataset.timestamp.getMinutes() == 0) {
+        if (dataset.timestamp.getMinutes() === 0) {
             
             let hourTimestamp = dataset.timestamp.getTime();
             if (hourTimestamp === prevTimestamp) {
@@ -58,27 +57,17 @@ function transformHourly (provider, csvObjectLines) {
                 console.log("Found summertime backswitch: ", prevTimestamp, " shift to ", hourTimestamp);
             }
             
-            console.log (hourTimestamp, new Date(hourTimestamp), hourSum);
+            console.log (hourTimestamp, new Date(hourTimestamp), hourSumKwh);
             
             data.push ({
                 utcHour: hourTimestamp-3600000,
-                kwh: hourSum
+                kwh: hourSumKwh
             });
             
-            hourSum = 0.0;
+            hourSumKwh = 0.0;
             prevTimestamp = hourTimestamp;
         }
     });
+    
     return data;
 }
-
-function local2UTC(date) {
-    return new Date(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate(),
-      date.getUTCHours(),
-      date.getUTCMinutes(),
-      date.getUTCSeconds(),
-    );
-};
