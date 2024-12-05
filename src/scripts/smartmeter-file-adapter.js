@@ -53,14 +53,14 @@ function transformHourly (provider, csvObjectLines) {
             
             let hourTimestamp = dataset.timestamp.getTime();
             if (hourTimestamp === prevTimestamp) {
-                hourTimestamp += 1000*60*60;
+                hourTimestamp += 3600000;
                 console.log("Found summertime backswitch: ", prevTimestamp, " shift to ", hourTimestamp);
             }
             
-            console.log (hourTimestamp, new Date(hourTimestamp), hourSumKwh);
+            // console.log (hourTimestamp, new Date(hourTimestamp), hourSumKwh);
             
             data.push ({
-                utcHour: hourTimestamp-3600000,
+                utcHour: hourTimestamp,
                 kwh: hourSumKwh
             });
             

@@ -25,19 +25,14 @@ export default function TariffsDayTable ({usagePDR, marketData}) {
 		let overallMarketPriceSumWeighted = 0.0;
 		let overallTariffPriceSum = new Array(tariffs.length).fill(0.0);
 	
-		console.log (usagePDR.hourData);
-
+		// Exclude 1. at 0:00, because its the sum from the last hour of the last month
 		const hourDataForMonth = usagePDR.hourData.filter( (hourEntry) => 
 			new Date (hourEntry.utcHour).getMonth() === 11 && 
 			!(new Date (hourEntry.utcHour).getDate() === 1 && new Date (hourEntry.utcHour).getHours() === 0)
 		);
 
-		console.log (hourDataForMonth);
-
 		hourDataForMonth.forEach((hourEntry, idx, array) => {
 	
-			console.log (new Date(hourEntry.utcHour), hourEntry.kwh);
-
 			dayHourCounter = dayHourCounter + 1;
 			daySumKwh += hourEntry.kwh;
 			
@@ -61,8 +56,6 @@ export default function TariffsDayTable ({usagePDR, marketData}) {
 					tariffPrices: tariffPriceSum
 				});
 				
-				console.log (format(new Date(array[idx-1].utcHour), "yyyy-MM-dd"), round3Digits(daySumKwh));
-
 				overallSumKwh += daySumKwh;
 				overallMarketPriceSum += marketPriceSum;
 				overallMarketPriceSumWeighted += marketPriceSumWeighted;
@@ -79,7 +72,7 @@ export default function TariffsDayTable ({usagePDR, marketData}) {
 		dataByDay.push ({
 			date: "Gesamt",
 			kwh: overallSumKwh,
-			averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / usagePDR.hourData.length),
+			averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / hourDataForMonth.length),
 			weightedMarketPricePerKwh: round3Digits (overallMarketPriceSumWeighted / overallSumKwh),
 			tariffPrices: overallTariffPriceSum
 		});
@@ -105,16 +98,10 @@ export default function TariffsDayTable ({usagePDR, marketData}) {
 					<thead>
 						<tr>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								Monat
+								Monat<br/>ct/kWh
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								Energie
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								ct/kWh netto<br/>Durchschnitt
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								ct/kWh netto<br/>nach Verbrauch
+								Energie<br/>ct/kWh
 							</th>
 							{Array.from(TARIFFS.values()).map((tariff) => (
 								<th key={tariff.name} className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
@@ -125,7 +112,7 @@ export default function TariffsDayTable ({usagePDR, marketData}) {
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{ tariffData(Array.from(TARIFFS.values()), usagePDR, marketData).map((dayData) => (
+						{ tariffData(Array.from(TARIFFS.values()), usagePDR, marketData).map((dayData, idx, array) => (
 							<motion.tr
 								key={dayData.date}
 								initial={{ opacity: 0 }}
@@ -133,22 +120,18 @@ export default function TariffsDayTable ({usagePDR, marketData}) {
 								transition={{ duration: 0.3 }}
 							>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{dayData.date}
+									<p>{dayData.date}</p>
+									<p className='text-gray-500'>{dayData.averageMarketPricePerKwh.toFixed(3)} ct</p>
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									{dayData.kwh.toFixed(3)} kWh
+									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{dayData.kwh.toFixed(3)} kWh</p>
+									<p className='text-gray-500'>{dayData.weightedMarketPricePerKwh.toFixed(3)} ct</p>
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									{dayData.averageMarketPricePerKwh.toFixed(3)} ct
-								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									{dayData.weightedMarketPricePerKwh.toFixed(3)} ct
-								</td>
-								{ dayData.tariffPrices.map ( (tariffPrice, idx) => (
+								{ dayData.tariffPrices.map ( (tariffPrice, key) => (
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'
-									key={idx}>
-									{tariffPrice.toFixed(2)} EUR <br/> 
-									{(tariffPrice/dayData.kwh*100).toFixed(3)} ct/kWh
+									key={key}>
+									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{tariffPrice.toFixed(2)} EUR</p>
+									<p className='text-gray-500'>{(tariffPrice/dayData.kwh*100).toFixed(3)} ct/kWh</p>
 								</td>
 								))}
 							</motion.tr>
