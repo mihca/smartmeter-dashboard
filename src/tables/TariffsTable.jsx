@@ -1,37 +1,41 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Eye } from "lucide-react";
 import { Dropdown } from 'primereact/dropdown';
+import { Checkbox } from 'primereact/checkbox';
 import { format } from "date-fns";
 
 import { round1Digit, round3Digits } from "../scripts/round.js";
 import { TARIFFS } from "../data/tariffs.js";
 import { calculateHour } from "../scripts/calculator.js";
-
-const MONTHS = [
-	{ month: "Gesamt", value: 0 },
-	{ month: "2024-01", value: 1 },
-	{ month: "2024-02", value: 2 },
-	{ month: "2024-03", value: 3 },
-	{ month: "2024-04", value: 4 },
-	{ month: "2024-05", value: 5 },
-	{ month: "2024-06", value: 6 },
-	{ month: "2024-07", value: 7 },
-	{ month: "2024-08", value: 8 },
-	{ month: "2024-09", value: 9 },
-	{ month: "2024-10", value: 10 },
-	{ month: "2024-11", value: 11 },
-	{ month: "2024-12", value: 12 },
-]
+import { NETFEES } from "../data/netfees.js";
 
 export default function TariffsTable ({usagePDR, marketData}) {
 
 	const [selectedMonth, setSelectedMonth] = useState(0);
+	const [selectedNetfees, setSelectedNetfees] = useState(0);
+	const [taxChecked, setTaxChecked] = useState(false);
+	const [basefeeChecked, setBasefeeChecked] = useState(false);
+	
+	function handleNetfeesSelected (e) {
+		setSelectedNetfees(e.target.value);
+	}
 
 	function handleMonthSelected (e) {
-		const month = e.target.value;
-		setSelectedMonth(month);
+		setSelectedMonth(e.target.value);
 	};
+
+	function netfeeOptions() {
+		let options = [{label: 'Keine Netzgebühren', value: 0 }];
+
+		NETFEES.forEach ((fee, idx) => {
+			options.push ({
+				label: fee.name,
+				value: idx + 1
+			})
+		});
+
+		return options;
+	}
 
 	function monthOptions (usagePDR) {
 		let months = [{label: "Gesamt", value: 0}];
@@ -62,6 +66,8 @@ export default function TariffsTable ({usagePDR, marketData}) {
 
 	function fillTable (tariffs, usagePDR, marketData, month) {
 
+		let taxFactor = taxChecked ? 1.2 : 1.0;
+
 		let lineData = [];
 		let lineHourCounter = 0;
 		let lineSumKwh = 0.0;
@@ -75,7 +81,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 		let overallTariffPriceSum = new Array(tariffs.length).fill(0.0);
 	
 		let hourData = usagePDR.hourData;
-
+		
 		// This is the default for the grouping by month
 		let groupId = 0;
 		let groupChange = (date, groupId) => date.getMonth() != groupId;
@@ -104,9 +110,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 	
 			// Caluclate tariffs
 			tariffs.forEach((tariff, idx) => {
-				const hourPriceEUR = calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour-3600000)) / 100.0;
-				lineTariffPriceSum[idx] += hourPriceEUR;
-				overallTariffPriceSum[idx] += hourPriceEUR;
+				lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour-3600000)) / 100.0 * taxFactor;
 			})
 	
 			// Change of day or month
@@ -122,6 +126,9 @@ export default function TariffsTable ({usagePDR, marketData}) {
 				overallSumKwh += lineSumKwh;
 				overallMarketPriceSum += lineMarketPriceCtSum;
 				overallMarketPriceSumWeighted += linePriceCtSumWeighted;
+				for (let t = 0; t<tariffs.length; t++) {
+					overallTariffPriceSum[t] += lineTariffPriceSum[t];
+				};
 		
 				lineHourCounter = 0;
 				lineSumKwh = 0.0;
@@ -153,8 +160,21 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			<div className='flex justify-between items-center mb-6'>
 				<h2 className='text-xl font-semibold text-gray-100'>{title(usagePDR, selectedMonth)}</h2>
 				<div className='relative'>
+					<Checkbox inputId="tax" onChange={e => setTaxChecked(e.checked)} checked={taxChecked}></Checkbox>
+					<label htmlFor="tax" className="ml-2">MwSt</label>
+					<Checkbox inputId="basfee" onChange={e => setBasefeeChecked(e.checked)} checked={basefeeChecked}></Checkbox>
+					<label htmlFor="basefee" className="ml-2">Grundgebühren</label>
 					<Dropdown 
-						className='bg-gray-300 text-white'
+						className='bg-gray-300 text-white rounded-lg pl-10 pr-4 py-2'
+						value={selectedNetfees} 
+						onChange={(e) => handleNetfeesSelected(e)} 
+						options={netfeeOptions()} 
+						optionLabel="label"  
+						optionValue="value"
+						placeholder="Netzgebühren"
+					/>
+					<Dropdown 
+						className='bg-gray-300 text-white rounded-lg pl-10 pr-4 py-2'
 						value={selectedMonth} 
 						onChange={(e) => handleMonthSelected(e)} 
 						options={monthOptions(usagePDR)} 
