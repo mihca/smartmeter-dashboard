@@ -9,6 +9,7 @@ import { TARIFFS } from "../data/tariffs.js";
 import { calculateHour } from "../scripts/calculator.js";
 
 const MONTHS = [
+	{ month: "Gesamt", value: 0 },
 	{ month: "2024-01", value: 1 },
 	{ month: "2024-02", value: 2 },
 	{ month: "2024-03", value: 3 },
@@ -23,15 +24,31 @@ const MONTHS = [
 	{ month: "2024-12", value: 12 },
 ]
 
-export default function TariffsTable ({usagePDR, marketData, month}) {
+export default function TariffsTable ({usagePDR, marketData}) {
 
-	const [selectedMonth, setSelectedMonth] = useState("Gesamt");
-	const [months, setMonths] = useState(MONTHS);
+	const [selectedMonth, setSelectedMonth] = useState(0);
 
 	function handleMonthSelected (e) {
 		const month = e.target.value;
 		setSelectedMonth(month);
 	};
+
+	function monthOptions (usagePDR) {
+		let months = [{label: "Gesamt", value: 0}];
+		let startDate = new Date(usagePDR.utcHourFrom);
+		let endDate = new Date(usagePDR.utcHourTo);
+		let date = startDate;
+		
+		while (date.getMonth() <= endDate.getMonth() && date.getFullYear() == endDate.getFullYear()) {
+			months.push ({
+				label: date.toLocaleString('default', { year: 'numeric', month: 'long' }),
+				value: date.getMonth() + 1
+			});
+			date.setMonth(date.getMonth() + 1);
+		}
+		
+		return months;
+	}
 
 	function title (usagePDR, month) {
 		if (month === 0) {
@@ -134,14 +151,15 @@ export default function TariffsTable ({usagePDR, marketData, month}) {
 			transition={{ delay: 0.4 }}
 		>
 			<div className='flex justify-between items-center mb-6'>
-				<h2 className='text-xl font-semibold text-gray-100'>{title(usagePDR, month)}</h2>
+				<h2 className='text-xl font-semibold text-gray-100'>{title(usagePDR, selectedMonth)}</h2>
 				<div className='relative'>
 					<Dropdown 
-						className='bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-5 pr-1'
+						className='bg-gray-300 text-white'
 						value={selectedMonth} 
 						onChange={(e) => handleMonthSelected(e)} 
-						options={months} 
-						optionLabel="month"  
+						options={monthOptions(usagePDR)} 
+						optionLabel="label"  
+						optionValue="value"
 						placeholder="Zeitraum"
 					/>
 				</div>
@@ -166,7 +184,7 @@ export default function TariffsTable ({usagePDR, marketData, month}) {
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{ fillTable(Array.from(TARIFFS.values()), usagePDR, marketData, month).map((lineData, idx, array) => (
+						{ fillTable(Array.from(TARIFFS.values()), usagePDR, marketData, selectedMonth).map((lineData, idx, array) => (
 							<motion.tr
 								key={lineData.date}
 								initial={{ opacity: 0 }}

@@ -34,10 +34,7 @@ export default function UsageCalcuclatorPage({pdr, marketData}) {
 				{ pdr.hourData && (
 					<>
 						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-							<TariffsTable usagePDR={pdr} marketData={marketData} month={0}/>
-						</div>
-						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-							<TariffsTable usagePDR={pdr} marketData={marketData} month={12}/>
+							<TariffsTable usagePDR={pdr} marketData={marketData}/>
 						</div>
 					</>
 				)}
