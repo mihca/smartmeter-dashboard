@@ -30,6 +30,7 @@ function App() {
 	async function usagePDRChanged(pdr) {
 		
 		setUsagePDR(pdr);
+		console.log(pdr);
 
 		try {
 			// Fetch market data one hour earlier (-3600000) than usage data, 
