@@ -1,14 +1,25 @@
 // ATTENTION: All prices are net prices without tax (ohne MwSt!)
+import { round2Digits } from "../scripts/round.js";
 
 export const TARIFFS = new Map([
-    ['smartENERGY.smartBASIC', {
-        name: 'smartBASIC',
-        description: 'Fix Strompreis gültig ab 01/2024-12/2024 mit 18.1833 ct/kWh netto ohne Mwst',
-        company: 'smartENERGY',
-        link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartBASIC.pdf',
-        base_fee_monthly_eur: 2.49,
+    ['awattar.alt', {
+        name: 'aWATTar alt',
+        description: 'Börsenstrompreis mit 3% Aufschlag',
+        company: 'aWATTar',
+        link: '',
+        base_fee_yearly_eur: 57.48,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
-            return kwh * 18.1833;
+            return round2Digits(kwh * (market_price_ct + (Math.abs(market_price_ct) * 0.03)))
+        }
+    }],
+    ['awattar.neu', {
+        name: 'aWATTar',
+        description: 'Börsenstrompreis mit 3% Aufschlag',
+        company: 'aWATTar',
+        link: '',
+        base_fee_yearly_eur: 57.48,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            return kwh * (market_price_ct + (Math.abs(market_price_ct) * 0.03) + 1.5);
         }
     }],
     ['smartENERGY.smartCONTROL', {
@@ -55,10 +66,74 @@ export const TARIFFS = new Map([
             return null;
         }
     }],
+    ['evn.smartaktiv', {
+        name: 'EVN Smart Aktiv',
+        description: 'Dynamischer Tarif mit Uhrzeiten',
+        company: 'EVN',
+        link: 'https://www.evn.at/getmedia/ac578f80-3dcf-4b4c-88fa-bb56b29a76c7/B914_Preisblatt_Strom_Optima_Smart_Aktiv.pdf',
+        base_fee_monthly_eur: 5.00,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            const matrix = new Map([
+                // year.month: day, freetime
+                ["2024.1", [20.664, 15.144]],
+                ["2024.2", [18.108, 14.448]],
+                ["2024.3", [13.356, 11.844]],
+                ["2024.4", [11.544, 11.484]],
+                ["2024.5", [10.500, 11.556]],
+                ["2024.6", [12.036, 13.032]],
+                ["2024.7", [13.284, 14.004]],
+                ["2024.8", [12.888, 13.236]],
+                ["2024.9", [16.968, 15.648]],
+                ["2024.10", [18.096, 14.160]],
+                ["2024.11", [20.508, 14.532]],
+                ["2024.12", [22.896, 16.608]]
+            ]);
+            let key = year + "." + (month+1);
+            if (matrix.has(key)) {
+                let priceArray = matrix.get(key);
+                // console.log(key, ": [", priceArray[0], ",", priceArray[1], ",", priceArray[2], "]");
+                let price_ct = priceArray[1]/1.2; // we need net prices
+                if (hour > 8 && hour <= 20) price_ct = priceArray[0];
+                return kwh * price_ct;
+            }
+            return null;
+        }
+    }],
+    ['evn.smartgarant', {
+        name: 'EVN Smart Garant',
+        description: 'Garantierter Tarif mit Uhrzeiten',
+        company: 'EVN',
+        link: 'https://www.evn.at/getmedia/ac578f80-3dcf-4b4c-88fa-bb56b29a76c7/B914_Preisblatt_Strom_Optima_Smart_Aktiv.pdf',
+        base_fee_monthly_eur: 5.00,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            const matrix = new Map([
+                // year.month: day, freetime
+                ["2024", [21.8640, 17.6520]],
+            ]);
+            let key = "2024";
+            if (matrix.has(key)) {
+                let priceArray = matrix.get(key);
+                let price_ct = priceArray[1]/1.2; // we need net prices
+                if (hour > 8 && hour <= 20) price_ct = priceArray[0];
+                return kwh * price_ct;
+            }
+            return null;
+        }
+    }],
+    ['smartENERGY.smartBASIC', {
+        name: 'smartBASIC',
+        description: 'Fix Strompreis gültig ab 01/2024-12/2024 mit 18.1833 ct/kWh netto ohne Mwst',
+        company: 'smartENERGY',
+        link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartBASIC.pdf',
+        base_fee_monthly_eur: 2.49,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            return kwh * 18.1833;
+        }
+    }],
     ['web.investor', {
-        name: 'Grünstrom Privat investor',
+        name: 'WEB Privat investor',
         description: 'Fix Strompreis gültig ab 01/2024-12/2024 mit 12.90 ct/kWh netto ohne Mwst',
-        company: 'web',
+        company: 'WEB',
         link: 'https://www.web.energy/fileadmin/media/documents/Gruenstrom/W.E.B_Gruenstrom_Produktblatt_investor_01.pdf',
         base_fee_yearly_eur: 42.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
