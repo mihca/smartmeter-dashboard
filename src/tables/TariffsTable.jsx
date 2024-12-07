@@ -4,9 +4,9 @@ import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from 'primereact/checkbox';
 import { format } from "date-fns";
 
-import { round1Digit, round3Digits } from "../scripts/round.js";
+import { round3Digits } from "../scripts/round.js";
 import { TARIFFS } from "../data/tariffs.js";
-import { calculateHour } from "../scripts/calculator.js";
+import { calculateHour, calculateBasefee, calculateNetfee, addTax } from "../scripts/calculator.js";
 import { NETFEES } from "../data/netfees.js";
 
 export default function TariffsTable ({usagePDR, marketData}) {
@@ -25,15 +25,11 @@ export default function TariffsTable ({usagePDR, marketData}) {
 	};
 
 	function netfeeOptions() {
-		let options = [{label: 'Keine Netzgebühren', value: 0 }];
-
-		NETFEES.forEach ((fee, idx) => {
-			options.push ({
-				label: fee.name,
-				value: idx + 1
-			})
-		});
-
+		let options = NETFEES.map ((fee, idx) => ({
+			label: fee.name,
+			value: idx + 1
+		}));
+		options.unshift({ label: 'Keine Netzgebühren', value: 0});
 		return options;
 	}
 
@@ -54,19 +50,17 @@ export default function TariffsTable ({usagePDR, marketData}) {
 		return months;
 	}
 
-	function title (usagePDR, month) {
-		if (month === 0) {
+	function title (usagePDR, monthOption) {
+		if (monthOption === 0) {
 			return "Kosten Gesamt";
 		} else {
 			let date = new Date(usagePDR.utcHourFrom)
-			date.setMonth(month-1);
+			date.setMonth(monthOption-1);
 			return date.toLocaleString('default', { year: 'numeric', month: 'long' });
 		}
 	}
 
-	function fillTable (tariffs, usagePDR, marketData, month) {
-
-		let taxFactor = taxChecked ? 1.2 : 1.0;
+	function fillTable (tariffs, usagePDR, marketData, monthOption) {
 
 		let lineData = [];
 		let lineHourCounter = 0;
@@ -88,10 +82,10 @@ export default function TariffsTable ({usagePDR, marketData}) {
 		let lineDatePattern = "yyyy-MM";
 
 		// Here comes the grouping by day
-		if (month > 0) {
+		if (monthOption > 0) {
 			// Exclude 1. at 0:00, because its the sum from the last hour of the last month
 			hourData = hourData.filter( (hourEntry) => 
-				new Date (hourEntry.utcHour).getMonth() === (month-1) && 
+				new Date (hourEntry.utcHour).getMonth() === (monthOption-1) && 
 				!(new Date (hourEntry.utcHour).getDate() === 1 && new Date (hourEntry.utcHour).getHours() === 0)
 			);
 			groupChange = (date, groupId) => date.getDate() != groupId;
@@ -108,15 +102,27 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			lineMarketPriceCtSum += marketPriceCt;
 			linePriceCtSumWeighted += marketPriceCt * hourEntry.kwh;
 	
-			// Caluclate tariffs
+			// Calculate tariffs
 			tariffs.forEach((tariff, idx) => {
-				lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour-3600000)) / 100.0 * taxFactor;
+				lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour-3600000));
 			})
 	
 			// Change of day or month
 			if (groupChange(new Date(hourEntry.utcHour), groupId) || (idx === array.length - 1)) {
+
+				// Add tax and fees if wanted
+				const endDate = new Date(array[idx-1].utcHour);
+				let days = (monthOption === 0) ? endDate.getDate() : 1;
+
+				tariffs.forEach((tariff, idx) => {
+					lineTariffPriceSum[idx] += basefeeChecked ? calculateBasefee(tariff, endDate, monthOption) : 0;
+					lineTariffPriceSum[idx] += selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh) : 0;
+					// Add tax in last step!
+					lineTariffPriceSum[idx] += taxChecked ? addTax(lineTariffPriceSum[idx]) : 0;
+				})
+
 				lineData.push ({
-					date: format(new Date(array[idx-1].utcHour), lineDatePattern),
+					date: format(endDate, lineDatePattern),
 					kwh: round3Digits(lineSumKwh),
 					averageMarketPricePerKwh: round3Digits (lineMarketPriceCtSum / lineHourCounter),
 					weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
@@ -189,14 +195,14 @@ export default function TariffsTable ({usagePDR, marketData}) {
 				<table className='min-w-full divide-y divide-gray-700'>
 					<thead>
 						<tr>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Monat<br/>ct/kWh
 							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie<br/>ct/kWh
 							</th>
 							{Array.from(TARIFFS.values()).map((tariff) => (
-								<th key={tariff.name} className='px-6 py-3 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 									{tariff.name}
 								</th>
 							))}
@@ -211,16 +217,16 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
-								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-100'>
 									<p>{lineData.date}</p>
 									<p className='text-gray-500'>{lineData.averageMarketPricePerKwh.toFixed(3)} ct</p>
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'>
 									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{lineData.kwh.toFixed(3)} kWh</p>
 									<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(3)} ct</p>
 								</td>
 								{ lineData.tariffPricesEUR.map ( (priceEUR, key) => (
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'
+								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'
 									key={key}>
 									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
 									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>

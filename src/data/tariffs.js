@@ -6,7 +6,7 @@ export const TARIFFS = new Map([
         description: 'Fix Strompreis gültig ab 01/2024-12/2024 mit 18.1833 ct/kWh netto ohne Mwst',
         company: 'smartENERGY',
         link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartBASIC.pdf',
-        base_fee_yearly_eur: 29.90,
+        base_fee_monthly_eur: 2.49,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             return kwh * 18.1833;
         }
@@ -16,7 +16,7 @@ export const TARIFFS = new Map([
         description: 'Börsenstrompreis mit 1,2 ct netto Aufschlag',
         company: 'smartENERGY',
         link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartCONTROL.pdf',
-        base_fee_yearly_eur: 29.90,
+        base_fee_monthly_eur: 2.49,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             return kwh * ( market_price_ct + 1.2 );
         }
@@ -26,7 +26,7 @@ export const TARIFFS = new Map([
         description: 'Monatlich angepasster Tarif mit Uhrzeiten',
         company: 'smartENERGY',
         link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartCONTROL.pdf',
-        base_fee_yearly_eur: 29.90,
+        base_fee_monthly_eur: 2.49,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             const matrix = new Map([
                 // year.month: peak, shoulder, off-peak
