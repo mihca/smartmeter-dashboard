@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Dropdown } from 'primereact/dropdown';
-import { Checkbox } from 'primereact/checkbox';
+import { Select, SelectItem } from "@nextui-org/select";
+import { Checkbox } from "@nextui-org/checkbox";
 import { format } from "date-fns";
 
 import { round3Digits } from "../scripts/round.js";
@@ -11,38 +11,38 @@ import { NETFEES } from "../data/netfees.js";
 
 export default function TariffsTable ({usagePDR, marketData}) {
 
-	const [selectedMonth, setSelectedMonth] = useState(0);
-	const [selectedNetfees, setSelectedNetfees] = useState(0);
+	const [selectedMonth, setSelectedMonth] = useState("0");
+	const [selectedNetfees, setSelectedNetfees] = useState("0");
 	const [taxChecked, setTaxChecked] = useState(false);
 	const [basefeeChecked, setBasefeeChecked] = useState(false);
 	
-	function handleNetfeesSelected (e) {
+	function handleNetfeesChange (e) {
 		setSelectedNetfees(e.target.value);
 	}
 
-	function handleMonthSelected (e) {
+	function handleMonthChange (e) {
 		setSelectedMonth(e.target.value);
 	};
 
 	function netfeeOptions() {
 		let options = NETFEES.map ((fee, idx) => ({
-			label: fee.name,
-			value: idx + 1
+			key: idx + 1,
+			label: fee.name
 		}));
-		options.unshift({ label: 'Keine Netzgebühren', value: 0});
+		options.unshift({ key: 0, label: 'Keine'});
 		return options;
 	}
 
 	function monthOptions (usagePDR) {
-		let months = [{label: "Gesamt", value: 0}];
+		let months = [{key: 0, label: "Gesamt"}];
 		let startDate = new Date(usagePDR.utcHourFrom);
 		let endDate = new Date(usagePDR.utcHourTo);
 		let date = startDate;
 		
 		while (date.getMonth() <= endDate.getMonth() && date.getFullYear() == endDate.getFullYear()) {
 			months.push ({
-				label: date.toLocaleString('default', { year: 'numeric', month: 'long' }),
-				value: date.getMonth() + 1
+				key: date.getMonth() + 1,
+				label: date.toLocaleString('default', { year: 'numeric', month: 'long' })
 			});
 			date.setMonth(date.getMonth() + 1);
 		}
@@ -51,7 +51,8 @@ export default function TariffsTable ({usagePDR, marketData}) {
 	}
 
 	function title (usagePDR, monthOption) {
-		if (monthOption === 0) {
+		console.log(monthOption);
+		if (monthOption == 0) {
 			return "Kosten Gesamt";
 		} else {
 			let date = new Date(usagePDR.utcHourFrom)
@@ -163,31 +164,30 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.4 }}
 		>
-			<div className='flex justify-between items-center mb-6'>
+			<div className='flex w-full justify-between items-center mb-6'>
 				<h2 className='text-xl font-semibold text-gray-100'>{title(usagePDR, selectedMonth)}</h2>
-				<div className='relative'>
-					<Checkbox inputId="tax" onChange={e => setTaxChecked(e.checked)} checked={taxChecked}></Checkbox>
-					<label htmlFor="tax" className="ml-2">MwSt</label>
-					<Checkbox inputId="basfee" onChange={e => setBasefeeChecked(e.checked)} checked={basefeeChecked}></Checkbox>
-					<label htmlFor="basefee" className="ml-2">Grundgebühren</label>
-					<Dropdown 
-						className='bg-gray-300 text-white rounded-lg pl-10 pr-4 py-2'
-						value={selectedNetfees} 
-						onChange={(e) => handleNetfeesSelected(e)} 
-						options={netfeeOptions()} 
-						optionLabel="label"  
-						optionValue="value"
-						placeholder="Netzgebühren"
-					/>
-					<Dropdown 
-						className='bg-gray-300 text-white rounded-lg pl-10 pr-4 py-2'
-						value={selectedMonth} 
-						onChange={(e) => handleMonthSelected(e)} 
-						options={monthOptions(usagePDR)} 
-						optionLabel="label"  
-						optionValue="value"
-						placeholder="Zeitraum"
-					/>
+				<div className='flex flex-wrap md:flex-nowrap gap-4 w-1/2'>
+					<Checkbox onValueChange={e => setTaxChecked(e)} isSelected={taxChecked} size="sm" >MwSt</Checkbox>
+					<Checkbox onValueChange={e => setBasefeeChecked(e)} isSelected={basefeeChecked} size="sm">Grundgebühren</Checkbox>
+					<Select 
+						className="max-w-xs bg-gray-800" 
+						label="Netzgebühren" 
+						onChange={handleNetfeesChange} 
+						selectedKeys={[selectedNetfees]} 
+						size="sm" 
+						variant="bordered">
+							{netfeeOptions(usagePDR).map((fee)=> ( <SelectItem key={fee.key}>{fee.label}</SelectItem> ))} 
+					</Select>
+
+					<Select 
+						className="max-w-xs" 
+						label="Zeitraum" 
+						onChange={handleMonthChange} 
+						selectedKeys={[selectedMonth]} 
+						size="sm" 
+						variant="bordered">
+							{monthOptions(usagePDR).map((month)=> ( <SelectItem key={month.key}>{month.label}</SelectItem> ))} 
+					</Select>
 				</div>
 			</div>
 

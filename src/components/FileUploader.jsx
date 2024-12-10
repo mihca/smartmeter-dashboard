@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from "framer-motion"
-import { FileUpload } from 'primereact/fileupload';
 
 export default function FileUploader({title, description, pdr, onFileUploaded}) {
   
   function handleUpload(event) {
 
-    let uploadedFile = event.files[0];
+    let uploadedFile = event.target.files[0];
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -25,16 +24,16 @@ export default function FileUploader({title, description, pdr, onFileUploaded}) 
 		>
 			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
-			<div className='h-10'>
-        {!pdr.fileName && (
-        <FileUpload 
-          chooseLabel="Datei auswählen" 
+			<div className='h-20'>
+        <input 
+          color="primary"
+          radius="sm" 
           mode="basic" 
           accept=".csv" 
+          type="file"
           customUpload 
-          uploadHandler={ handleUpload }
-          auto/>
-        )}
+          onChange={ handleUpload }/>
+
         {pdr.fileName && (
           <p className="py-4">{ pdr.fileName }</p>
         )}

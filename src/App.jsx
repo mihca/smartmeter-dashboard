@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { Route } from "react-router-dom"
 import { Routes } from "react-router-dom"
 
-import { PrimeReactProvider } from 'primereact/api';
-
 import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
 import UsageCalculatorPage from './pages/UsageCalculatorPage'
@@ -56,30 +54,28 @@ function App() {
 				<div className='absolute inset-0 backdrop-blur-sm' />
 			</div>
 
-			<PrimeReactProvider>
-				<Sidebar />
-				<Routes>
-					<Route path='/' element={
-						<UploadPage 
-							usagePDR={usagePDR} 
-							feedinPDR={feedinPDR}
-							onUsagePDRChanged={usagePDRChanged}
-							onFeedinPDRChanged={feedinPDRChanged}
-						/>} 
-					/>
-					<Route path='/usage-calculator' element={
-						<UsageCalculatorPage
-							pdr={usagePDR}
-							marketData={marketData}
-						/>} 
-					/>
-					<Route path='/marketprice' element={
-						<MarketpricePage
-							marketData={marketData}
-						/>} 
-					/>
-					</Routes>
-			</PrimeReactProvider>
+			<Sidebar />
+			<Routes>
+				<Route path='/' element={
+					<UploadPage 
+						usagePDR={usagePDR} 
+						feedinPDR={feedinPDR}
+						onUsagePDRChanged={usagePDRChanged}
+						onFeedinPDRChanged={feedinPDRChanged}
+					/>} 
+				/>
+				<Route path='/usage-calculator' element={
+					<UsageCalculatorPage
+						pdr={usagePDR}
+						marketData={marketData}
+					/>} 
+				/>
+				<Route path='/marketprice' element={
+					<MarketpricePage
+						marketData={marketData}
+					/>} 
+				/>
+				</Routes>
 		</div>
 	);
 }
