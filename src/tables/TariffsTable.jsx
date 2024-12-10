@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/checkbox";
+import { Tooltip } from "@nextui-org/react";
 import { format } from "date-fns";
 
 import { round3Digits } from "../scripts/round.js";
@@ -228,8 +229,10 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								{ lineData.tariffPricesEUR.map ( (priceEUR, key) => (
 								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'
 									key={key}>
-									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
-									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>
+									<Tooltip content="I am a tooltip" radius="sm" size="sm">
+										<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
+									</Tooltip>
+										<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>
 								</td>
 								))}
 							</motion.tr>

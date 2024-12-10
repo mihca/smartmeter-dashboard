@@ -3,14 +3,19 @@ import { motion } from "framer-motion"
 
 export default function FileUploader({title, description, pdr, onFileUploaded}) {
   
+  const [loading, setLoading] = useState(false);
+
   function handleUpload(event) {
 
     let uploadedFile = event.target.files[0];
-
     const reader = new FileReader();
+    setLoading(true);
+    
     reader.onload = (e) => {
       onFileUploaded(uploadedFile.name, e.target.result);
+      setLoading(false);
     }
+    
     reader.readAsText(uploadedFile);
 
   };
@@ -34,6 +39,9 @@ export default function FileUploader({title, description, pdr, onFileUploaded}) 
           customUpload 
           onChange={ handleUpload }/>
 
+        {loading && (
+          <p className='py-4'>Lade..</p>
+        )}
         {pdr.fileName && (
           <p className="py-4">{ pdr.fileName }</p>
         )}
