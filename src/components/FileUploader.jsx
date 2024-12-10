@@ -31,19 +31,13 @@ export default function FileUploader({title, description, pdr, onFileUploaded}) 
 
 			<div className='h-20'>
         <input 
-          color="primary"
-          radius="sm" 
-          mode="basic" 
-          accept=".csv" 
+          className='bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded transition duration-200 w-auto'
+          accept=".csv;.xls" 
           type="file"
-          customUpload 
           onChange={ handleUpload }/>
 
         {loading && (
-          <p className='py-4'>Lade..</p>
-        )}
-        {pdr.fileName && (
-          <p className="py-4">{ pdr.fileName }</p>
+          <p className='py-4'>Datei wird eingelesen...</p>
         )}
       </div>
 		</motion.div>
