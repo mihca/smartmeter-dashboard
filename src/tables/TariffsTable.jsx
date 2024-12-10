@@ -2,12 +2,14 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/checkbox";
-import { Tooltip } from "@nextui-org/react";
 import { format } from "date-fns";
 
 import { round3Digits } from "../scripts/round.js";
-import { TARIFFS } from "../data/tariffs.js";
 import { calculateHour, calculateBasefee, calculateNetfee, addTax } from "../scripts/calculator.js";
+
+import Bill from "../components/Bill.jsx";
+
+import { TARIFFS } from "../data/tariffs.js";
 import { NETFEES } from "../data/netfees.js";
 
 export default function TariffsTable ({usagePDR, marketData}) {
@@ -115,12 +117,20 @@ export default function TariffsTable ({usagePDR, marketData}) {
 				// Add tax and fees if wanted
 				const endDate = new Date(array[idx-1].utcHour);
 				let days = (monthOption === 0) ? endDate.getDate() : 1;
+				let priceInfo = [];
 
 				tariffs.forEach((tariff, idx) => {
-					lineTariffPriceSum[idx] += basefeeChecked ? calculateBasefee(tariff, endDate, monthOption) : 0;
-					lineTariffPriceSum[idx] += selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh) : 0;
-					// Add tax in last step!
-					lineTariffPriceSum[idx] += taxChecked ? addTax(lineTariffPriceSum[idx]) : 0;
+					let tariffPriceInfo = [];
+					tariffPriceInfo.push ({item: "Energiepreis", value: lineTariffPriceSum[idx].toFixed(2)});
+					let basefee = basefeeChecked ? calculateBasefee(tariff, endDate, monthOption) : 0;
+					let netfee = selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh) : 0;
+					let tax = taxChecked ? addTax(lineTariffPriceSum[idx] + basefee + netfee) : 0;
+					if (basefeeChecked) tariffPriceInfo.push ({item: "Grundgebühr", value: basefee.toFixed(2)});
+					if (selectedNetfees > 0) tariffPriceInfo.push ({item: "Netzgebühr", value: netfee.toFixed(2)});
+					if (taxChecked) tariffPriceInfo.push ({item: "MwSt", value: tax.toFixed(2)});
+					lineTariffPriceSum[idx] += basefee + netfee + tax;
+					tariffPriceInfo.push ({item: "Gesamtpreis", value: lineTariffPriceSum[idx].toFixed(2)});
+					priceInfo.push(tariffPriceInfo);
 				})
 
 				lineData.push ({
@@ -128,7 +138,8 @@ export default function TariffsTable ({usagePDR, marketData}) {
 					kwh: round3Digits(lineSumKwh),
 					averageMarketPricePerKwh: round3Digits (lineMarketPriceCtSum / lineHourCounter),
 					weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
-					tariffPricesEUR: lineTariffPriceSum
+					tariffPricesEUR: lineTariffPriceSum,
+					priceInfo: priceInfo
 				});
 				
 				overallSumKwh += lineSumKwh;
@@ -152,7 +163,8 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			kwh: overallSumKwh,
 			averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / hourData.length),
 			weightedMarketPricePerKwh: round3Digits (overallMarketPriceSumWeighted / overallSumKwh),
-			tariffPricesEUR: overallTariffPriceSum
+			tariffPricesEUR: overallTariffPriceSum,
+			priceInfo: []
 		});
 
 		return lineData;
@@ -226,13 +238,13 @@ export default function TariffsTable ({usagePDR, marketData}) {
 									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{lineData.kwh.toFixed(3)} kWh</p>
 									<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(3)} ct</p>
 								</td>
-								{ lineData.tariffPricesEUR.map ( (priceEUR, key) => (
+								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff) => (
 								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'
-									key={key}>
-									<Tooltip content="I am a tooltip" radius="sm" size="sm">
+									key={idxTariff}>
+									<Bill priceInfo={lineData.priceInfo[idxTariff]}>
 										<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
-									</Tooltip>
-										<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>
+									</Bill>
+									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>
 								</td>
 								))}
 							</motion.tr>
