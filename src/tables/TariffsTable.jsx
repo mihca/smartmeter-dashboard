@@ -4,7 +4,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/checkbox";
 import { format } from "date-fns";
 
-import { round3Digits } from "../scripts/round.js";
+import { formatEUR, round3Digits } from "../scripts/round.js";
 import { calculateHour, calculateBasefee, calculateNetfee, addTax } from "../scripts/calculator.js";
 
 import Bill from "../components/Bill.jsx";
@@ -117,20 +117,15 @@ export default function TariffsTable ({usagePDR, marketData}) {
 				// Add tax and fees if wanted
 				const endDate = new Date(array[idx-1].utcHour);
 				let days = (monthOption === 0) ? endDate.getDate() : 1;
-				let priceInfo = [];
+				let bills = [];
 
 				tariffs.forEach((tariff, idx) => {
-					let tariffPriceInfo = [];
-					tariffPriceInfo.push ({item: "Energiepreis", value: lineTariffPriceSum[idx].toFixed(2)});
-					let basefee = basefeeChecked ? calculateBasefee(tariff, endDate, monthOption) : 0;
-					let netfee = selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh) : 0;
-					let tax = taxChecked ? addTax(lineTariffPriceSum[idx] + basefee + netfee) : 0;
-					if (basefeeChecked) tariffPriceInfo.push ({item: "Grundgebühr", value: basefee.toFixed(2)});
-					if (selectedNetfees > 0) tariffPriceInfo.push ({item: "Netzgebühr", value: netfee.toFixed(2)});
-					if (taxChecked) tariffPriceInfo.push ({item: "MwSt", value: tax.toFixed(2)});
-					lineTariffPriceSum[idx] += basefee + netfee + tax;
-					tariffPriceInfo.push ({item: "Gesamtpreis", value: lineTariffPriceSum[idx].toFixed(2)});
-					priceInfo.push(tariffPriceInfo);
+					let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
+					lineTariffPriceSum[idx] += basefeeChecked ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
+					lineTariffPriceSum[idx] += selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh, bill) : 0;
+					lineTariffPriceSum[idx] += taxChecked ? addTax(lineTariffPriceSum[idx], bill) : 0;
+					bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
+					bills.push(bill);
 				})
 
 				lineData.push ({
@@ -139,7 +134,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 					averageMarketPricePerKwh: round3Digits (lineMarketPriceCtSum / lineHourCounter),
 					weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
 					tariffPricesEUR: lineTariffPriceSum,
-					priceInfo: priceInfo
+					priceInfo: bills
 				});
 				
 				overallSumKwh += lineSumKwh;
@@ -241,7 +236,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff) => (
 								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'
 									key={idxTariff}>
-									<Bill priceInfo={lineData.priceInfo[idxTariff]}>
+									<Bill bill={lineData.priceInfo[idxTariff]}>
 										<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
 									</Bill>
 									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>

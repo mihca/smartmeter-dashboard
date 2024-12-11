@@ -4,35 +4,11 @@ export const PROVIDERS_USAGE = [
     {
         name: "Netz NÖ",
         description: "Netz NÖ Verbrauch 2",
-        // "Messzeitpunkt;Verbrauch (kWh);Qualität;"
         match: (fileContent) => fileContent.includes("Messzeitpunkt;Verbrauch (kWh)"),
-        // Input:
-        // {
-        //   Messzeitpunkt: "01.01.2024 00:15",
-        //   Qualität: "G",
-        //   Verbrauch (kWh): "0,079000"
-        // }
-        // Output:
-        // { 
-        //   utc: "2024-11-19T02:00", 
-        //   value: 3.5 
-        // }
         transform: (lineObject) => ({ 
             timestamp: parse (lineObject['Messzeitpunkt'], "dd.MM.yyyy HH:mm", new Date()),
             kwh: parseFloat(lineObject['Verbrauch (kWh)'].replace(",", "."))
         }),
-
-        descriptorUsage: "Verbrauch (kWh)",
-        descriptorTimestamp: "Messzeitpunkt",
-        descriptorTimeSub: null,
-        dateFormatString: "dd.MM.yyyy HH:mm",
-        usageParse: (usage) => parseFloat(usage.replace(",", ".")),
-        otherFields: ["Qualität"],
-        shouldSkip: null,
-        fixupTimestamp: true,
-        feedin: false,
-        endDescriptorTimestamp: null,
-        preprocessDateString: (date) => date
     },
     {
         name: "Netz NÖ",

@@ -2,7 +2,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { motion } from "framer-motion";
 import { round1Digit } from "../scripts/round";
 
-export default function UsageChart ({hourData}) {
+export default function QuantityChart ({title, hourData}) {
 
 	function groupByMonth(hourData) {
 
@@ -34,7 +34,7 @@ export default function UsageChart ({hourData}) {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.4 }}
 		>
-			<h2 className='text-xl font-semibold text-gray-100 mb-4'>Verbrauch pro Monat</h2>
+			<h2 className='text-xl font-semibold text-gray-100 mb-4'>{title}</h2>
 			<div style={{ width: "100%", height: 300 }}>
 				<ResponsiveContainer>
 					<BarChart data={groupByMonth(hourData)}>

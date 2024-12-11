@@ -6,9 +6,10 @@ import { format } from "date-fns";
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import FileUploader from '../components/FileUploader'
-import UsageChart from '../charts/UsageChart'
+import QuantityChart from '../charts/QuantityChart'
 
 import { importProviderFile } from '../scripts/smartmeter-file-adapter'
+import { round1Digit } from "../scripts/round.js";
 
 import { PROVIDERS_USAGE } from "../data/providers-usage"
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin"
@@ -25,6 +26,14 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 		const feedinPDRFound = importProviderFile(fileContent, PROVIDERS_FEEDIN);
 		feedinPDRFound.fileName = fileName;
 		onFeedinPDRChanged(feedinPDRFound);
+	}
+
+	function sumUsage(usagePDR) {
+		let sum = 0.0;
+		usagePDR.hourData.forEach((hour) => {
+			sum += hour.kwh;
+		})
+		return sum;
 	}
 
 	return (
@@ -45,28 +54,32 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					<StatCard name='Provider Verbrauch' icon={Zap} value={usagePDR.provider} color='#6366F1' />
-					{ !usagePDR.utcHourFrom && (
-						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value="-" color='#8B5CF6' />
-					)}
 					{ usagePDR.utcHourFrom && (
-						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
-					)}
-					<StatCard name='Provider Einspeisung' icon={Sun} value={feedinPDR.provider} color='#6366F1' />
-					{ !feedinPDR.utcHourFrom && (
-						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value="-" color='#8B5CF6' />
+						<>
+							<StatCard title='Provider Verbrauch' icon={Zap} text={usagePDR.provider} color='#6366F1' />
+							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo, "dd.MM.yyyy")} sub={round1Digit(sumUsage(usagePDR)) + "kWh"} color='#8B5CF6' />
+						</>
 					)}
 					{ feedinPDR.utcHourFrom && (
-						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
+						<>
+							<StatCard title='Provider Einspeisung' icon={Sun} text={feedinPDR.provider} color='#6366F1' />
+							<StatCard title='Zeitraum Einspeisung' icon={CalendarFold} text={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
+						</>
 					)}
 				</motion.div>
 
 				{/* CHARTS */}
-				{ usagePDR.hourData && (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<UsageChart hourData={usagePDR.hourData}/>
-				</div>
+				{ usagePDR.hourData && (
+					<QuantityChart title="Verbrauch nach Monat" hourData={usagePDR.hourData}/>
 				)}
+				{ !usagePDR.hourData && (
+					<div className='p-6'/>
+				)}
+				{ feedinPDR.hourData && (
+					<QuantityChart title="Einspeisung nach Monat" hourData={feedinPDR.hourData}/>
+				)}
+				</div>
 			</main>
 		</div>
 	)

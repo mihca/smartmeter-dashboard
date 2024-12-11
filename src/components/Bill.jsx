@@ -1,17 +1,17 @@
 import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
 
-export default function Bill ({priceInfo, ...props}) {
+export default function Bill ({bill, ...props}) {
 
-    console.log(priceInfo);
+    console.log(bill);
 
     return (
         <>
-        { !priceInfo && (
+        { !bill && (
             <>
                 { props.children }
             </>
         )}
-        { priceInfo && (
+        { bill && (
             <Popover placement="bottom">
                 <PopoverTrigger>
                     {props.children}
@@ -21,11 +21,11 @@ export default function Bill ({priceInfo, ...props}) {
                         <div className="text-small font-bold">Rechnung</div>
                         <table>
                             <tbody>
-                                { priceInfo.map( ( line, idx, array ) => (
+                                { bill.map( ( line, idx, array ) => (
                                     <tr className={"text-tiny " + ((idx === (array.length-1)) ? "divide-y divide-gray-700" : "")}>
                                         <td>{ line.item }</td>
                                         <td></td>
-                                        <td className="text-right">{ line.value} EUR</td>
+                                        <td className="text-right">{ line.value}</td>
                                     </tr>
                                 )) }
                             </tbody>
