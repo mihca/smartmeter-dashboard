@@ -20,7 +20,7 @@ export default function Bill ({bill, ...props}) {
                         <table>
                             <tbody>
                                 { bill.map( ( line, idx, array ) => (
-                                    <tr className={"text-tiny " + ((idx === (array.length-1)) ? "divide-y divide-gray-700" : "")}>
+                                    <tr className={"text-small " + ((idx === (array.length-1)) ? "divide-y divide-gray-700" : "")}>
                                         <td>{ line.item }</td>
                                         <td></td>
                                         <td className="text-right">{ line.value}</td>
@@ -28,7 +28,7 @@ export default function Bill ({bill, ...props}) {
                                 )) }
                             </tbody>
                         </table>
-                        <div className="text-tiny">Hinweis</div>
+                        <div className="text-tiny">ohne jegliche Gewähr</div>
                     </div>
                 </PopoverContent>
             </Popover>
