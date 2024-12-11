@@ -11,5 +11,5 @@ export function round3Digits (number) {
 }
 
 export function formatEUR (number) {
-    return Math.round(number * 100) / 100 + " EUR"
+    return (Math.round(number * 100) / 100).toFixed(2) + " EUR"
 }

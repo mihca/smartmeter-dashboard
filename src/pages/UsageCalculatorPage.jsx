@@ -21,12 +21,12 @@ export default function UsageCalcuclatorPage({pdr, marketData}) {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					<StatCard name='Provider Verbrauch' icon={Zap} value={pdr.provider} color='#6366F1' />
+					<StatCard title='Provider Verbrauch' icon={Zap} text={pdr.provider} color='#6366F1' />
 					{ !pdr.utcHourFrom && (
-						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value="-" color='#8B5CF6' />
+						<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text="-" color='#8B5CF6' />
 					)}
 					{ pdr.utcHourFrom && (
-						<StatCard name='Zeitraum Verbrauch' icon={CalendarFold} value={format(pdr.utcHourFrom, "dd.MM.yyyy") + " - " + format(pdr.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
+						<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(pdr.utcHourFrom, "dd.MM.yyyy") + " - " + format(pdr.utcHourTo, "dd.MM.yyyy")} color='#8B5CF6' />
 					)}
 				</motion.div>
 

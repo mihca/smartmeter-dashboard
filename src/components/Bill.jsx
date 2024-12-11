@@ -2,8 +2,6 @@ import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
 
 export default function Bill ({bill, ...props}) {
 
-    console.log(bill);
-
     return (
         <>
         { !bill && (

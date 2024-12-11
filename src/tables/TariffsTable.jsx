@@ -116,7 +116,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 
 				// Add tax and fees if wanted
 				const endDate = new Date(array[idx-1].utcHour);
-				let days = (monthOption === 0) ? endDate.getDate() : 1;
+				let days = (monthOption == 0) ? endDate.getDate() : 1;
 				let bills = [];
 
 				tariffs.forEach((tariff, idx) => {

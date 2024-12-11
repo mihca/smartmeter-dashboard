@@ -1,4 +1,4 @@
-import { round2Digits, formatEUR } from "../scripts/round.js";
+import { round1Digit, round2Digits, formatEUR } from "../scripts/round.js";
 
 // returns EUR
 export function calculateHour (tariff, hourEntry, marketPrice) {
@@ -7,12 +7,16 @@ export function calculateHour (tariff, hourEntry, marketPrice) {
     const month = date.getMonth();
     const weekday = date.getDay();
     const hour = date.getHours();
-    return tariff.calculate(year, month, weekday, hour, marketPrice, hourEntry.kwh) / 100.0;
+    const kwh = hourEntry.kwh;
+    return tariff.calculate(year, month, weekday, hour, marketPrice, kwh) / 100.0;
 }
 
 // returns EUR
 export function calculateNetfee(netfee, days, kwh, bill) { 
-    let fee = round2Digits((days * netfee.netfee_per_day_ct + kwh * netfee.netfee_per_kwh_ct + kwh * netfee.tax_per_kwh_ct) / 100.0);
+    const feePerDay = round2Digits( days * netfee.netfee_per_day_ct / 100 );
+    const feePerKwh = round2Digits( round1Digit(kwh) * netfee.netfee_per_kwh_ct / 100 );
+    const taxPerKwh = round2Digits( kwh * netfee.tax_per_kwh_ct / 100 );
+    const fee = feePerDay + feePerKwh + taxPerKwh;
     bill.push ({item: "Netzgebühr", value: formatEUR (fee)});
     return fee;
 }
@@ -36,7 +40,7 @@ export function calculateBasefee(tariff, date, monthOption, bill) {
             basefee = tariff.base_fee_monthly_eur/daysInMonth(date);
         }
         if (tariff.base_fee_yearly_eur) {
-            basefee = tariff.base_fee_yearly_eur/365*daysInMonth(date);
+            basefee = tariff.base_fee_yearly_eur/365;
         }
     }
     bill.push ({item: "Grundgebühr", value: formatEUR (basefee)})
