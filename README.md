@@ -23,11 +23,17 @@ A utility-first CSS framework
 - [CheatSheet](https://nerdcave.com/tailwind-cheat-sheet)
 - [Responsive Design](https://tailwindcss.com/docs/responsive-design)
 
+## Next UI
+Component library with good integration in tailwind CSS
+- [Homepage](https://nextui.org/)
+- [Components](https://nextui.org/docs/components)
+
 ## Lucide
+For icons
 - [Icon reference](https://lucide.dev/icons/)
 
 ## Motion
-A modern animation library for JavaScript and React
+A modern animation library for JavaScript and React (nice to have)
 - [Homepage](https://motion.dev/)
 
 ## Papaparse
