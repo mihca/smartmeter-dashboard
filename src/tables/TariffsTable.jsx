@@ -66,6 +66,15 @@ export default function TariffsTable ({usagePDR, marketData}) {
 		}
 	}
 
+	function priceClassName (price, pricesArray, lastLine) {
+		let fontStyle = "font-standard";
+		if (lastLine) fontStyle = "font-medium";
+		let fontColor = "text-gray-100";
+		if (Math.min(...pricesArray) === price) fontColor = "text-yellow-300";
+		console.log(Math.min(...pricesArray), price, fontColor);
+		return fontColor + fontStyle;
+	}
+
 	function fillTable (tariffs, usagePDR, marketData, monthOption) {
 
 		let lineData = [];
@@ -235,11 +244,11 @@ export default function TariffsTable ({usagePDR, marketData}) {
 									<p className={(idx === array.length-1) ? 'text-gray-100':'text-gray-100'}>{lineData.kwh.toFixed(2)} kWh</p>
 									<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(1)}</p>
 								</td>
-								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff) => (
-								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'
+								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff, pricesArray) => (
+								<td className='px-2 py-2 whitespace-nowrap text-sm'
 									key={idxTariff}>
 									<Bill bill={lineData.priceInfo[idxTariff]}>
-										<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
+										<p className={priceClassName(priceEUR, pricesArray, idx === array.length-1)}>{priceEUR.toFixed(2)} EUR</p>
 									</Bill>
 									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(1)}</p>
 								</td>
