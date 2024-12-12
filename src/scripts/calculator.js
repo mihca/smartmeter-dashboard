@@ -47,10 +47,10 @@ export function calculateBasefee(tariff, date, monthOption, bill) {
     return round2Digits(basefee);
 }
 
-export function addTax(amount, bill) {
-    let tax = amount * 0.2;
-    bill.push ({item: "MwSt", value: formatEUR (tax)});
-    return tax;
+export function addVat(vatRate, amount, bill) {
+    let vat = amount * vatRate / 100;
+    bill.push ({item: "MwSt " + vatRate + "%" , value: formatEUR (vat)});
+    return vat;
 }
 
 // Use 1 for January, 2 for February, etc.

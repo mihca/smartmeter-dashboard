@@ -5,18 +5,20 @@ import { Checkbox } from "@nextui-org/checkbox";
 import { format } from "date-fns";
 
 import { formatEUR, round3Digits } from "../scripts/round.js";
-import { calculateHour, calculateBasefee, calculateNetfee, addTax } from "../scripts/calculator.js";
+import { calculateHour, calculateBasefee, calculateNetfee, addVat } from "../scripts/calculator.js";
 
 import Bill from "../components/Bill.jsx";
 
 import { TARIFFS } from "../data/tariffs.js";
 import { NETFEES } from "../data/netfees.js";
 
+const VAT_RATE = 20;
+
 export default function TariffsTable ({usagePDR, marketData}) {
 
 	const [selectedMonth, setSelectedMonth] = useState("0");
 	const [selectedNetfees, setSelectedNetfees] = useState("0");
-	const [taxChecked, setTaxChecked] = useState(false);
+	const [vatChecked, setVatChecked] = useState(false);
 	const [basefeeChecked, setBasefeeChecked] = useState(false);
 	
 	function handleNetfeesChange (e) {
@@ -114,7 +116,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			// Change of day or month
 			if (groupChange(new Date(hourEntry.utcHour), groupId) || (idx === array.length - 1)) {
 
-				// Add tax and fees if wanted
+				// Add vat and fees if wanted
 				const endDate = new Date(array[idx-1].utcHour);
 				let days = (monthOption == 0) ? endDate.getDate() : 1;
 				let bills = [];
@@ -123,7 +125,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 					let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
 					lineTariffPriceSum[idx] += basefeeChecked ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
 					lineTariffPriceSum[idx] += selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh, bill) : 0;
-					lineTariffPriceSum[idx] += taxChecked ? addTax(lineTariffPriceSum[idx], bill) : 0;
+					lineTariffPriceSum[idx] += vatChecked ? addVat(VAT_RATE, lineTariffPriceSum[idx], bill) : 0;
 					bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
 					bills.push(bill);
 				})
@@ -175,7 +177,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			<div className='flex w-full justify-between items-center mb-6'>
 				<h2 className='text-xl font-semibold text-gray-100'>{title(usagePDR, selectedMonth)}</h2>
 				<div className='flex flex-wrap md:flex-nowrap gap-4 w-1/2'>
-					<Checkbox onValueChange={e => setTaxChecked(e)} isSelected={taxChecked} size="sm" >MwSt</Checkbox>
+					<Checkbox onValueChange={e => setVatChecked(e)} isSelected={vatChecked} size="sm" >MwSt</Checkbox>
 					<Checkbox onValueChange={e => setBasefeeChecked(e)} isSelected={basefeeChecked} size="sm">Grundgebühren</Checkbox>
 					<Select 
 						className="max-w-xs bg-gray-800" 
@@ -204,10 +206,10 @@ export default function TariffsTable ({usagePDR, marketData}) {
 					<thead>
 						<tr>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								Monat<br/>ct/kWh
+								Monat
 							</th>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								Energie<br/>ct/kWh
+								Energie
 							</th>
 							{Array.from(TARIFFS.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
@@ -225,13 +227,13 @@ export default function TariffsTable ({usagePDR, marketData}) {
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
-								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-100'>
-									<p>{lineData.date}</p>
-									<p className='text-gray-500'>{lineData.averageMarketPricePerKwh.toFixed(3)} ct</p>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+									<p className='text-gray-100'>{lineData.date}</p>
+									<p className='text-gray-500'>{lineData.averageMarketPricePerKwh.toFixed(1)}</p>
 								</td>
-								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'>
-									<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{lineData.kwh.toFixed(3)} kWh</p>
-									<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(3)} ct</p>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+									<p className={(idx === array.length-1) ? 'text-gray-100':'text-gray-100'}>{lineData.kwh.toFixed(2)} kWh</p>
+									<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(1)}</p>
 								</td>
 								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff) => (
 								<td className='px-2 py-2 whitespace-nowrap text-sm text-gray-300'
@@ -239,7 +241,7 @@ export default function TariffsTable ({usagePDR, marketData}) {
 									<Bill bill={lineData.priceInfo[idxTariff]}>
 										<p className={(idx === array.length-1) ? 'font-medium text-gray-100':'text-gray-300'}>{priceEUR.toFixed(2)} EUR</p>
 									</Bill>
-									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(3)} ct/kWh</p>
+									<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(1)}</p>
 								</td>
 								))}
 							</motion.tr>
