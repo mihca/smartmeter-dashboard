@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from "framer-motion"
 
-export default function FileUploader({title, description, pdr, onFileUploaded}) {
+export default function FileUploader({title, importError, onFileUploaded}) {
   
   const [loading, setLoading] = useState(false);
 
@@ -38,6 +38,10 @@ export default function FileUploader({title, description, pdr, onFileUploaded}) 
 
         {loading && (
           <p className='py-4'>Datei wird eingelesen...</p>
+        )}
+
+        {importError && (
+          <p className='py-4'>Dateiformat unbekannt!</p>
         )}
       </div>
 		</motion.div>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from "react";
 import { Zap, CalendarFold, Sun } from 'lucide-react'
 import { motion } from "framer-motion"
 import { format } from "date-fns";
@@ -9,23 +10,31 @@ import FileUploader from '../components/FileUploader'
 import QuantityChart from '../charts/QuantityChart'
 
 import { importProviderFile } from '../scripts/smartmeter-file-adapter'
-import { round1Digit } from "../scripts/round.js";
 
 import { PROVIDERS_USAGE } from "../data/providers-usage"
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin"
 
 export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFeedinPDRChanged}) {
 
+	const [errorUsage, setErrorUsage] = useState(false);
+	const [errorFeedin, setErrorFeedin] = useState(false);
+
 	function handleFileUsageUploaded(fileName, fileContent) {
 		const usagePDRFound = importProviderFile(fileContent, PROVIDERS_USAGE);
 		usagePDRFound.fileName = fileName;
-		onUsagePDRChanged(usagePDRFound);			
+		if (usagePDRFound.hourData)
+			onUsagePDRChanged(usagePDRFound);
+		else
+			setErrorUsage(true);	
 	}
 
 	function handleFileFeedinUploaded(fileName, fileContent) {
 		const feedinPDRFound = importProviderFile(fileContent, PROVIDERS_FEEDIN);
 		feedinPDRFound.fileName = fileName;
-		onFeedinPDRChanged(feedinPDRFound);
+		if (feedinPDRFound.hourData)
+			onFeedinPDRChanged(feedinPDRFound);
+		else
+			setErrorFeedin(true);	
 	}
 
 	function sumUsage(pdr) {
@@ -43,8 +52,8 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				
 				{/* UPLOADER */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<FileUploader title="Stromverbrauch" description="Erklärung Verbrauch" onFileUploaded={handleFileUsageUploaded} pdr={usagePDR}/>
-					<FileUploader title="Stromeinspeisung" description="Erklärung Einspeisung" onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR}/>
+					<FileUploader title="Stromverbrauch" importError={errorUsage} onFileUploaded={handleFileUsageUploaded} pdr={usagePDR}/>
+					<FileUploader title="Stromeinspeisung" importError={errorFeedin} onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR}/>
 				</div>
 				
 				{/* STATS */}
