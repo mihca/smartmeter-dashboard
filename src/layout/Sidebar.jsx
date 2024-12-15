@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const SIDEBAR_ITEMS = [
     { name: "Upload", icon: Upload, color: "#6366f1", href: "/" },
-    { name: "Verbrauchsrechner", icon: ReceiptEuro, color: "#6366f1", href: "/usage-calculator" },
+    { name: "Tarifrechner", icon: ReceiptEuro, color: "#6366f1", href: "/usage-calculator" },
     { name: "Börsenstrompreis", icon: TrendingUp, color: "#3B82F6", href: "/marketprice" }
 ]
 

@@ -57,13 +57,13 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					{ usagePDR.utcHourFrom && (
 						<>
 							<StatCard title='Netzanbieter Verbrauch' icon={Zap} text={usagePDR.provider} color='#6366F1' />
-							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo, "dd.MM.yyyy")} sub={Math.round(sumUsage(usagePDR)) + " kWh"} color='#8B5CF6' />
+							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={Math.round(sumUsage(usagePDR)) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
 					{ feedinPDR.utcHourFrom && (
 						<>
 							<StatCard title='Netzanbieter Einspeisung' icon={Sun} text={feedinPDR.provider} color='#6366F1' />
-							<StatCard title='Zeitraum Einspeisung' icon={CalendarFold} text={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo, "dd.MM.yyyy")} sub={Math.round(sumUsage(feedinPDR)) + " kWh"} color='#8B5CF6' />
+							<StatCard title='Zeitraum Einspeisung' icon={CalendarFold} text={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={Math.round(sumUsage(feedinPDR)) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
 				</motion.div>

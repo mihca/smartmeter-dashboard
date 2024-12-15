@@ -33,7 +33,7 @@ export const TARIFFS = new Map([
         }
     }],
     ['smartENERGY.smartTIMES', {
-        name: 'smartTIMES 2024',
+        name: 'smartTIMES',
         description: 'Monatlich angepasster Tarif mit Uhrzeiten',
         company: 'smartENERGY',
         link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartCONTROL.pdf',

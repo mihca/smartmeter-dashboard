@@ -14,12 +14,12 @@ import { NETFEES } from "../data/netfees.js";
 
 const VAT_RATE = 20;
 
-export default function TariffsTable ({usagePDR, marketData}) {
+export default function TariffsTable ({usagePDR, marketData, onBestTariffFound}) {
 
 	const [selectedMonth, setSelectedMonth] = useState("0");
 	const [selectedNetfees, setSelectedNetfees] = useState("0");
-	const [vatChecked, setVatChecked] = useState(false);
-	const [basefeeChecked, setBasefeeChecked] = useState(false);
+	const [vatChecked, setVatChecked] = useState(true);
+	const [basefeeChecked, setBasefeeChecked] = useState(true);
 	
 	function handleNetfeesChange (e) {
 		setSelectedNetfees(e.target.value);
@@ -42,21 +42,20 @@ export default function TariffsTable ({usagePDR, marketData}) {
 		let months = [{key: 0, label: "Gesamt"}];
 		let startDate = new Date(usagePDR.utcHourFrom);
 		let endDate = new Date(usagePDR.utcHourTo);
-		let date = startDate;
+		let date = endDate;
 		
-		while (date.getMonth() <= endDate.getMonth() && date.getFullYear() == endDate.getFullYear()) {
+		while (date.getMonth() >= startDate.getMonth() && date.getFullYear() == startDate.getFullYear()) {
 			months.push ({
 				key: date.getMonth() + 1,
 				label: date.toLocaleString('default', { year: 'numeric', month: 'long' })
 			});
-			date.setMonth(date.getMonth() + 1);
+			date.setMonth(date.getMonth() - 1);
 		}
 		
 		return months;
 	}
 
 	function title (usagePDR, monthOption) {
-		console.log(monthOption);
 		if (monthOption == 0) {
 			return "Kosten Gesamt";
 		} else {
@@ -66,12 +65,12 @@ export default function TariffsTable ({usagePDR, marketData}) {
 		}
 	}
 
-	function highlightBestPrice (price, pricesArray, lastLine) {
+	function highlightBestPrice (price, prices, lastLine) {
 		let fontStyle = "font-light";
 		if (lastLine) fontStyle = "font-bold";
 		
-		const min = Math.min(...pricesArray);
-		const max = Math.max(...pricesArray);
+		const min = Math.min(...prices);
+		const max = Math.max(...prices);
 		// const idx = Math.round ((price - min) / (max - min) * 4) + 1;
 		// const fontColor = "text-yellow-" + idx + "00";
 		let fontColor = "text-gray-100";
@@ -81,6 +80,15 @@ export default function TariffsTable ({usagePDR, marketData}) {
 
 		// console.log (price, min, max, idx, result);
 		return result;
+	}
+
+	function findBestTariff (tariffs, prices) {
+		const min = Math.min(...prices);
+		for (let idx = 0; idx < tariffs.length; idx ++) {
+			if (prices[idx] === min)
+				return tariffs[idx];
+		}
+		return null;
 	}
 
 	function fillTable (tariffs, usagePDR, marketData, monthOption) {
@@ -180,6 +188,8 @@ export default function TariffsTable ({usagePDR, marketData}) {
 			tariffPricesEUR: overallTariffPriceSum,
 			priceInfo: []
 		});
+
+		onBestTariffFound(selectedMonth, new Date(hourData[0].utcHour), findBestTariff(tariffs, overallTariffPriceSum));
 
 		return lineData;
 	}
