@@ -2,21 +2,11 @@
 import { round2Digits } from "../scripts/round.js";
 
 export const TARIFFS = new Map([
-    ['awattar.alt', {
-        name: 'aWATTar alt',
-        description: 'Börsenstrompreis mit 3% Aufschlag',
-        company: 'aWATTar',
-        link: '',
-        base_fee_yearly_eur: 57.48,
-        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
-            return round2Digits(kwh * (market_price_ct + (Math.abs(market_price_ct) * 0.03)))
-        }
-    }],
     ['awattar.neu', {
-        name: 'aWATTar',
-        description: 'Börsenstrompreis mit 3% Aufschlag',
+        name: 'aWATTar HOURLY',
+        description: 'Börsenstrompreis mit 3% und 1,5 ct Aufschlag',
         company: 'aWATTar',
-        link: '',
+        link: 'https://api.awattar.at/v1/templates/bba9e568-777c-43a7-b181-79de2188439f/content?accept-override=application/pdf',
         base_fee_yearly_eur: 57.48,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             return kwh * (market_price_ct + (Math.abs(market_price_ct) * 0.03) + 1.5);

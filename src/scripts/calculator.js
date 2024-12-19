@@ -13,11 +13,14 @@ export function calculateHour (tariff, hourEntry, marketPrice) {
 
 // returns EUR
 export function calculateNetfee(netfee, days, kwh, bill) { 
+    // Seems that netfees are calculated always for 365 days and therefore February counts always 28 days
+    if (days == 29) days = 28;
     const feePerDay = round2Digits( days * netfee.netfee_per_day_ct / 100 );
     const feePerKwh = round2Digits( round1Digit(kwh) * netfee.netfee_per_kwh_ct / 100 );
     const taxPerKwh = round2Digits( kwh * netfee.tax_per_kwh_ct / 100 );
     const fee = feePerDay + feePerKwh + taxPerKwh;
-    bill.push ({item: "Netzgebühr", value: formatEUR (fee)});
+    bill.push ({item: "Netzgebühren", value: formatEUR (feePerDay + feePerKwh)});
+    bill.push ({item: "Abgaben", value: formatEUR (taxPerKwh)});
     return fee;
 }
 
