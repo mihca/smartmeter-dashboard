@@ -5,6 +5,7 @@ import { Routes } from "react-router-dom"
 import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
 import UsageCalculatorPage from './pages/UsageCalculatorPage'
+import FeedinCalculatorPage from './pages/FeedinCalculatorPage'
 
 import Sidebar from "./layout/Sidebar"
 import { fetchMarketData } from './scripts/fetch-awattar';
@@ -67,6 +68,12 @@ function App() {
 				<Route path='/usage-calculator' element={
 					<UsageCalculatorPage
 						pdr={usagePDR}
+						marketData={marketData}
+					/>} 
+				/>
+				<Route path='/feedin-calculator' element={
+					<FeedinCalculatorPage
+						pdr={feedinPDR}
 						marketData={marketData}
 					/>} 
 				/>

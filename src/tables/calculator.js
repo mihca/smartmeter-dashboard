@@ -46,7 +46,7 @@ export function calculateBasefee(tariff, date, monthOption, bill) {
             basefee = tariff.base_fee_yearly_eur/365;
         }
     }
-    bill.push ({item: "Grundgebühr", value: formatEUR (basefee)})
+    if (bill) bill.push ({item: "Grundgebühr", value: formatEUR (basefee)})
     return round2Digits(basefee);
 }
 

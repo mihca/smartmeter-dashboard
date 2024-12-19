@@ -69,6 +69,12 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={Math.round(sumUsage(usagePDR)) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
+					{ !usagePDR.hourData && (
+						<>
+							<div className='p-6'/>
+							<div className='p-6'/>
+						</>
+					)}
 					{ feedinPDR.utcHourFrom && (
 						<>
 							<StatCard title='Netzanbieter Einspeisung' icon={Sun} text={feedinPDR.provider} color='#6366F1' />
