@@ -8,7 +8,7 @@ import StatCard from '../components/StatCard'
 import MarketChart from '../charts/MarketChart'
 import Header from '../layout/Header'
 
-export default function MarketpricePage ({marketData}) {
+export default function MarketpricePage ({mdr}) {
   return (
     <div className='flex-1 overflow-auto realtive z-10'>
       	<Header title="Börsenstrompreis"/>
@@ -21,9 +21,9 @@ export default function MarketpricePage ({marketData}) {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 1 }}
 			>
-				{ marketData.hourMap.size > 0 && (
+				{ mdr.hourMap.size > 0 && (
 					<>
-						<StatCard title='Zeitraum' icon={CalendarFold} value="" color='#6366F1' text={format(marketData.utcHourFrom, "dd.MM.yyyy") + " - " + format(marketData.utcHourTo-3600000, "dd.MM.yyyy")}/>
+						<StatCard title='Zeitraum' icon={CalendarFold} value="" color='#6366F1' text={format(mdr.utcHourFrom, "dd.MM.yyyy") + " - " + format(mdr.utcHourTo-3600000, "dd.MM.yyyy")}/>
 						<StatCard title='Durchschnittspreis' icon={Euro} value="" color='#6366F1' />
 						<StatCard title='Minimalpreis' icon={Zap} value="" color='#6366F1' />
 						<StatCard title='Maximalpreis' icon={Sun} value="" color='#6366F1' />
@@ -32,9 +32,9 @@ export default function MarketpricePage ({marketData}) {
 			</motion.div>
 
 			{/* CHARTS */}
-			{ marketData.hourMap.size > 0 && (
+			{ mdr.hourMap.size > 0 && (
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-				<MarketChart marketData={marketData.hourMap}/>
+				<MarketChart marketHourMap={mdr.hourMap}/>
 			</div>
 			)}
 		</main>

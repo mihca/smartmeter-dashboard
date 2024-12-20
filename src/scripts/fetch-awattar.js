@@ -1,16 +1,34 @@
-export async function fetchMarketData (marketData, start, end) {
+export async function fetchMarketDataRecord (mdr, start, end) {
 
-  const marketDataLoaded = await loadMarketData(start, end);
+  /*
+  if (mdr.utcHourFrom && mdr.utcHourTo && start >= mdr.utcHourFrom && end <= mdr.utcHourTo)
+    // Nothing to do, data is already loaded
+    return mdr;
+
+  if (mdr.utcHourFrom && mdr.utcHourTo) {
+    // extend the range to load
+    if (start < mdr.utcHourTo)
+      start = mdr.utcHourTo + 3600000;
+  }
+    */
+
+  const marketHourData = await loadMarketHourData(start, end);
+
+  /*
+  marketHourData.forEach((value, key) => {
+    mdr.hourMap.set(key, value);
+  });
+  */
 
   return {
     country: "at",
     utcHourFrom: start,
     utcHourTo: end,
-    hourMap: marketDataLoaded
+    hourMap: marketHourData
   }
 }
 
-export async function loadMarketData (start, end) {
+export async function loadMarketHourData (start, end) {
 
   let url = "https://api.awattar.at/v1/marketdata?start=" + start + "&end=" + end;
 

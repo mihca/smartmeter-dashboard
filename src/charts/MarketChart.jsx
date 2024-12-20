@@ -2,19 +2,10 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { motion } from "framer-motion";
 import { round1Digit } from "../scripts/round";
 
-const salesData = [
-	{ month: "Jan", sales: 4000 },
-	{ month: "Feb", sales: 3000 },
-	{ month: "Mar", sales: 5000 },
-	{ month: "Apr", sales: 4500 },
-	{ month: "May", sales: 6000 },
-	{ month: "Jun", sales: 5500 },
-];
+export default function MarketChart ({marketHourMap}) {
 
-export default function MarketChart ({marketData}) {
-
-	console.log (marketData);
-	console.log (Array.from(marketData, ([start, price]) => ({start, price})));
+	console.log (marketHourMap);
+	console.log (Array.from(marketHourMap, ([start, price]) => ({start, price})));
 
 	function groupByMonth(hourData) {
 
@@ -49,7 +40,7 @@ export default function MarketChart ({marketData}) {
 			<h2 className='text-xl font-semibold text-gray-100 mb-4'>Verbrauch pro Monat</h2>
 			<div style={{ width: "100%", height: 300 }}>
 				<ResponsiveContainer>
-					<BarChart data={Array.from(marketData, ([start, price]) => ({start, price}))}>
+					<BarChart data={Array.from(marketHourMap, ([start, price]) => ({start, price}))}>
 						<CartesianGrid strokeDasharray='3 3' stroke='#374151' />
 						<XAxis dataKey='start' stroke='#9CA3AF' />
 						<YAxis stroke='#9CA3AF' />

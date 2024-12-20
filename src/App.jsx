@@ -8,7 +8,7 @@ import UsageCalculatorPage from './pages/UsageCalculatorPage'
 import FeedinCalculatorPage from './pages/FeedinCalculatorPage'
 
 import Sidebar from "./layout/Sidebar"
-import { fetchMarketData } from './scripts/fetch-awattar';
+import { fetchMarketDataRecord } from './scripts/fetch-awattar';
 import useLocalStorage from "./hooks/useLocalStorage";
 
 const EMPTY_PDR = {
@@ -19,7 +19,7 @@ const EMPTY_PDR = {
 	hourData: null
 }
 
-const EMPTY_MARKETDATA = {
+const EMPTY_MDR = {
 	country: "-",
 	utcHourFrom: null,
 	utcHourTo: null,
@@ -30,31 +30,34 @@ function App() {
 
 	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
 	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
-	const [marketData, setMarketData] = useLocalStorage("emarketdata.at", EMPTY_MARKETDATA);
+	const [marketDataRecord, setMarketDataRecord] = useLocalStorage("smartmeter.dashboard.mdr.at", EMPTY_MDR);
 	const [isFetching, setIsFetching] = useState(false);
 	const [error, setError] = useState(null);
 
 	async function usagePDRChanged(pdr) {
-		
 		setUsagePDR(pdr);
-		console.log(pdr);
+		updateMarketDataRecord(pdr);
+	}
 
+	async function feedinPDRChanged(pdr) {
+		setFeedinPDR(pdr);			
+		updateMarketDataRecord(pdr);
+	}
+
+	async function updateMarketDataRecord(pdr) {
+		setIsFetching(true);
 		try {
 			// Fetch market data one hour earlier (-3600000) than usage data, 
 			// because usage data shows end of hour and marketprice is valid at start of hour
-			const fetchedMarketData = await fetchMarketData (marketData, pdr.utcHourFrom - 3600000, pdr.utcHourTo);
-			setMarketData(fetchedMarketData);
+			const fetchedMDR = await fetchMarketDataRecord (marketDataRecord, pdr.utcHourFrom - 3600000, pdr.utcHourTo);
+			setMarketDataRecord(fetchedMDR);
 			setIsFetching(false);
 		} catch (error) {
 			setError(error.message);
 			setIsFetching(false);
 		}
 	}
-
-	function feedinPDRChanged(pdr) {
-		setFeedinPDR(pdr);			
-	}
-
+	
 	return (
 		<div className='flex h-screen bg-gray-900 text-gray-100 overflow-hidden'>
 			{/* BG */}
@@ -76,18 +79,18 @@ function App() {
 				<Route path='/usage-calculator' element={
 					<UsageCalculatorPage
 						pdr={usagePDR}
-						marketData={marketData.hourMap}
+						mdr={marketDataRecord}
 					/>} 
 				/>
 				<Route path='/feedin-calculator' element={
 					<FeedinCalculatorPage
 						pdr={feedinPDR}
-						marketData={marketData.hourMap}
+						mdr={marketDataRecord}
 					/>} 
 				/>
 				<Route path='/marketprice' element={
 					<MarketpricePage
-						marketData={marketData}
+						mdr={marketDataRecord}
 					/>} 
 				/>
 				</Routes>

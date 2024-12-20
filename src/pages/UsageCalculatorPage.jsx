@@ -10,7 +10,7 @@ import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import TariffsTable from '../tables/TariffsTable'
 
-export default function UsageCalcuclatorPage({pdr, marketData}) {
+export default function UsageCalcuclatorPage({pdr, mdr}) {
 
 	const [timeRange, setTimeRange] = useState("");
 	const [bestTariff, setBestTariff] = useState(null);
@@ -54,7 +54,7 @@ export default function UsageCalcuclatorPage({pdr, marketData}) {
 				{ pdr.hourData && (
 					<>
 						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-							<TariffsTable pdr={pdr} marketData={marketData} onBestTariffFound={bestTariffFound}/>
+							<TariffsTable pdr={pdr} mdr={mdr} onBestTariffFound={bestTariffFound}/>
 						</div>
 					</>
 				)}

@@ -15,7 +15,7 @@ import { NETFEES } from "../data/netfees.js";
 
 const VAT_RATE = 20;
 
-export default function TariffsTable ({pdr, marketData, onBestTariffFound}) {
+export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 
 	const [selectedMonth, setSelectedMonth] = useState("0");
 	const [selectedNetfees, setSelectedNetfees] = useState("0");
@@ -40,7 +40,7 @@ export default function TariffsTable ({pdr, marketData, onBestTariffFound}) {
 		return options;
 	}
 
-	function fillTable (tariffs, pdr, marketData, monthOption) {
+	function fillTable (tariffs, pdr, marketHourMap, monthOption) {
 
 		let lineData = [];
 		let lineHourCounter = 0;
@@ -78,13 +78,13 @@ export default function TariffsTable ({pdr, marketData, onBestTariffFound}) {
 			lineHourCounter = lineHourCounter + 1;
 			lineSumKwh += hourEntry.kwh;
 			
-			let marketPriceCt = marketData.get(hourEntry.utcHour-3600000);
+			let marketPriceCt = marketHourMap.get(hourEntry.utcHour-3600000);
 			lineMarketPriceCtSum += marketPriceCt;
 			linePriceCtSumWeighted += marketPriceCt * hourEntry.kwh;
 	
 			// Calculate tariffs
 			tariffs.forEach((tariff, idx) => {
-				lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketData.get(hourEntry.utcHour-3600000));
+				lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
 			})
 	
 			// Change of day or month
@@ -197,7 +197,7 @@ export default function TariffsTable ({pdr, marketData, onBestTariffFound}) {
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{ fillTable(Array.from(TARIFFS.values()), pdr, marketData, selectedMonth).map((lineData, idx, array) => (
+						{ fillTable(Array.from(TARIFFS.values()), pdr, mdr.hourMap, selectedMonth).map((lineData, idx, array) => (
 							<motion.tr
 								key={lineData.date}
 								initial={{ opacity: 0 }}
