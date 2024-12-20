@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { motion } from "framer-motion"
-import { Zap, CalendarFold, Sun } from 'lucide-react'
+import { Zap, CalendarFold, Sun, Euro } from 'lucide-react'
 import { format } from "date-fns";
 
 import StatCard from '../components/StatCard'
@@ -24,7 +24,7 @@ export default function MarketpricePage ({marketData}) {
 				{ marketData.hourMap.size > 0 && (
 					<>
 						<StatCard title='Zeitraum' icon={CalendarFold} value="" color='#6366F1' text={format(marketData.utcHourFrom, "dd.MM.yyyy") + " - " + format(marketData.utcHourTo-3600000, "dd.MM.yyyy")}/>
-						<StatCard title='Durchschnittspreis' icon={Sun} value="" color='#6366F1' />
+						<StatCard title='Durchschnittspreis' icon={Euro} value="" color='#6366F1' />
 						<StatCard title='Minimalpreis' icon={Zap} value="" color='#6366F1' />
 						<StatCard title='Maximalpreis' icon={Sun} value="" color='#6366F1' />
 					</>

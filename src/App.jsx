@@ -9,6 +9,7 @@ import FeedinCalculatorPage from './pages/FeedinCalculatorPage'
 
 import Sidebar from "./layout/Sidebar"
 import { fetchMarketData } from './scripts/fetch-awattar';
+import useLocalStorage from "./hooks/useLocalStorage";
 
 const EMPTY_PDR = {
 	provider: "-",
@@ -29,7 +30,7 @@ function App() {
 
 	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
 	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
-	const [marketData, setMarketData] = useState(EMPTY_MARKETDATA);
+	const [marketData, setMarketData] = useLocalStorage("emarketdata.at", EMPTY_MARKETDATA);
 	const [isFetching, setIsFetching] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -41,7 +42,7 @@ function App() {
 		try {
 			// Fetch market data one hour earlier (-3600000) than usage data, 
 			// because usage data shows end of hour and marketprice is valid at start of hour
-			const fetchedMarketData = await fetchMarketData (pdr.utcHourFrom - 3600000, pdr.utcHourTo);
+			const fetchedMarketData = await fetchMarketData (marketData, pdr.utcHourFrom - 3600000, pdr.utcHourTo);
 			setMarketData(fetchedMarketData);
 			setIsFetching(false);
 		} catch (error) {
