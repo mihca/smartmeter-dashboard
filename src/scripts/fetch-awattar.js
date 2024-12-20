@@ -21,5 +21,10 @@ export async function fetchMarketData (start, end) {
 
     console.log(marketData);
 
-    return marketData;
+    return {
+      country: "at",
+      utcHourFrom: start,
+      utcHourTo: end,
+      hourMap: marketData
+    }
   }

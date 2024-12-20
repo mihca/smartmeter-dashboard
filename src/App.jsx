@@ -18,11 +18,18 @@ const EMPTY_PDR = {
 	hourData: null
 }
 
+const EMPTY_MARKETDATA = {
+	country: "-",
+	utcHourFrom: null,
+	utcHourTo: null,
+	hourMap: new Map()
+}
+
 function App() {
 
 	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
 	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
-	const [marketData, setMarketData] = useState(new Map());
+	const [marketData, setMarketData] = useState(EMPTY_MARKETDATA);
 	const [isFetching, setIsFetching] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -68,13 +75,13 @@ function App() {
 				<Route path='/usage-calculator' element={
 					<UsageCalculatorPage
 						pdr={usagePDR}
-						marketData={marketData}
+						marketData={marketData.hourMap}
 					/>} 
 				/>
 				<Route path='/feedin-calculator' element={
 					<FeedinCalculatorPage
 						pdr={feedinPDR}
-						marketData={marketData}
+						marketData={marketData.hourMap}
 					/>} 
 				/>
 				<Route path='/marketprice' element={

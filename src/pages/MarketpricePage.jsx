@@ -2,6 +2,7 @@ import React from 'react'
 
 import { motion } from "framer-motion"
 import { Zap, CalendarFold, Sun } from 'lucide-react'
+import { format } from "date-fns";
 
 import StatCard from '../components/StatCard'
 import MarketChart from '../charts/MarketChart'
@@ -20,16 +21,20 @@ export default function MarketpricePage ({marketData}) {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 1 }}
 			>
-				<StatCard name='Zeitraum' icon={Zap} value="" color='#6366F1' />
-				<StatCard name='Durchschnittspreis' icon={Sun} value="" color='#6366F1' />
-				<StatCard name='Minimalpreis' icon={Zap} value="" color='#6366F1' />
-				<StatCard name='Maximalpreis' icon={Sun} value="" color='#6366F1' />
+				{ marketData.hourMap.size > 0 && (
+					<>
+						<StatCard title='Zeitraum' icon={CalendarFold} value="" color='#6366F1' text={format(marketData.utcHourFrom, "dd.MM.yyyy") + " - " + format(marketData.utcHourTo-3600000, "dd.MM.yyyy")}/>
+						<StatCard title='Durchschnittspreis' icon={Sun} value="" color='#6366F1' />
+						<StatCard title='Minimalpreis' icon={Zap} value="" color='#6366F1' />
+						<StatCard title='Maximalpreis' icon={Sun} value="" color='#6366F1' />
+					</>
+				)}
 			</motion.div>
 
 			{/* CHARTS */}
-			{ marketData && (
+			{ marketData.hourMap.size > 0 && (
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-				<MarketChart marketData={marketData}/>
+				<MarketChart marketData={marketData.hourMap}/>
 			</div>
 			)}
 		</main>
