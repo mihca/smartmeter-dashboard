@@ -1,9 +1,11 @@
 
 export function findBestTariff (tariffs, prices, bestFunction) {
-    const min = bestFunction(...prices);
+    const price = bestFunction(...prices);
     for (let idx = 0; idx < tariffs.length; idx ++) {
-        if (prices[idx] === min)
-            return tariffs[idx];
+        if (prices[idx] === price) return ({
+            price: price, 
+            tariff: tariffs[idx]
+        });
     }
     return null;
 }

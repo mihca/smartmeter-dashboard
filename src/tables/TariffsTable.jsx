@@ -138,7 +138,8 @@ export default function TariffsTable ({pdr, marketData, onBestTariffFound}) {
 			priceInfo: []
 		});
 
-		onBestTariffFound(selectedMonth, new Date(hourData[0].utcHour), findBestTariff(tariffs, overallTariffPriceSum, Math.min));
+		const bestTariff = findBestTariff(tariffs, overallTariffPriceSum, Math.min);
+		onBestTariffFound(selectedMonth, new Date(hourData[0].utcHour), overallSumKwh, bestTariff.tariff, bestTariff.price);
 
 		return lineData;
 	}

@@ -111,7 +111,8 @@ export default function FeedinTable ({pdr, marketData, onBestTariffFound}) {
 			tariffPricesEUR: overallTariffPriceSum,
 		});
 
-		onBestTariffFound(selectedMonth, new Date(hourData[0].utcHour), findBestTariff(tariffs, overallTariffPriceSum, Math.max));
+		const bestTariff = findBestTariff(tariffs, overallTariffPriceSum, Math.max);
+		onBestTariffFound(selectedMonth, new Date(hourData[0].utcHour), overallSumKwh, bestTariff.tariff, bestTariff.price);
 
 		return lineData;
 	}

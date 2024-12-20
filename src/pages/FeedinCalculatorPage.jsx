@@ -1,8 +1,10 @@
 import React from 'react'
 import { useState } from "react";
-import { Zap, CalendarFold, Sun } from 'lucide-react'
+import { Medal, CalendarFold, Euro, Sun } from 'lucide-react'
 import { motion } from "framer-motion"
 import { format } from "date-fns";
+
+import { formatEUR, round1Digit } from '../scripts/round';
 
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
@@ -11,10 +13,14 @@ import FeedinTable from '../tables/FeedinTable'
 export default function UsageCalcuclatorPage({pdr, marketData}) {
 
     const [timeRange, setTimeRange] = useState("");
-    const [bestTariff, setBestTariff] = useState({});
+    const [bestTariff, setBestTariff] = useState(null);
+    const [bestPrice, setBestPrice] = useState(0);
+	const [quantity, setQuantity] = useState(0);
 
-    function bestTariffFound (month, date, tariff) {
+    function bestTariffFound (month, date, kwh, tariff, price) {
         setBestTariff(tariff);
+		setBestPrice(price);
+		setQuantity(kwh);
         if (month == 0) {
             setTimeRange(format(pdr.utcHourFrom, "dd.MM.yyyy") + " - " + format(pdr.utcHourTo-3600000, "dd.MM.yyyy"));
         } else {
@@ -34,16 +40,12 @@ export default function UsageCalcuclatorPage({pdr, marketData}) {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					{ pdr.utcHourFrom && (
+					{ bestTariff && (
 						<>
-							<StatCard title='Netzanbieter Einspeisung' icon={Zap} text={pdr.provider} color='#6366F1' />
-							<StatCard title='Gesamter Zeitraum' icon={CalendarFold} text={format(pdr.utcHourFrom, "dd.MM.yyyy") + " - " + format(pdr.utcHourTo-3600000, "dd.MM.yyyy")} color='#8B5CF6' />
-							{ bestTariff && (
-								<>
-									<StatCard title='Bester Tarif' icon={CalendarFold} text={bestTariff.name} color='#8B5CF6' />
-									<StatCard title='Gewählter Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
-								</>
-							)}
+							<StatCard title='Bester Tarif' icon={Medal} text={bestTariff.name} sub={bestTariff.company} color='#8B5CF6' />
+							<StatCard title='Vergütung' icon={Euro} text={formatEUR(bestPrice)} color='#6366F1' />
+							<StatCard title='Strommenge' icon={Sun} text={round1Digit(quantity) + " kWh"} color='#6366F1' />
+							<StatCard title='Gewählter Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
 						</>
 					)}
 				</motion.div>
