@@ -1,18 +1,20 @@
-export async function fetchMarketDataRecord (mdr, start, end) {
+export async function fetchMarketDataRecord (mdr, from, to) {
+
+  if (mdr.utcHourFrom && mdr.utcHourTo && from >= mdr.utcHourFrom && to <= mdr.utcHourTo) {
+    // Nothing to do, data is already loaded
+    console.log("fetchMarketData from local storage");
+    return mdr;
+  }
 
   /*
-  if (mdr.utcHourFrom && mdr.utcHourTo && start >= mdr.utcHourFrom && end <= mdr.utcHourTo)
-    // Nothing to do, data is already loaded
-    return mdr;
-
   if (mdr.utcHourFrom && mdr.utcHourTo) {
     // extend the range to load
     if (start < mdr.utcHourTo)
       start = mdr.utcHourTo + 3600000;
   }
-    */
+  */
 
-  const marketHourData = await loadMarketHourData(start, end);
+  const marketHourData = await loadMarketHourData(from, to);
 
   /*
   marketHourData.forEach((value, key) => {
@@ -22,8 +24,8 @@ export async function fetchMarketDataRecord (mdr, start, end) {
 
   return {
     country: "at",
-    utcHourFrom: start,
-    utcHourTo: end,
+    utcHourFrom: from,
+    utcHourTo: to,
     hourMap: marketHourData
   }
 }
