@@ -1,4 +1,205 @@
-import { round1Digit, round2Digits, formatEUR } from "../scripts/round.js";
+import { round1Digit, round2Digits, round3Digits, formatEUR } from "../scripts/round.js";
+import { format } from "date-fns";
+import { NETFEES } from "../data/netfees.js";
+
+const VAT_RATE = 20;
+
+export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasefee, withVat, selectedNetfeesIdx) {
+
+    const marketHourMap = mdr.hourMap;
+
+    let lineData = [];
+    let lineHourCounter = 0;
+    let lineSumKwh = 0.0;
+    let lineMarketPriceCtSum = 0.0;
+    let linePriceCtSumWeighted = 0.0;
+    let lineTariffPriceSum = new Array(tariffs.length).fill(0.0);
+
+    let overallSumKwh = 0.0;
+    let overallMarketPriceSum = 0.0;
+    let overallMarketPriceSumWeighted = 0.0;
+    let overallTariffPriceSum = new Array(tariffs.length).fill(0.0);
+
+    let hourData = pdr.hourData;
+    
+    // This is the default for the grouping by month
+    let groupId = 0;
+    let groupChange = (date, groupId) => date.getMonth() != groupId;
+    let lineDatePattern = "yyyy-MM";
+
+    // Here comes the grouping by day
+    if (monthOption > 0) {
+        // Exclude 1. at 0:00, because its the sum from the last hour of the last month
+        hourData = hourData.filter( (hourEntry) => 
+            new Date (hourEntry.utcHour).getMonth() === (monthOption-1) && 
+            !(new Date (hourEntry.utcHour).getDate() === 1 && new Date (hourEntry.utcHour).getHours() === 0)
+        );
+        groupChange = (date, groupId) => date.getDate() != groupId;
+        groupId = 1;
+        lineDatePattern = "yyyy-MM-dd";
+    }
+
+    hourData.forEach((hourEntry, idx, array) => {
+
+        lineHourCounter = lineHourCounter + 1;
+        lineSumKwh += hourEntry.kwh;
+        
+        let marketPriceCt = marketHourMap.get(hourEntry.utcHour-3600000);
+        lineMarketPriceCtSum += marketPriceCt;
+        linePriceCtSumWeighted += marketPriceCt * hourEntry.kwh;
+
+        // Calculate tariffs
+        tariffs.forEach((tariff, idx) => {
+            lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
+        })
+
+        // Change of day or month
+        if (groupChange(new Date(hourEntry.utcHour), groupId) || (idx === array.length - 1)) {
+
+            // Add vat and fees if wanted
+            const endDate = new Date(array[idx-1].utcHour);
+            let days = (monthOption == 0) ? endDate.getDate() : 1;
+            let bills = [];
+
+            tariffs.forEach((tariff, idx) => {
+                let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
+                lineTariffPriceSum[idx] += withBasefee ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
+                lineTariffPriceSum[idx] += selectedNetfeesIdx > 0 ? calculateNetfee(NETFEES[selectedNetfeesIdx-1], days, lineSumKwh, bill) : 0;
+                lineTariffPriceSum[idx] += withVat ? addVat(VAT_RATE, lineTariffPriceSum[idx], bill) : 0;
+                bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
+                bills.push(bill);
+            })
+
+            lineData.push ({
+                date: format(endDate, lineDatePattern),
+                kwh: round3Digits(lineSumKwh),
+                averageMarketPricePerKwh: round3Digits (lineMarketPriceCtSum / lineHourCounter),
+                weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
+                tariffPricesEUR: lineTariffPriceSum,
+                priceInfo: bills
+            });
+            
+            overallSumKwh += lineSumKwh;
+            overallMarketPriceSum += lineMarketPriceCtSum;
+            overallMarketPriceSumWeighted += linePriceCtSumWeighted;
+            for (let t = 0; t<tariffs.length; t++) {
+                overallTariffPriceSum[t] += lineTariffPriceSum[t];
+            };
+    
+            lineHourCounter = 0;
+            lineSumKwh = 0.0;
+            lineTariffPriceSum = new Array(tariffs.length).fill(0.0);
+            lineMarketPriceCtSum = 0.0;
+            linePriceCtSumWeighted = 0.0;
+            groupId += 1;
+        }
+    });
+
+    lineData.push ({
+        date: "Gesamt",
+        kwh: overallSumKwh,
+        averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / hourData.length),
+        weightedMarketPricePerKwh: round3Digits (overallMarketPriceSumWeighted / overallSumKwh),
+        tariffPricesEUR: overallTariffPriceSum,
+        priceInfo: []
+    });
+
+    return lineData;
+}
+
+export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefee) {
+
+    const marketHourMap = mdr.hourMap;
+
+    let lineData = [];
+    let lineHourCounter = 0;
+    let lineSumKwh = 0.0;
+    let lineMarketPriceCtSum = 0.0;
+    let linePriceCtSumWeighted = 0.0;
+    let lineTariffPriceSum = new Array(tariffs.length).fill(0.0);
+
+    let overallSumKwh = 0.0;
+    let overallMarketPriceSum = 0.0;
+    let overallMarketPriceSumWeighted = 0.0;
+    let overallTariffPriceSum = new Array(tariffs.length).fill(0.0);
+
+    let hourData = pdr.hourData;
+    
+    // This is the default for the grouping by month
+    let groupId = 0;
+    let groupChange = (date, groupId) => date.getMonth() != groupId;
+    let lineDatePattern = "yyyy-MM";
+
+    // Here comes the grouping by day
+    if (monthOption > 0) {
+        // Exclude 1. at 0:00, because its the sum from the last hour of the last month
+        hourData = hourData.filter( (hourEntry) => 
+            new Date (hourEntry.utcHour).getMonth() === (monthOption-1) && 
+            !(new Date (hourEntry.utcHour).getDate() === 1 && new Date (hourEntry.utcHour).getHours() === 0)
+        );
+        groupChange = (date, groupId) => date.getDate() != groupId;
+        groupId = 1;
+        lineDatePattern = "yyyy-MM-dd";
+    }
+
+    hourData.forEach((hourEntry, idx, array) => {
+
+        lineHourCounter = lineHourCounter + 1;
+        lineSumKwh += hourEntry.kwh;
+        
+        let marketPriceCt = marketHourMap.get(hourEntry.utcHour-3600000);
+        lineMarketPriceCtSum += marketPriceCt;
+        linePriceCtSumWeighted += marketPriceCt * hourEntry.kwh;
+
+        // Calculate tariffs
+        tariffs.forEach((tariff, idx) => {
+            lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
+        })
+
+        // Change of day or month
+        if (groupChange(new Date(hourEntry.utcHour), groupId) || (idx === array.length - 1)) {
+
+            // Add basefee if wanted
+            const endDate = new Date(array[idx-1].utcHour);
+
+            tariffs.forEach((tariff, idx) => {
+                lineTariffPriceSum[idx] -= withBasefee ? calculateBasefee(tariff, endDate, monthOption, undefined) : 0;
+            })
+
+            lineData.push ({
+                date: format(endDate, lineDatePattern),
+                kwh: round3Digits(lineSumKwh),
+                averageMarketPricePerKwh: round3Digits (lineMarketPriceCtSum / lineHourCounter),
+                weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
+                tariffPricesEUR: lineTariffPriceSum,
+            });
+            
+            overallSumKwh += lineSumKwh;
+            overallMarketPriceSum += lineMarketPriceCtSum;
+            overallMarketPriceSumWeighted += linePriceCtSumWeighted;
+            for (let t = 0; t<tariffs.length; t++) {
+                overallTariffPriceSum[t] += lineTariffPriceSum[t];
+            };
+    
+            lineHourCounter = 0;
+            lineSumKwh = 0.0;
+            lineTariffPriceSum = new Array(tariffs.length).fill(0.0);
+            lineMarketPriceCtSum = 0.0;
+            linePriceCtSumWeighted = 0.0;
+            groupId += 1;
+        }
+    });
+
+    lineData.push ({
+        date: "Gesamt",
+        kwh: overallSumKwh,
+        averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / hourData.length),
+        weightedMarketPricePerKwh: round3Digits (overallMarketPriceSumWeighted / overallSumKwh),
+        tariffPricesEUR: overallTariffPriceSum,
+    });
+
+    return lineData;
+}
 
 // returns EUR
 export function calculateHour (tariff, hourEntry, marketPrice) {
@@ -56,7 +257,19 @@ export function addVat(vatRate, amount, bill) {
     return vat;
 }
 
+export function findBestTariff (tariffs, prices, bestFunction) {
+    const price = bestFunction(...prices.filter(value => !isNaN(value)));
+    for (let idx = 0; idx < tariffs.length; idx ++) {
+        if (! isNaN(prices[idx]) && prices[idx] === price) return ({
+            price: price, 
+            tariff: tariffs[idx]
+        });
+    }
+    return null;
+}
+
 // Use 1 for January, 2 for February, etc.
 function daysInMonth (date) { 
     return new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
 }
+

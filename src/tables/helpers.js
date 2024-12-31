@@ -1,15 +1,4 @@
 
-export function findBestTariff (tariffs, prices, bestFunction) {
-    const price = bestFunction(...prices.filter(value => !isNaN(value)));
-    for (let idx = 0; idx < tariffs.length; idx ++) {
-        if (prices[idx] === price) return ({
-            price: price, 
-            tariff: tariffs[idx]
-        });
-    }
-    return null;
-}
-
 export function monthOptions (pdr) {
     let months = [{key: 0, label: "Gesamt"}];
     let startDate = new Date(pdr.utcHourFrom);

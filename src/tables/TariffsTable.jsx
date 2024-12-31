@@ -2,18 +2,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/checkbox";
-import { format } from "date-fns";
 
-import { formatEUR, format1Digit, round3Digits } from "../scripts/round.js";
-import { calculateHour, calculateBasefee, calculateNetfee, addVat } from "./calculator.js";
-import { findBestTariff, monthOptions, title, highlightBestPrice } from "./helpers.js";
+import { calculateTariffsTable, findBestTariff } from "./calculator.js";
+import { formatEUR, format1Digit } from "../scripts/round.js";
+import { monthOptions, title, highlightBestPrice } from "./helpers.js";
 
 import Bill from "../components/Bill.jsx";
 
 import { TARIFFS } from "../data/tariffs-usage.js";
 import { NETFEES } from "../data/netfees.js";
-
-const VAT_RATE = 20;
 
 export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 
@@ -40,107 +37,12 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 		return options;
 	}
 
-	function fillTable (tariffs, pdr, marketHourMap, monthOption) {
-
-		let lineData = [];
-		let lineHourCounter = 0;
-		let lineSumKwh = 0.0;
-		let lineMarketPriceCtSum = 0.0;
-		let linePriceCtSumWeighted = 0.0;
-		let lineTariffPriceSum = new Array(tariffs.length).fill(0.0);
-	
-		let overallSumKwh = 0.0;
-		let overallMarketPriceSum = 0.0;
-		let overallMarketPriceSumWeighted = 0.0;
-		let overallTariffPriceSum = new Array(tariffs.length).fill(0.0);
-	
-		let hourData = pdr.hourData;
-		
-		// This is the default for the grouping by month
-		let groupId = 0;
-		let groupChange = (date, groupId) => date.getMonth() != groupId;
-		let lineDatePattern = "yyyy-MM";
-
-		// Here comes the grouping by day
-		if (monthOption > 0) {
-			// Exclude 1. at 0:00, because its the sum from the last hour of the last month
-			hourData = hourData.filter( (hourEntry) => 
-				new Date (hourEntry.utcHour).getMonth() === (monthOption-1) && 
-				!(new Date (hourEntry.utcHour).getDate() === 1 && new Date (hourEntry.utcHour).getHours() === 0)
-			);
-			groupChange = (date, groupId) => date.getDate() != groupId;
-			groupId = 1;
-			lineDatePattern = "yyyy-MM-dd";
-		}
-
-		hourData.forEach((hourEntry, idx, array) => {
-	
-			lineHourCounter = lineHourCounter + 1;
-			lineSumKwh += hourEntry.kwh;
-			
-			let marketPriceCt = marketHourMap.get(hourEntry.utcHour-3600000);
-			lineMarketPriceCtSum += marketPriceCt;
-			linePriceCtSumWeighted += marketPriceCt * hourEntry.kwh;
-	
-			// Calculate tariffs
-			tariffs.forEach((tariff, idx) => {
-				lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
-			})
-	
-			// Change of day or month
-			if (groupChange(new Date(hourEntry.utcHour), groupId) || (idx === array.length - 1)) {
-
-				// Add vat and fees if wanted
-				const endDate = new Date(array[idx-1].utcHour);
-				let days = (monthOption == 0) ? endDate.getDate() : 1;
-				let bills = [];
-
-				tariffs.forEach((tariff, idx) => {
-					let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
-					lineTariffPriceSum[idx] += basefeeChecked ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
-					lineTariffPriceSum[idx] += selectedNetfees > 0 ? calculateNetfee(NETFEES[selectedNetfees-1], days, lineSumKwh, bill) : 0;
-					lineTariffPriceSum[idx] += vatChecked ? addVat(VAT_RATE, lineTariffPriceSum[idx], bill) : 0;
-					bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
-					bills.push(bill);
-				})
-
-				lineData.push ({
-					date: format(endDate, lineDatePattern),
-					kwh: round3Digits(lineSumKwh),
-					averageMarketPricePerKwh: round3Digits (lineMarketPriceCtSum / lineHourCounter),
-					weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
-					tariffPricesEUR: lineTariffPriceSum,
-					priceInfo: bills
-				});
-				
-				overallSumKwh += lineSumKwh;
-				overallMarketPriceSum += lineMarketPriceCtSum;
-				overallMarketPriceSumWeighted += linePriceCtSumWeighted;
-				for (let t = 0; t<tariffs.length; t++) {
-					overallTariffPriceSum[t] += lineTariffPriceSum[t];
-				};
-		
-				lineHourCounter = 0;
-				lineSumKwh = 0.0;
-				lineTariffPriceSum = new Array(tariffs.length).fill(0.0);
-				lineMarketPriceCtSum = 0.0;
-				linePriceCtSumWeighted = 0.0;
-				groupId += 1;
-			}
-		});
-	
-		lineData.push ({
-			date: "Gesamt",
-			kwh: overallSumKwh,
-			averageMarketPricePerKwh: round3Digits (overallMarketPriceSum / hourData.length),
-			weightedMarketPricePerKwh: round3Digits (overallMarketPriceSumWeighted / overallSumKwh),
-			tariffPricesEUR: overallTariffPriceSum,
-			priceInfo: []
-		});
-
-		const bestTariff = findBestTariff(tariffs, overallTariffPriceSum, Math.min);
-		onBestTariffFound(selectedMonth, new Date(hourData[0].utcHour), overallSumKwh, bestTariff.tariff, bestTariff.price);
-
+	function fillTable (pdr, mdr, selectedMonth) {
+		const tariffs = Array.from(TARIFFS.values());
+		const lineData = calculateTariffsTable (tariffs, pdr, mdr, selectedMonth, basefeeChecked, vatChecked, selectedNetfees);
+		const overallLine = lineData[lineData.length-1];
+		const bestTariff = findBestTariff(tariffs, overallLine.tariffPricesEUR, Math.min);
+		onBestTariffFound(selectedMonth, new Date(pdr.hourData[0].utcHour), overallLine.kwh, bestTariff.tariff, bestTariff.price);
 		return lineData;
 	}
 
@@ -197,7 +99,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{ fillTable(Array.from(TARIFFS.values()), pdr, mdr.hourMap, selectedMonth).map((lineData, idx, array) => (
+						{ fillTable(pdr, mdr, selectedMonth).map((lineData, idx, array) => (
 							<motion.tr
 								key={lineData.date}
 								initial={{ opacity: 0 }}
