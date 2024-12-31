@@ -81,7 +81,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 			</div>
 
 			<div className='overflow-x-auto'>
-				<table className='min-w-full divide-y divide-gray-700 table-fixed'>
+				<table className='table-fixed divide-y divide-gray-700'>
 					<thead>
 						<tr>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
@@ -90,7 +90,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
-							{Array.from(TARIFFS.values()).map((tariff) => (
+							{Array.from(TARIFFS_USAGE.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 									{tariff.name}
 								</th>

@@ -21,7 +21,7 @@ export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 
 	function fillTable (pdr, mdr, selectedMonth, basefeeChecked) {
 
-		const tariffs = Array.from(TARIFFS.values());
+		const tariffs = Array.from(TARIFFS_FEEDIN.values());
 		const lineData = calculateFeedinTable (tariffs, pdr, mdr, selectedMonth, basefeeChecked);
 		const overallLine = lineData[lineData.length-1];
 		const bestTariff = findBestTariff(tariffs, overallLine.tariffPricesEUR, Math.max);
@@ -53,7 +53,7 @@ export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 			</div>
 
 			<div className='overflow-x-auto'>
-				<table className='min-w-full divide-y divide-gray-700 table-fixed'>
+				<table className='table-fixed divide-y divide-gray-700'>
 					<thead>
 						<tr>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
@@ -70,7 +70,7 @@ export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 						</tr>
 					</thead>
 
-					<tbody className='divide divide-gray-700'>
+					<tbody>
 						{ fillTable(pdr, mdr, selectedMonth, basefeeChecked).map((lineData, idx, array) => (
 							<motion.tr
 								key={lineData.date}
