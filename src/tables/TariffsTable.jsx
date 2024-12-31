@@ -84,10 +84,10 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 				<table className='table-fixed divide-y divide-gray-700'>
 					<thead>
 						<tr>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-1 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Monat
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-1 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
 							{Array.from(TARIFFS_USAGE.values()).map((tariff) => (
@@ -106,23 +106,23 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
-								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+								<td className='px-2 py-1 whitespace-nowrap text-sm font-medium'>
 									<p className='text-gray-100'>{lineData.date}</p>
 									{ showCtPerKwh && (
 										<p className='text-gray-500'>{lineData.averageMarketPricePerKwh.toFixed(1)}</p>
 									)}
 								</td>
-								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+								<td className='px-2 py-1 whitespace-nowrap text-sm font-medium'>
 									<p className={(idx === array.length-1) ? 'text-gray-100':'text-gray-100'}>{lineData.kwh.toFixed(2)} kWh</p>
 									{ showCtPerKwh && (
 										<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(1)}</p>
 									)}
 								</td>
 								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff, pricesArray) => (
-								<td className='px-2 py-2 whitespace-nowrap text-sm'
+								<td className='px-2 py-1 whitespace-nowrap text-sm'
 									key={idxTariff}>
 									<Bill bill={lineData.priceInfo[idxTariff]}>
-										<p className={highlightBestPrice(priceEUR, pricesArray, idx === array.length-1, "text-yellow-300", "text-red-400")}>{formatEUR(priceEUR)}</p>
+										<p className={highlightBestPrice(priceEUR, pricesArray, idx === array.length-1, "text-yellow-300", Math.min)}>{formatEUR(priceEUR)}</p>
 									</Bill>
 									{ showCtPerKwh && (
 										<p className='text-gray-500'>{format1Digit(priceEUR/lineData.kwh*100)}</p>

@@ -27,19 +27,12 @@ export function title (pdr, monthOption, topic) {
     }
 }
 
-export function highlightBestPrice (price, prices, lastLine, minColor, maxColor) {
+export function highlightBestPrice (price, prices, lastLine, bestColor, bestFunction) {
     let fontStyle = "font-light";
     if (lastLine) fontStyle = "font-bold";
     
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    // const idx = Math.round ((price - min) / (max - min) * 4) + 1;
-    // const fontColor = "text-yellow-" + idx + "00";
+    const bestPrice = bestFunction(...prices.filter(value => !isNaN(value)));
     let fontColor = "text-gray-100";
-    if (price == min) fontColor = minColor;
-    if (price == max) fontColor = maxColor;
-    const result = fontColor + " " + fontStyle;
-
-    // console.log (price, min, max, idx, result);
-    return result;
+    if (price == bestPrice) fontColor = bestColor;
+    return fontColor + " " + fontStyle;
 }
