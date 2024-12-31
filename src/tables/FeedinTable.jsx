@@ -6,7 +6,7 @@ import { Checkbox } from "@nextui-org/checkbox";
 import { calculateFeedinTable, findBestTariff } from "./calculator.js";
 import { title, monthOptions, highlightBestPrice } from "./helpers.js";
 
-import { TARIFFS } from "../data/tariffs-feedin.js";
+import { TARIFFS_FEEDIN } from "../data/tariffs-feedin.js";
 import { format1Digit, formatEUR } from "../scripts/round.js";
 
 export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
@@ -62,7 +62,7 @@ export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
-							{Array.from(TARIFFS.values()).map((tariff) => (
+							{Array.from(TARIFFS_FEEDIN.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 									{tariff.name}
 								</th>

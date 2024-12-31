@@ -1,4 +1,4 @@
-export const TARIFFS = new Map([
+export const TARIFFS_FEEDIN = new Map([
     ['awattar.sunny', {
         name: 'aWATTar SUNNY',
         description: 'Monatliche Anpassung auf Basis EEX Month Futures',

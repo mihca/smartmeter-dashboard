@@ -5,8 +5,12 @@ import { Zap, CalendarFold, Sun, Euro } from 'lucide-react'
 
 import StatCard from '../components/StatCard'
 import Header from '../layout/Header'
+import StorageSimulatorTable from '../tables/StorageSimulatorTable'
 
 export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
+
+	function handleSimulationResult () {
+	}
 
     return (
 		<div className='flex-1 overflow-auto realtive z-10'>
@@ -34,6 +38,7 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 				{ usagePDR && feedinPDR && (
 					<>
 						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
+							<StorageSimulatorTable usagePDR={usagePDR} feedinPDR={feedinPDR} mdr={mdr} onSimulationResult={handleSimulationResult}/>
 						</div>
 					</>
 				)}

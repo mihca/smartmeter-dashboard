@@ -9,7 +9,7 @@ import { monthOptions, title, highlightBestPrice } from "./helpers.js";
 
 import Bill from "../components/Bill.jsx";
 
-import { TARIFFS } from "../data/tariffs-usage.js";
+import { TARIFFS_USAGE } from "../data/tariffs-usage.js";
 import { NETFEES } from "../data/netfees.js";
 
 export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
@@ -38,7 +38,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 	}
 
 	function fillTable (pdr, mdr, selectedMonth) {
-		const tariffs = Array.from(TARIFFS.values());
+		const tariffs = Array.from(TARIFFS_USAGE.values());
 		const lineData = calculateTariffsTable (tariffs, pdr, mdr, selectedMonth, basefeeChecked, vatChecked, selectedNetfees);
 		const overallLine = lineData[lineData.length-1];
 		const bestTariff = findBestTariff(tariffs, overallLine.tariffPricesEUR, Math.min);
@@ -65,7 +65,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 						selectedKeys={[selectedNetfees]} 
 						size="sm" 
 						variant="bordered">
-							{netfeeOptions(pdr).map((fee)=> ( <SelectItem key={fee.key}>{fee.label}</SelectItem> ))} 
+							{netfeeOptions().map((fee)=> ( <SelectItem key={fee.key}>{fee.label}</SelectItem> ))} 
 					</Select>
 
 					<Select 

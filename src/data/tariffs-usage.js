@@ -3,7 +3,7 @@
 // 2. "hour" passed as parameter to calculate is the begin of the hour, with the collected kwh from the end of the hour
 
 
-export const TARIFFS = new Map([
+export const TARIFFS_USAGE = new Map([
     ['awattar.neu', {
         name: 'aWATTar HOURLY',
         description: 'Börsenstrompreis mit 3% und 1,5 ct Aufschlag',
