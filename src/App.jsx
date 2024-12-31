@@ -6,6 +6,7 @@ import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
 import UsageCalculatorPage from './pages/UsageCalculatorPage'
 import FeedinCalculatorPage from './pages/FeedinCalculatorPage'
+import StorageSimulatorPage from './pages/StorageSimulatorPage'
 
 import Sidebar from "./layout/Sidebar"
 import { fetchMarketDataRecord } from './scripts/fetch-awattar';
@@ -85,6 +86,13 @@ function App() {
 				<Route path='/feedin-calculator' element={
 					<FeedinCalculatorPage
 						pdr={feedinPDR}
+						mdr={marketDataRecord}
+					/>} 
+				/>
+				<Route path='/storage-simulator' element={
+					<StorageSimulatorPage
+						usagePDR={usagePDR}
+						feedinPDR={feedinPDR}
 						mdr={marketDataRecord}
 					/>} 
 				/>

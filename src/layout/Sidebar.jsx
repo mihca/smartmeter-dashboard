@@ -1,4 +1,4 @@
-import { ReceiptEuro, TrendingUp, Menu, Upload } from 'lucide-react';
+import { ReceiptEuro, HandCoins, ServerCrash, TrendingUp, Menu, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 const SIDEBAR_ITEMS = [
     { name: "Upload", icon: Upload, color: "#6366f1", href: "/" },
     { name: "Tarifrechner", icon: ReceiptEuro, color: "#6366f1", href: "/usage-calculator" },
-    { name: "Einspeisevergütung", icon: ReceiptEuro, color: "#6366f1", href: "/feedin-calculator" },
+    { name: "Einspeisevergütung", icon: HandCoins, color: "#6366f1", href: "/feedin-calculator" },
+    { name: "Speicher-Simulator", icon: ServerCrash, color: "#6366f1", href: "/storage-simulator" },
     { name: "Börsenstrompreis", icon: TrendingUp, color: "#3B82F6", href: "/marketprice" }
 ]
 
