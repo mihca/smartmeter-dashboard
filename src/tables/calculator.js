@@ -151,9 +151,9 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
         lineMarketPriceCtSum += marketPriceCt;
         linePriceCtSumWeighted += marketPriceCt * hourEntry.kwh;
 
-        // Calculate tariffs
-        tariffs.forEach((tariff, idx) => {
-            lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
+        // Calculate price for each tariff
+        tariffs.forEach((tariff, tdx) => {
+            lineTariffPriceSum[tdx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
         })
 
         // Change of day or month
@@ -163,7 +163,7 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
             const endDate = new Date(array[idx-1].utcHour);
 
             tariffs.forEach((tariff, idx) => {
-                lineTariffPriceSum[idx] -= withBasefee ? calculateBasefee(tariff, endDate, monthOption, undefined) : 0;
+                lineTariffPriceSum[idx] -= withBasefee ? calculateBasefee(tariff, endDate, monthOption) : 0;
             })
 
             lineData.push ({
@@ -173,6 +173,7 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
                 weightedMarketPricePerKwh: round3Digits (linePriceCtSumWeighted / lineSumKwh),
                 tariffPricesEUR: lineTariffPriceSum,
             });
+
             
             overallSumKwh += lineSumKwh;
             overallMarketPriceSum += lineMarketPriceCtSum;
@@ -204,12 +205,16 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
 // returns EUR
 export function calculateHour (tariff, hourEntry, marketPrice) {
     const date = new Date(hourEntry.utcHour);
+    // Usage and feedin values are at the end of each hour, prices are at the beginning
+    // For ex.: 01.12.2023 00:00 will take the tariff price of 30.11.2023 23:00
+    date.setHours(date.getHours() - 1);
     const year = date.getFullYear();
     const month = date.getMonth();
     const weekday = date.getDay();
     const hour = date.getHours();
     const kwh = hourEntry.kwh;
-    return tariff.calculate(year, month, weekday, hour, marketPrice, kwh) / 100.0;
+    const priceEUR = tariff.calculate(year, month, weekday, hour, marketPrice, kwh) / 100.0;
+    return priceEUR;
 }
 
 // returns EUR
@@ -228,7 +233,7 @@ export function calculateNetfee(netfee, days, kwh, bill) {
 // returns EUR
 // monthOption=0 => Whole month for overall view
 // monthOption>0 => One day in dedicated month (January, ...)
-export function calculateBasefee(tariff, date, monthOption, bill) {
+export function calculateBasefee(tariff, date, monthOption, bill=undefined) {
     let basefee = 0.0;
     if (monthOption == 0) {
         // Calculate for whole month with number of days

@@ -1,5 +1,7 @@
-// ATTENTION: All prices are net prices without tax (ohne MwSt!)
-import { round2Digits } from "../scripts/round.js";
+// ATTENTION: 
+// 1. All prices are net prices without tax (ohne MwSt!)
+// 2. "hour" passed as parameter to calculate is the begin of the hour, with the collected kwh from the end of the hour
+
 
 export const TARIFFS = new Map([
     ['awattar.neu', {
@@ -48,9 +50,9 @@ export const TARIFFS = new Map([
             if (matrix.has(key)) {
                 let priceArray = matrix.get(key);
                 // console.log(key, ": [", priceArray[0], ",", priceArray[1], ",", priceArray[2], "]");
-                let price_ct = priceArray[1];
-                if ((hour > 0 && hour <= 6) || (hour > 13 && hour <= 15)) price_ct = priceArray[2];
-                if ((hour > 7 && hour <= 10) || (hour > 17 && hour <= 22)) price_ct = priceArray[0];
+                let price_ct = priceArray[1]; // Default is shoulder, define other ranges:
+                if ((hour >= 0 && hour < 6) || (hour >= 13 && hour < 15)) price_ct = priceArray[2]; // off-peak
+                if ((hour >= 7 && hour < 10) || (hour >= 17 && hour < 22)) price_ct = priceArray[0]; // peak
                 return kwh * price_ct;
             }
             return NaN;

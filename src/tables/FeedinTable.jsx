@@ -7,6 +7,7 @@ import { calculateFeedinTable, findBestTariff } from "./calculator.js";
 import { title, monthOptions, highlightBestPrice } from "./helpers.js";
 
 import { TARIFFS } from "../data/tariffs-feedin.js";
+import { format1Digit, formatEUR } from "../scripts/round.js";
 
 export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 
@@ -92,9 +93,9 @@ export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff, pricesArray) => (
 								<td className='px-2 py-2 whitespace-nowrap text-sm'
 									key={idxTariff}>
-									<p className={highlightBestPrice(priceEUR, pricesArray, idx === array.length-1,  "text-red-400", "text-yellow-300")}>{priceEUR.toFixed(2)} EUR</p>
+									<p className={highlightBestPrice(priceEUR, pricesArray, idx === array.length-1,  "text-red-400", "text-yellow-300")}>{formatEUR(priceEUR)}</p>
 									{ showCtPerKwh && (
-										<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(1)}</p>
+										<p className='text-gray-500'>{format1Digit(priceEUR/lineData.kwh*100)}</p>
 									)}
 								</td>
 								))}

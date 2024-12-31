@@ -3,6 +3,7 @@ export function monthOptions (pdr) {
     let months = [{key: 0, label: "Gesamt"}];
     let startDate = new Date(pdr.utcHourFrom);
     let endDate = new Date(pdr.utcHourTo);
+    endDate.setDate(1);
     let date = endDate;
     
     while (date.getMonth() >= startDate.getMonth() && date.getFullYear() == startDate.getFullYear()) {

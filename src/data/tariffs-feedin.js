@@ -53,7 +53,7 @@ export const TARIFFS = new Map([
     }],
     ['oemag', {
         name: 'OeMAG',
-        description: 'Monatlich angepasster Tarif mit Uhrzeiten',
+        description: 'Monatlich angepasster Tarif',
         company: 'OeMAG',
         link: 'https://www.oem-ag.at/de/marktpreis/',
         base_fee_monthly_eur: 0,
@@ -89,7 +89,7 @@ export const TARIFFS = new Map([
                 let price_ct = matrix.get(key);
                 return kwh * price_ct;
             }
-            return null;
+            return NaN;
         }
     }],
 ]);
