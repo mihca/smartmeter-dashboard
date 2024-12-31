@@ -1,5 +1,6 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
 import { round1Digit } from "../scripts/round";
 
 export default function MarketChart ({marketHourMap}) {
@@ -7,25 +8,33 @@ export default function MarketChart ({marketHourMap}) {
 	console.log (marketHourMap);
 	console.log (Array.from(marketHourMap, ([start, price]) => ({start, price})));
 
-	function groupByMonth(hourData) {
+	function groupByMonth(marketHourMap) {
 
 		let dataByMonth = [];
 		let monthSum = 0.0;
 		let month = 0;
+		let counter = 0;
+		let prevDate = 0;
+		let hourData = Array.from(marketHourMap, ([start, price]) => ({start, price}))
 
 		hourData.forEach((hourEntry, idx, array) => {
 
-			monthSum += hourEntry.kwh;
+			monthSum += hourEntry.price;
+			counter += 1;
 
-			if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
+			if (new Date(hourEntry.start).getMonth() != month || (idx === array.length - 1)) {
 					dataByMonth.push ({
-					month: month + 1,
-					kwh: round1Digit(monthSum)
+					timestamp: prevDate.toLocaleString('default', { month: 'long' }),
+					price: round1Digit(monthSum/counter)
 				});
 				monthSum = 0.0;
 				month += 1;
+				counter = 0;
 			}
+
+			prevDate = new Date(hourEntry.start);
 		});
+
 
 		return dataByMonth;
 	}
@@ -37,12 +46,12 @@ export default function MarketChart ({marketHourMap}) {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.4 }}
 		>
-			<h2 className='text-xl font-semibold text-gray-100 mb-4'>Verbrauch pro Monat</h2>
+			<h2 className='text-xl font-semibold text-gray-100 mb-4'>Preis pro Monat</h2>
 			<div style={{ width: "100%", height: 300 }}>
 				<ResponsiveContainer>
-					<BarChart data={Array.from(marketHourMap, ([start, price]) => ({start, price}))}>
+					<BarChart data={groupByMonth(marketHourMap)}>
 						<CartesianGrid strokeDasharray='3 3' stroke='#374151' />
-						<XAxis dataKey='start' stroke='#9CA3AF' />
+						<XAxis dataKey='timestamp' stroke='#9CA3AF' />
 						<YAxis stroke='#9CA3AF' />
 						<Tooltip
 							contentStyle={{

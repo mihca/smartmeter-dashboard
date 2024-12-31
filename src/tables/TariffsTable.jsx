@@ -4,7 +4,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/checkbox";
 import { format } from "date-fns";
 
-import { formatEUR, round3Digits } from "../scripts/round.js";
+import { formatEUR, format1Digit, round3Digits } from "../scripts/round.js";
 import { calculateHour, calculateBasefee, calculateNetfee, addVat } from "./calculator.js";
 import { findBestTariff, monthOptions, title, highlightBestPrice } from "./helpers.js";
 
@@ -220,10 +220,10 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 								<td className='px-2 py-2 whitespace-nowrap text-sm'
 									key={idxTariff}>
 									<Bill bill={lineData.priceInfo[idxTariff]}>
-										<p className={highlightBestPrice(priceEUR, pricesArray, idx === array.length-1, "text-yellow-300", "text-red-400")}>{priceEUR.toFixed(2)} EUR</p>
+										<p className={highlightBestPrice(priceEUR, pricesArray, idx === array.length-1, "text-yellow-300", "text-red-400")}>{formatEUR(priceEUR)}</p>
 									</Bill>
 									{ showCtPerKwh && (
-										<p className='text-gray-500'>{(priceEUR/lineData.kwh*100).toFixed(1)}</p>
+										<p className='text-gray-500'>{format1Digit(priceEUR/lineData.kwh*100)}</p>
 									)}
 								</td>
 								))}

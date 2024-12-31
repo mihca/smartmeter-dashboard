@@ -53,7 +53,7 @@ export const TARIFFS = new Map([
                 if ((hour > 7 && hour <= 10) || (hour > 17 && hour <= 22)) price_ct = priceArray[0];
                 return kwh * price_ct;
             }
-            return null;
+            return NaN;
         }
     }],
     ['evn.smartaktiv', {
@@ -86,7 +86,7 @@ export const TARIFFS = new Map([
                 if (hour > 8 && hour <= 20) price_ct = priceArray[0];
                 return kwh * price_ct;
             }
-            return null;
+            return NaN;
         }
     }],
     ['evn.smartgarant', {
