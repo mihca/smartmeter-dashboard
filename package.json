@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.6.5",
+    "@nextui-org/react": "^2.6.10",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.454.0",
     "motion": "^11.11.16",
