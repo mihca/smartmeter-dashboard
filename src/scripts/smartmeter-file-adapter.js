@@ -21,10 +21,12 @@ export function importProviderFile (fileContentText, providers) {
     const csvObjectLines = Papa.parse(fileContentText, {header: true, skipEmptyLines: true}).data;
 
     // Sum up hourly
-    const data = transformHourly (provider, csvObjectLines);
+    const result = transformHourly (provider, csvObjectLines);
+    const data = result.data;
 
     return {
         provider: provider.name,
+        kwh: result.sumKwh,
         utcHourFrom: data[0].utcHour,
         utcHourTo: data[data.length-1].utcHour,
         hourData: data 
@@ -42,6 +44,7 @@ function transformHourly (provider, csvObjectLines) {
     let data = [];
     let hourSumKwh = 0.0;
     let prevTimestamp = new Date();
+    let overallSumKwh = 0.0;
 
     csvObjectLines.forEach((lineObject) => {
         
@@ -64,10 +67,14 @@ function transformHourly (provider, csvObjectLines) {
                 kwh: hourSumKwh
             });
             
+            overallSumKwh += hourSumKwh;
             hourSumKwh = 0.0;
             prevTimestamp = hourTimestamp;
         }
     });
     
-    return data;
+    return {
+        data: data,
+        sumKwh: overallSumKwh
+    }
 }

@@ -10,6 +10,7 @@ import FileUploader from '../components/FileUploader'
 import QuantityChart from '../charts/QuantityChart'
 
 import { importProviderFile } from '../scripts/smartmeter-file-adapter'
+import { round1Digit } from '../scripts/round';
 
 import { PROVIDERS_USAGE } from "../data/providers-usage"
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin"
@@ -37,14 +38,6 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 			setErrorFeedin(true);	
 	}
 
-	function sumUsage(pdr) {
-		let sum = 0.0;
-		pdr.hourData.forEach((hour) => {
-			sum += hour.kwh;
-		})
-		return sum;
-	}
-
 	return (
 		<div className='flex-1 overflow-auto realtive z-10'>
 			<Header title="Upload" />
@@ -66,7 +59,7 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					{ usagePDR.utcHourFrom && (
 						<>
 							<StatCard title='Netzanbieter Verbrauch' icon={Zap} text={usagePDR.provider} color='#6366F1' />
-							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={Math.round(sumUsage(usagePDR)) + " kWh"} color='#8B5CF6' />
+							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(usagePDR.kwh) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
 					{ !usagePDR.hourData && (
@@ -78,7 +71,7 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					{ feedinPDR.utcHourFrom && (
 						<>
 							<StatCard title='Netzanbieter Einspeisung' icon={Sun} text={feedinPDR.provider} color='#6366F1' />
-							<StatCard title='Zeitraum Einspeisung' icon={CalendarFold} text={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={Math.round(sumUsage(feedinPDR)) + " kWh"} color='#8B5CF6' />
+							<StatCard title='Zeitraum Einspeisung' icon={CalendarFold} text={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(feedinPDR.kwh) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
 				</motion.div>
