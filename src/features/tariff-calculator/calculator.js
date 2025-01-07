@@ -1,6 +1,6 @@
-import { round1Digit, round2Digits, round3Digits, formatEUR } from "../scripts/round.js";
+import { round1Digit, round2Digits, round3Digits, formatEUR } from "../../scripts/round.js";
 import { format } from "date-fns";
-import { NETFEES } from "../data/netfees.js";
+import { NETFEES } from "../../data/netfees.js";
 
 const VAT_RATE = 20;
 

@@ -8,7 +8,7 @@ import { formatEUR, round1Digit } from '../scripts/round';
 
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
-import FeedinTable from '../tables/FeedinTable'
+import FeedinTable from '../features/tariff-calculator/FeedinTable'
 
 export default function UsageCalcuclatorPage({pdr, mdr}) {
 

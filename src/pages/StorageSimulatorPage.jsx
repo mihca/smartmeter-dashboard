@@ -5,7 +5,7 @@ import { Zap, CalendarFold, Sun, Euro } from 'lucide-react'
 
 import StatCard from '../components/StatCard'
 import Header from '../layout/Header'
-import StorageSimulatorTable from '../tables/StorageSimulatorTable'
+import StorageSimulatorTable from '../features/storage/StorageSimulatorTable'
 
 export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 

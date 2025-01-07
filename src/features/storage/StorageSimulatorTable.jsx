@@ -2,13 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Select, SelectItem } from "@nextui-org/select";
 
-import { calculateTariffsTable, findBestTariff } from "./calculator.js";
-import { formatEUR, format1Digit } from "../scripts/round.js";
-import { monthOptions, title, highlightBestPrice } from "./helpers.js";
-
-import { TARIFFS_FEEDIN } from "../data/tariffs-feedin.js";
-import { TARIFFS_USAGE } from "../data/tariffs-usage.js";
-import { NETFEES } from "../data/netfees.js";
+import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
+import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
+import { NETFEES } from "../../data/netfees.js";
 
 const CHARGING_LOSSES = [
 	{ key: "5", label: "5%"},

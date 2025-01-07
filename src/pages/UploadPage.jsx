@@ -9,7 +9,7 @@ import StatCard from '../components/StatCard'
 import FileUploader from '../components/FileUploader'
 import QuantityChart from '../charts/QuantityChart'
 
-import { importProviderFile } from '../scripts/smartmeter-file-adapter'
+import { importProviderFile } from '../features/import/smartmeter-file-adapter'
 import { round1Digit } from '../scripts/round';
 
 import { PROVIDERS_USAGE } from "../data/providers-usage"
