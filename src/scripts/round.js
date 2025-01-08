@@ -16,12 +16,19 @@ export function format1Digit (number) {
     if (isNaN(number)) 
         return "-"
     else
-        return number.toFixed(1);
+        return number.toFixed(1).replace(".", ",");
+}
+
+export function format2Digit (number) {
+    if (isNaN(number)) 
+        return "-"
+    else
+        return number.toFixed(2).replace(".", ",");
 }
 
 export function formatEUR (number) {
     if (isNaN(number)) 
         return "-"
     else
-        return (Math.round(number * 100) / 100).toFixed(2) + " EUR"
+        return ((Math.round(number * 100) / 100).toFixed(2) + " EUR").replace(".", ",");
 }

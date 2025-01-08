@@ -5,6 +5,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
 import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
 import { NETFEES } from "../../data/netfees.js";
+import { simulateStorage } from "./simulate-storage.js";
 
 const CHARGING_LOSSES = [
 	{ key: "5", label: "5%"},
@@ -60,7 +61,7 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 	}
 
 	function fillTable (usagePDR, feedinPDR, mdr) {
-		const lineData = [];
+		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedUsageTariff, selectedNetfees, selectedFeedinTariff);
 		return lineData;
 	}
 

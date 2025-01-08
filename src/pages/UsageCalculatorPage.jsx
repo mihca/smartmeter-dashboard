@@ -4,7 +4,7 @@ import { Medal, CalendarFold, Euro, Zap } from 'lucide-react'
 import { motion } from "framer-motion"
 import { format } from "date-fns";
 
-import { formatEUR, round1Digit } from '../scripts/round';
+import { formatEUR, format2Digit } from '../scripts/round';
 
 import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
@@ -44,7 +44,7 @@ export default function UsageCalcuclatorPage({pdr, mdr}) {
 						<>
 							<StatCard title='Bester Tarif' icon={Medal} text={bestTariff.name} sub={bestTariff.company} color='#8B5CF6' />
 							<StatCard title='Kosten' icon={Euro} text={formatEUR(bestPrice)} color='#6366F1' />
-							<StatCard title='Strommenge' icon={Zap} text={round1Digit(quantity) + " kWh"} color='#6366F1' />
+							<StatCard title='Strommenge' icon={Zap} text={format2Digit(quantity) + " kWh"} color='#6366F1' />
 							<StatCard title='Gewählter Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
 						</>
 					)}

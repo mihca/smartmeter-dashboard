@@ -4,7 +4,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/checkbox";
 
 import { calculateTariffsTable, findBestTariff } from "./calculator.js";
-import { formatEUR, format1Digit } from "../../scripts/round.js";
+import { formatEUR, format1Digit, format2Digit } from "../../scripts/round.js";
 import { monthOptions, title, highlightBestPrice } from "./helpers.js";
 
 import Bill from "../../components/Bill.jsx";
@@ -109,13 +109,13 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 								<td className='px-2 py-1 whitespace-nowrap text-sm font-medium'>
 									<p className='text-gray-100'>{lineData.date}</p>
 									{ showCtPerKwh && (
-										<p className='text-gray-500'>{lineData.averageMarketPricePerKwh.toFixed(1)}</p>
+										<p className='text-gray-500'>{format1Digit(lineData.averageMarketPricePerKwh)}</p>
 									)}
 								</td>
 								<td className='px-2 py-1 whitespace-nowrap text-sm font-medium'>
-									<p className={(idx === array.length-1) ? 'text-gray-100':'text-gray-100'}>{lineData.kwh.toFixed(2)} kWh</p>
+									<p className={(idx === array.length-1) ? 'text-gray-100':'text-gray-100'}>{format2Digit(lineData.kwh)} kWh</p>
 									{ showCtPerKwh && (
-										<p className='text-gray-500'>{lineData.weightedMarketPricePerKwh.toFixed(1)}</p>
+										<p className='text-gray-500'>{format1Digit(lineData.weightedMarketPricePerKwh)}</p>
 									)}
 								</td>
 								{ lineData.tariffPricesEUR.map ( (priceEUR, idxTariff, pricesArray) => (
