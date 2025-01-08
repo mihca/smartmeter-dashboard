@@ -6,6 +6,7 @@ import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
 import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
 import { NETFEES } from "../../data/netfees.js";
 import { simulateStorage } from "./simulate-storage.js";
+import { format1Digit, format2Digit, formatPercent } from "../../scripts/round.js";
 
 const CHARGING_LOSSES = [
 	{ key: "5", label: "5%"},
@@ -20,7 +21,7 @@ const STORAGE_SIZES = [
 
 export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimulationResult}) {
 
-	const [selectedNetfees, setSelectedNetfees] = useState("0");
+	const [selectedNetfees, setSelectedNetfees] = useState(null);
 	const [selectedFeedinTariff, setSelectedFeedinTariff] = useState(null);
 	const [selectedUsageTariff, setSelectedUsageTariff] = useState(null);
 	const [selectedStorageSize, setSelectedStorageSize] = useState("7.7");
@@ -61,7 +62,15 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 	}
 
 	function fillTable (usagePDR, feedinPDR, mdr) {
-		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedUsageTariff, selectedNetfees, selectedFeedinTariff);
+		if (selectedUsageTariff === null) return [];
+		if (selectedFeedinTariff === null) return [];
+		const usageTariff = TARIFFS_USAGE.get(selectedUsageTariff);
+		const feedinTariff = TARIFFS_FEEDIN.get(selectedFeedinTariff);
+		let netfees = null;
+
+		if (selectedNetfees !== null) netfees = NETFEES[selectedNetfees];
+		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, usageTariff, netfees, feedinTariff);
+
 		return lineData;
 	}
 
@@ -140,6 +149,9 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								SOC (kWh)
 							</th>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								SOC (%)
+							</th>
+							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Geld gespart (ct)
 							</th>
 						</tr>
@@ -157,16 +169,19 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 									<p className='text-gray-100'>{lineData.date}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{lineData.charged}</p>
+									<p className='text-gray-100'>{format2Digit(lineData.chargedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{lineData.discharged}</p>
+									<p className='text-gray-100'>{format2Digit(lineData.dischargedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{lineData.soc}</p>
+									<p className='text-gray-100'>{format1Digit(lineData.socKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{lineData.moneySaved}</p>
+									<p className='text-gray-100'>{formatPercent(lineData.socPercent)}</p>
+								</td>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+									<p className='text-gray-100'>{lineData.eurSaved}</p>
 								</td>
 							</motion.tr>
 						))}
