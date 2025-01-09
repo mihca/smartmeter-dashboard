@@ -42,17 +42,15 @@ export default function FileUploader({title, importError, onFileUploaded, demoFi
 			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
 			<div className='h-20'>
-        <span>
-          <input 
-            className='bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded transition duration-200 w-auto'
-            accept=".csv;.xls" 
-            type="file"
-            onChange={ handleUpload }/>
-        </span>
+        <input 
+          className='bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded transition duration-200 w-auto'
+          accept=".csv;.xls" 
+          type="file"
+          onChange={ handleUpload }/>
 
         { demoFile && (
           <button
-						className='px-3 py-1 rounded bg-blue-600 hover:bg-gray-700 transition duration-200'
+						className='px-3 py-2 mx-6 rounded bg-blue-600 hover:bg-gray-700 transition duration-200'
 						onClick={handleDemoUpload}
 					>
 						Lade Demo-Datei
