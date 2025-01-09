@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Button } from "@nextui-org/button";
 import { motion } from "framer-motion"
 
-export default function FileUploader({title, importError, onFileUploaded}) {
+export default function FileUploader({title, importError, onFileUploaded, demoFile}) {
   
   const [loading, setLoading] = useState(false);
+  const [filename, setFilename] = useState(null);
 
   function handleUpload(event) {
 
@@ -12,6 +14,7 @@ export default function FileUploader({title, importError, onFileUploaded}) {
     setLoading(true);
     
     reader.onload = (e) => {
+      setFilename(uploadedFile.name);
       onFileUploaded(uploadedFile.name, e.target.result);
       setLoading(false);
     }
@@ -19,6 +22,15 @@ export default function FileUploader({title, importError, onFileUploaded}) {
     reader.readAsText(uploadedFile);
 
   };
+
+  function handleDemoUpload() {
+    fetch(`./smartmeter-dashboard/${demoFile}`)
+      .then(response => response.text())
+      .then(data => {
+        setFilename(demoFile);
+        onFileUploaded(demoFile, data);
+      });
+  }
 
   return (
 		<motion.div
@@ -30,14 +42,29 @@ export default function FileUploader({title, importError, onFileUploaded}) {
 			<h2 className='text-lg font-medium mb-4 text-gray-100'>{ title }</h2>
 
 			<div className='h-20'>
-        <input 
-          className='bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded transition duration-200 w-auto'
-          accept=".csv;.xls" 
-          type="file"
-          onChange={ handleUpload }/>
+        <span>
+          <input 
+            className='bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded transition duration-200 w-auto'
+            accept=".csv;.xls" 
+            type="file"
+            onChange={ handleUpload }/>
+        </span>
+
+        { demoFile && (
+          <button
+						className='px-3 py-1 rounded bg-blue-600 hover:bg-gray-700 transition duration-200'
+						onClick={handleDemoUpload}
+					>
+						Lade Demo-Datei
+					</button>
+        )}
 
         {loading && (
           <p className='py-4'>Datei wird eingelesen...</p>
+        )}
+        
+        {filename && (
+          <p className='py-4'>{filename}</p>
         )}
 
         {importError && (

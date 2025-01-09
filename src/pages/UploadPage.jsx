@@ -45,8 +45,8 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				
 				{/* UPLOADER */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<FileUploader title="Stromverbrauch" importError={errorUsage} onFileUploaded={handleFileUsageUploaded} pdr={usagePDR}/>
-					<FileUploader title="Stromeinspeisung" importError={errorFeedin} onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR}/>
+					<FileUploader title="Stromverbrauch" importError={errorUsage} onFileUploaded={handleFileUsageUploaded} pdr={usagePDR} demoFile="NetzNOE-Jahresverbrauch-2024.csv"/>
+					<FileUploader title="Stromeinspeisung" importError={errorFeedin} onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR} demoFile="NetzNOE-Jahreseinspeisung-2024.csv"/>
 				</div>
 				
 				{/* STATS */}
