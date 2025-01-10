@@ -45,7 +45,7 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				
 				{/* UPLOADER */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<FileUploader title="Stromverbrauch" importError={errorUsage} onFileUploaded={handleFileUsageUploaded} pdr={usagePDR} demoFile="NetzNOE-Jahresverbrauch-2024.csv"/>
+					<FileUploader title="Strombezug" importError={errorUsage} onFileUploaded={handleFileUsageUploaded} pdr={usagePDR} demoFile="NetzNOE-Jahresverbrauch-2024.csv"/>
 					<FileUploader title="Stromeinspeisung" importError={errorFeedin} onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR} demoFile="NetzNOE-Jahreseinspeisung-2024.csv"/>
 				</div>
 				
@@ -58,8 +58,8 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				>
 					{ usagePDR.utcHourFrom && (
 						<>
-							<StatCard title='Netzanbieter Verbrauch' icon={Zap} text={usagePDR.provider} color='#6366F1' />
-							<StatCard title='Zeitraum Verbrauch' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(usagePDR.kwh) + " kWh"} color='#8B5CF6' />
+							<StatCard title='Netzanbieter Bezug' icon={Zap} text={usagePDR.provider} color='#6366F1' />
+							<StatCard title='Zeitraum Bezug' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(usagePDR.kwh) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
 					{ !usagePDR.hourData && (
@@ -79,7 +79,7 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				{/* CHARTS */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
 				{ usagePDR.hourData && (
-					<QuantityChart title="Verbrauch nach Monat" hourData={usagePDR.hourData}/>
+					<QuantityChart title="Bezug nach Monat" hourData={usagePDR.hourData}/>
 				)}
 				{ !usagePDR.hourData && (
 					<div className='p-6'/>
