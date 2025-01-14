@@ -33,27 +33,27 @@ export const TARIFFS_USAGE = new Map([
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             const matrix = new Map([
                 // year.month: peak, shoulder, off-peak
-                ["2024.1", [13.54, 11.12, 9.67]],
-                ["2024.2", [11.66, 9.58, 8.33]],
-                ["2024.3", [9.00, 7.39, 6.43]],
-                ["2024.4", [8.30, 6.82, 5.93]],
-                ["2024.5", [8.08, 6.64, 5.77]],
-                ["2024.6", [9.60, 7.89, 6.86]],
-                ["2024.7", [10.22, 8.40, 7.30]],
-                ["2024.8", [9.93, 8.15, 7.09]],
-                ["2024.9", [12.63, 10.37, 9.02]],
-                ["2024.10", [11.97, 9.23, 8.55]],
-                ["2024.11", [13.34, 10.96, 9.53]],
-                ["2024.12", [15.30, 12.57, 10.93]],
-                ["2025.1", [17.26, 14.18, 12.33]]
+                ["2024.1", [9.67, 11.12, 13.54]],
+                ["2024.2", [8.33, 9.58, 11.66]],
+                ["2024.3", [6.43, 7.39, 9.00]],
+                ["2024.4", [5.93, 6.82, 8.30]],
+                ["2024.5", [5.77, 6.64, 8.08]],
+                ["2024.6", [6.86, 7.89, 9.60]],
+                ["2024.7", [7.30, 8.40, 10.22]],
+                ["2024.8", [7.09, 8.15, 9.93]],
+                ["2024.9", [9.02, 10.37, 12.63]],
+                ["2024.10", [8.55, 9.23, 11.97]],
+                ["2024.11", [9.53, 10.96, 13.34]],
+                ["2024.12", [10.93, 12.57, 15.30]],
+                ["2025.1", [12.33, 14.18, 17.26]]
             ]);
             let key = year + "." + (month+1);
             if (matrix.has(key)) {
                 let priceArray = matrix.get(key);
                 // console.log(key, ": [", priceArray[0], ",", priceArray[1], ",", priceArray[2], "]");
                 let price_ct = priceArray[1]; // Default is shoulder, define other ranges:
-                if ((hour >= 0 && hour < 6) || (hour >= 13 && hour < 15)) price_ct = priceArray[2]; // off-peak
-                if ((hour >= 7 && hour < 10) || (hour >= 17 && hour < 22)) price_ct = priceArray[0]; // peak
+                if ((hour >= 0 && hour < 6) || (hour >= 13 && hour < 15)) price_ct = priceArray[0]; // off-peak
+                if ((hour >= 7 && hour < 10) || (hour >= 17 && hour < 22)) price_ct = priceArray[2]; // peak
                 return kwh * price_ct;
             }
             return NaN;
