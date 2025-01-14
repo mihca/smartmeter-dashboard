@@ -140,6 +140,12 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								Datum
 							</th>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								Verbraucht (kWh)
+							</th>
+							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+								Eingespeist (kWh)
+							</th>
+							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Laden (kWh)
 							</th>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
@@ -167,6 +173,12 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 							>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
 									<p className='text-gray-100'>{lineData.date}</p>
+								</td>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+									<p className='text-gray-100'>{format2Digit(lineData.usedKwh)}</p>
+								</td>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+									<p className='text-gray-100'>{format2Digit(lineData.feedinKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
 									<p className='text-gray-100'>{format2Digit(lineData.chargedKwh)}</p>
