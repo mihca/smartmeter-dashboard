@@ -6,7 +6,7 @@ import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
 import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
 import { NETFEES } from "../../data/netfees.js";
 import { simulateStorage } from "./simulate-storage.js";
-import { format1Digit, format2Digit, formatPercent } from "../../scripts/round.js";
+import { format1Digit, format2Digit, formatPercent, formatEUR } from "../../scripts/round.js";
 
 const CHARGING_LOSSES = [
 	{ key: "5", label: "5%"},
@@ -16,7 +16,11 @@ const CHARGING_LOSSES = [
 ];
 
 const STORAGE_SIZES = [
-	{ key: "7.7", label: "7,7"},
+	{ key: "5.1", label: "BYD HVS 5.1"},
+	{ key: "7.7", label: "BYD HVS 7.7"},
+	{ key: "11.0", label: "BYD HVM 11.0"},
+	{ key: "13.8", label: "BYD HVM 13.8"},
+	{ key: "22.1", label: "BYD HVM 22.1"},
 ];
 
 export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimulationResult}) {
@@ -66,9 +70,10 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 		if (selectedFeedinTariff === null) return [];
 		const usageTariff = TARIFFS_USAGE.get(selectedUsageTariff);
 		const feedinTariff = TARIFFS_FEEDIN.get(selectedFeedinTariff);
+		
 		let netfees = null;
+		if (selectedNetfees !== null) netfees = NETFEES[selectedNetfees-1];
 
-		if (selectedNetfees !== null) netfees = NETFEES[selectedNetfees];
 		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, usageTariff, netfees, feedinTariff);
 
 		return lineData;
@@ -158,7 +163,7 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								SOC (%)
 							</th>
 							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
-								Geld gespart (ct)
+								Geld gespart (EUR)
 							</th>
 						</tr>
 					</thead>
@@ -193,7 +198,7 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 									<p className='text-gray-100'>{formatPercent(lineData.socPercent)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{lineData.eurSaved}</p>
+									<p className='text-gray-100'>{formatEUR(lineData.eurSaved)}</p>
 								</td>
 							</motion.tr>
 						))}

@@ -50,7 +50,7 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
 
         // Calculate tariffs
         tariffs.forEach((tariff, idx) => {
-            lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
+            lineTariffPriceSum[idx] += calculateHour (tariff, hourEntry.kwh, hourEntry.utcHour, marketHourMap.get(hourEntry.utcHour-3600000));
         })
 
         // Change of day or month
@@ -65,7 +65,7 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
                 let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
                 lineTariffPriceSum[idx] += withBasefee ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
                 lineTariffPriceSum[idx] += selectedNetfeesIdx > 0 ? calculateNetfee(NETFEES[selectedNetfeesIdx-1], days, lineSumKwh, bill) : 0;
-                lineTariffPriceSum[idx] += withVat ? addVat(VAT_RATE, lineTariffPriceSum[idx], bill) : 0;
+                lineTariffPriceSum[idx] += withVat ? addVat(lineTariffPriceSum[idx], bill) : 0;
                 bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
                 bills.push(bill);
             })
@@ -153,7 +153,7 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
 
         // Calculate price for each tariff
         tariffs.forEach((tariff, tdx) => {
-            lineTariffPriceSum[tdx] += calculateHour (tariff, hourEntry, marketHourMap.get(hourEntry.utcHour-3600000));
+            lineTariffPriceSum[tdx] += calculateHour (tariff, hourEntry.kwh, hourEntry.utcHour, marketHourMap.get(hourEntry.utcHour-3600000));
         })
 
         // Change of day or month
@@ -203,8 +203,8 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
 }
 
 // returns EUR
-export function calculateHour (tariff, hourEntry, marketPrice) {
-    const date = new Date(hourEntry.utcHour);
+export function calculateHour (tariff, kwh, utcHour, marketPrice) {
+    const date = new Date(utcHour);
     // Usage and feedin values are at the end of each hour, prices are at the beginning
     // For ex.: 01.12.2023 00:00 will take the tariff price of 30.11.2023 23:00
     date.setHours(date.getHours() - 1);
@@ -212,21 +212,26 @@ export function calculateHour (tariff, hourEntry, marketPrice) {
     const month = date.getMonth();
     const weekday = date.getDay();
     const hour = date.getHours();
-    const kwh = hourEntry.kwh;
     const priceEUR = tariff.calculate(year, month, weekday, hour, marketPrice, kwh) / 100.0;
     return priceEUR;
 }
 
 // returns EUR
-export function calculateNetfee(netfee, days, kwh, bill) { 
+// hack: days maybe 0, 1, 28, 29, 30, 31
+// 0=hour
+// 1=1 day
+// ...=whole month
+export function calculateNetfee(netfee, days, kwh, bill=undefined) { 
     // Seems that netfees are calculated always for 365 days and therefore February counts always 28 days
     if (days == 29) days = 28;
-    const feePerDay = round2Digits( days * netfee.netfee_per_day_ct / 100 );
+    let feePerDay = round2Digits( days * netfee.netfee_per_day_ct / 100 );
+    // Handle per hour
+    if (days == 0) feePerDay = round2Digits( netfee.netfee_per_day_ct / 24 / 100 );
     const feePerKwh = round2Digits( round1Digit(kwh) * netfee.netfee_per_kwh_ct / 100 );
     const taxPerKwh = round2Digits( kwh * netfee.tax_per_kwh_ct / 100 );
     const fee = feePerDay + feePerKwh + taxPerKwh;
-    bill.push ({item: "Netzgebühren", value: formatEUR (feePerDay + feePerKwh)});
-    bill.push ({item: "Abgaben", value: formatEUR (taxPerKwh)});
+    if (bill) bill.push ({item: "Netzgebühren", value: formatEUR (feePerDay + feePerKwh)});
+    if (bill) bill.push ({item: "Abgaben", value: formatEUR (taxPerKwh)});
     return fee;
 }
 
@@ -256,9 +261,9 @@ export function calculateBasefee(tariff, date, monthOption, bill=undefined) {
     return round2Digits(basefee);
 }
 
-export function addVat(vatRate, amount, bill) {
-    let vat = amount * vatRate / 100;
-    bill.push ({item: "MwSt " + vatRate + "%" , value: formatEUR (vat)});
+export function addVat(amount, bill=undefined) {
+    let vat = amount * VAT_RATE / 100;
+    if (bill) bill.push ({item: "MwSt " + VAT_RATE + "%" , value: formatEUR (vat)});
     return vat;
 }
 

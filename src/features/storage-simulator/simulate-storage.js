@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { calculateHour, calculateNetfee, addVat } from "../tariff-calculator/calculator";
 
 export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedUsageTariff, selectedNetfees, selectedFeedinTariff) {
     const lineData = [];
@@ -13,28 +14,68 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         
         const usageHourData = usagePDR.hourData;
         const feedinHourData = feedinPDR.hourData;
-        let socKwh = 0.0;
+        const capacity = Number(selectedStorageSize);
+        const ladeverluste = Number(selectedChargingLoss);
+        let soc = 0.0;
+        let kohle_eur = 0.0;
         
         usageHourData.forEach((usageHourEntry, idx, array) => {
 
             const date = new Date (usageHourEntry.utcHour);
-            const kwhUsed = usageHourEntry.kwh;
-            const kwhFedin = feedinHourData[idx].kwh;
+            const kwh_verbrauch = usageHourEntry.kwh;
+            const kwh_einspeisung = feedinHourData[idx].kwh;
+            const marketPrice = mdr.hourMap.get(usageHourEntry.utcHour-3600000)
 
-            const { kwhCharged, kwhNotCharged, socKwhAfterCharging } = chargeStorage(selectedStorageSize, selectedChargingLoss, socKwh, kwhFedin);
-            const { kwhDischarged, socKwhAfterDischarging }= dischargeStorage(selectedStorageSize, selectedChargingLoss, socKwhAfterCharging, kwhUsed);
+            // Akku laden
+            let kwh_ladung = kwh_einspeisung;
 
-            socKwh = socKwhAfterDischarging;
-            
+            if (kwh_einspeisung > 0) {
+
+                let kwh_ladung_netto = kwh_einspeisung * (1 - ladeverluste / 100);
+                if (soc + kwh_ladung_netto > capacity) {
+                    // Akku voll
+                    kwh_ladung = (capacity - soc) * (1 + ladeverluste / 100);
+                    soc = capacity;
+                } else {
+                    // Komplette Einspeisung in den Akku geladen
+                    soc = soc + kwh_ladung_netto;
+                    kwh_ladung = kwh_einspeisung;
+                }
+
+                const kohle_nicht_erhalten = calculateHour (selectedFeedinTariff, kwh_ladung, usageHourEntry.utcHour, marketPrice);
+                kohle_eur = kohle_eur - kohle_nicht_erhalten
+                // print("Time: %s, Akku geladen mit %f kWh, Soc: %f, Geld verloren: %f ct" % (point_verbrauch['time'], kwh_einspeisung_netto, soc, kohle_nicht_erhalten))            }
+            }
+
+            // Akku entladen
+            let kwh_verbrauch_neu = kwh_verbrauch;
+            let kwh_gespart = 0;
+
+            if (kwh_verbrauch > 0 && soc > 0) {
+                soc = soc - kwh_verbrauch;
+                kwh_verbrauch_neu = 0;
+                if (soc < 0) {
+                    kwh_verbrauch_neu = -soc;
+                    soc = 0;
+                }
+                kwh_gespart = kwh_verbrauch - kwh_verbrauch_neu;
+                let kohle_gespart = calculateHour (selectedUsageTariff, kwh_gespart, usageHourEntry.utcHour, marketPrice);
+                // We need 1 our and not 1 day
+                kohle_gespart += calculateNetfee (selectedNetfees, 0, kwh_gespart);
+                kohle_gespart += addVat (kohle_gespart);
+                kohle_eur = kohle_eur + kohle_gespart;
+                // print("Time: %s, Akku entladen mit %f kWh, Soc: %f, Geld gespart: %f ct" % (point_verbrauch['time'], kwh_gespart, soc, kohle_gespart))
+            }
+
             lineData.push({
                 date: format(date, "yyyy-MM-dd HH:mm"),
-                usedKwh: kwhUsed,
-                feedinKwh: kwhFedin,
-                chargedKwh: kwhCharged,
-                dischargedKwh: kwhDischarged,
-                socKwh: socKwh,
-                socPercent: socKwh / selectedStorageSize,
-                eurSaved: 0.0
+                usedKwh: kwh_verbrauch,
+                feedinKwh: kwh_einspeisung,
+                chargedKwh: kwh_ladung,
+                dischargedKwh: kwh_gespart,
+                socKwh: soc,
+                socPercent: soc / selectedStorageSize,
+                eurSaved: kohle_eur
             });
         })
     }
