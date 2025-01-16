@@ -4,12 +4,6 @@ import { calculateHour, calculateNetfee, addVat } from "../tariff-calculator/cal
 export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedUsageTariff, selectedNetfees, selectedFeedinTariff) {
     const lineData = [];
 
-    console.log("storageSize", selectedStorageSize);
-    console.log("chargingLoss", selectedChargingLoss);
-    console.log("usageTariff", selectedUsageTariff);
-    console.log("netfees", selectedNetfees);
-    console.log("feedinTariff", selectedFeedinTariff);
-    
     if (usagePDR && feedinPDR) {
         
         const usageHourData = usagePDR.hourData;
@@ -27,7 +21,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             const marketPrice = mdr.hourMap.get(usageHourEntry.utcHour-3600000)
 
             // Akku laden
-            let kwh_ladung = kwh_einspeisung;
+            let kwh_ladung = 0;
 
             if (kwh_einspeisung > 0) {
 
