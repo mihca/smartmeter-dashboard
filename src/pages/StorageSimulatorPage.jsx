@@ -37,7 +37,7 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 					{ usagePDR.hourData && feedinPDR.hourData && (
 						<>
 							<StatCard title='Ersparnis' icon={Euro} text={formatEUR(eurProfit)} color='#8B5CF6' />
-							<StatCard title='Ersparnis 10 Jahre' icon={Euro} text={formatEUR(eurProfit*10)} color='#6366F1' />
+							<StatCard title='Ersparnis 15 Jahre' icon={Euro} text={formatEUR(eurProfit*15)} color='#6366F1' />
 							<StatCard title='Volle Ladezyklen' icon={Zap} text={Math.round(cycles)} color='#6366F1' />
 							<StatCard title='Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
 						</>

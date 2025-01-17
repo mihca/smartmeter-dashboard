@@ -70,7 +70,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             eurProfit += eurUsageSaved;
         }
 
-        console.log(new Date(usageHourEntry.utcHour), "verbraucht: "+kwhUsage.toFixed(2), "einspeist: "+kwhFeedin.toFixed(2), "laden: "+kwhCharged.toFixed(2), "entladen: "+kwhDischarged.toFixed(2), "soc: "+soc.toFixed(2), "verloren: "+eurFeedinLost.toFixed(2), "gespart: "+eurUsageSaved.toFixed(2));
+        // console.log(new Date(usageHourEntry.utcHour), "verbraucht: "+kwhUsage.toFixed(2), "einspeist: "+kwhFeedin.toFixed(2), "laden: "+kwhCharged.toFixed(2), "entladen: "+kwhDischarged.toFixed(2), "soc: "+soc.toFixed(2), "verloren: "+eurFeedinLost.toFixed(2), "gespart: "+eurUsageSaved.toFixed(2));
 
         sumKwhUsage += kwhUsage;
         sumKwhFeedin += kwhFeedin;
