@@ -9,10 +9,12 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         
     const usageHourData = usagePDR.hourData;
     const feedinHourData = feedinPDR.hourData;
+    const capacity = Number(selectedStorageSize);
+    const loss = Number(selectedChargingLoss);
      
     let groupId = 0;
     let groupChange = (date, groupId) => date.getMonth() != groupId;
-    let groupCounter = 0;
+    let lineCounter = 0;
     
     let lineDatePattern = "yyyy-MM";
     let sumKwhUsage = 0.0;
@@ -42,7 +44,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
 
         if (kwhFeedin > 0) {
             // We have kwh left to charge the storage
-            const [kwh, socAfterCharging] = chargeStorage(selectedStorageSize, selectedChargingLoss, soc, kwhFeedin);
+            const [kwh, socAfterCharging] = chargeStorage(capacity, loss, soc, kwhFeedin);
             const eurFeedinLost = calculateHour (selectedFeedinTariff, kwh, usageHourEntry.utcHour, marketPrice);
             soc = socAfterCharging;
             kwhCharged = kwh;
@@ -54,7 +56,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
 
         if (kwhUsage > 0 && soc > 0) {
             // We need kwh and storage is charged
-            const [kwh, socAfterDischarging] = dischargeStorage (selectedChargingLoss, soc, kwhUsage) 
+            const [kwh, socAfterDischarging] = dischargeStorage (loss, soc, kwhUsage) 
             let eurUsageSaved = calculateHour (selectedUsageTariff, kwh, usageHourEntry.utcHour, marketPrice);
             if (selectedNetfees) eurUsageSaved += calculateNetfee (selectedNetfees, 0, kwh);
             eurUsageSaved += addVat (eurUsageSaved);
@@ -69,7 +71,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         sumKwhDischarged += kwhDischarged;
         sumEurProfit += eurProfit;
         sumSoc += soc;
-        groupCounter += 1;
+        lineCounter += 1;
 
         // Change of day or month
         if (groupChange(new Date(usageHourEntry.utcHour), groupId) || (idx === array.length - 1)) {
@@ -82,8 +84,8 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
                 feedinKwh: sumKwhFeedin,
                 chargedKwh: sumKwhCharged,
                 dischargedKwh: sumKwhDischarged,
-                socKwh: sumSoc/groupCounter,
-                socPercent: sumSoc/groupCounter/selectedStorageSize,
+                socKwh: sumSoc/lineCounter,
+                socPercent: sumSoc/lineCounter/selectedStorageSize,
                 eurProfit: sumEurProfit
             });
 
@@ -99,7 +101,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             sumKwhDischarged = 0.0;
             sumEurProfit = 0.0;
             sumSoc = 0.0;
-            groupCounter = 0;
+            lineCounter = 0;
             groupId += 1;        
         }
     })
@@ -110,8 +112,8 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         feedinKwh: overallKwhFeedin,
         chargedKwh: overallKwhCharged,
         dischargedKwh: overallKwhDischarged,
-        socKwh: 0,
-        socPercent: 0,
+        socKwh: NaN,
+        socPercent: NaN,
         eurProfit: overallEurProfit
     });
 
@@ -152,7 +154,7 @@ function dischargeStorage (loss, soc, kwh) {
     let kwhGot = kwh;
 
     if (soc < 0) {
-        // Uups, storage is empty, not all kwh could be taken: Take all minus loss
+        // Uups, storage is empty, not all kwh could be taken: Take all you get minus loss
         kwhGot = soc * (1 - loss / 100);
         soc = 0;
     }

@@ -1,5 +1,3 @@
-import { ellipse } from "motion/react-client"
-
 export function round1Digit (number) {
     return Math.round(number * 10) / 10
 }

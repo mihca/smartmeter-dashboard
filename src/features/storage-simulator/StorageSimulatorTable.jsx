@@ -9,6 +9,7 @@ import { simulateStorage } from "./simulate-storage.js";
 import { format1Digit, format2Digit, formatPercent, formatEUR } from "../../scripts/round.js";
 
 const CHARGING_LOSSES = [
+	{ key: "0", label: "0%"},
 	{ key: "5", label: "5%"},
 	{ key: "10", label: "10%"},
 	{ key: "15", label: "15%"},
@@ -65,6 +66,13 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 		return options.sort ((t1, t2) => t1.name.localeCompare(t2.name));
 	}
 
+	function highlight (bool) {
+		if (bool)
+			return "text-gray-100";
+		else
+			return "text-gray-400";
+	}
+
 	function fillTable (usagePDR, feedinPDR, mdr) {
 		if (selectedUsageTariff === null) return [];
 		if (selectedFeedinTariff === null) return [];
@@ -77,7 +85,7 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, usageTariff, netfees, feedinTariff);
 		const overallLine = lineData[lineData.length-1];
 		const eurProfit = overallLine.eurProfit;
-		onSimulationResult(eurProfit);
+		onSimulationResult(eurProfit, overallLine.chargedKwh/selectedStorageSize);
 		return lineData;
 	}
 
@@ -159,10 +167,10 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								Entladen (kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								SOC (kWh)
+								Ø SOC (kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								SOC (%)
+								Ø SOC (%)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Geld gespart (EUR)
@@ -182,16 +190,16 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 									<p className='text-gray-100'>{lineData.date}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-400'>{format1Digit(lineData.usedKwh)}</p>
+									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.usedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-400'>{format1Digit(lineData.feedinKwh)}</p>
+									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.feedinKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-400'>{format1Digit(lineData.chargedKwh)}</p>
+									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.chargedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-400'>{format1Digit(lineData.dischargedKwh)}</p>
+									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.dischargedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
 									<p className='text-gray-400'>{format1Digit(lineData.socKwh)}</p>
@@ -200,7 +208,7 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 									<p className='text-gray-400'>{formatPercent(lineData.socPercent)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-400'>{formatEUR(lineData.eurProfit)}</p>
+									<p className={highlight(idx === array.length-1)}>{formatEUR(lineData.eurProfit)}</p>
 								</td>
 							</motion.tr>
 						))}

@@ -8,16 +8,19 @@ import { format } from "date-fns";
 import StatCard from '../components/StatCard'
 import Header from '../layout/Header'
 import StorageSimulatorTable from '../features/storage-simulator/StorageSimulatorTable'
-import { formatEUR } from '../scripts/round'
+import { format1Digit, formatEUR } from '../scripts/round'
 
 export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 
 	const [eurProfit, setEurProfit] = useState(0);
+	const [cycles, setCycles] = useState(0);
 	const [timeRange, setTimeRange] = useState("");
 
-	function handleSimulationResult (eurProfit) {
+	function handleSimulationResult (eurProfit, cycles) {
+		console.log(cycles);
 		setEurProfit(eurProfit);
 		setTimeRange(format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy"));
+		setCycles(cycles);
 	}
 
     return (
@@ -36,7 +39,7 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 						<>
 							<StatCard title='Ersparnis' icon={Euro} text={formatEUR(eurProfit)} color='#8B5CF6' />
 							<StatCard title='Ersparnis 10 Jahre' icon={Euro} text={formatEUR(eurProfit*10)} color='#6366F1' />
-							<StatCard title='Volle Ladezyklen' icon={Zap} text='' color='#6366F1' />
+							<StatCard title='Volle Ladezyklen' icon={Zap} text={Math.round(cycles)} color='#6366F1' />
 							<StatCard title='Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
 						</>
 					)}
