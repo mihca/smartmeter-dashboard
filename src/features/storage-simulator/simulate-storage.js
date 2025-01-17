@@ -14,9 +14,12 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
      
     let groupId = 0;
     let groupChange = (date, groupId) => date.getMonth() != groupId;
+    let lineDatePattern = "yyyy-MM";
+    //let groupId = 1;
+    //let groupChange = (date, groupId) => date.getDay() != groupId;
+    //let lineDatePattern = "yyyy-MM-dd";
     let lineCounter = 0;
     
-    let lineDatePattern = "yyyy-MM";
     let sumKwhUsage = 0.0;
     let sumKwhFeedin = 0.0;
     let sumKwhCharged = 0.0;
@@ -41,11 +44,13 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
     
         // Charge storage
         let kwhCharged = 0;
+        let eurFeedinLost = 0;
+        let eurUsageSaved = 0;
 
         if (kwhFeedin > 0) {
             // We have kwh left to charge the storage
             const [kwh, socAfterCharging] = chargeStorage(capacity, loss, soc, kwhFeedin);
-            const eurFeedinLost = calculateHour (selectedFeedinTariff, kwh, usageHourEntry.utcHour, marketPrice);
+            eurFeedinLost = calculateHour (selectedFeedinTariff, kwh, usageHourEntry.utcHour, marketPrice);
             soc = socAfterCharging;
             kwhCharged = kwh;
             eurProfit -= eurFeedinLost;
@@ -57,13 +62,15 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         if (kwhUsage > 0 && soc > 0) {
             // We need kwh and storage is charged
             const [kwh, socAfterDischarging] = dischargeStorage (loss, soc, kwhUsage) 
-            let eurUsageSaved = calculateHour (selectedUsageTariff, kwh, usageHourEntry.utcHour, marketPrice);
+            eurUsageSaved = calculateHour (selectedUsageTariff, kwh, usageHourEntry.utcHour, marketPrice);
             if (selectedNetfees) eurUsageSaved += calculateNetfee (selectedNetfees, 0, kwh);
             eurUsageSaved += addVat (eurUsageSaved);
             soc = socAfterDischarging;
             kwhDischarged = kwh;
             eurProfit += eurUsageSaved;
         }
+
+        console.log(new Date(usageHourEntry.utcHour), "verbraucht: "+kwhUsage.toFixed(2), "einspeist: "+kwhFeedin.toFixed(2), "laden: "+kwhCharged.toFixed(2), "entladen: "+kwhDischarged.toFixed(2), "soc: "+soc.toFixed(2), "verloren: "+eurFeedinLost.toFixed(2), "gespart: "+eurUsageSaved.toFixed(2));
 
         sumKwhUsage += kwhUsage;
         sumKwhFeedin += kwhFeedin;
@@ -148,15 +155,16 @@ function chargeStorage (capacity, loss, soc, kwh) {
 // soc=10 means 10 kWh loaded in storage
 function dischargeStorage (loss, soc, kwh) {
     
-    // Assume all kwh can be taken from storage
     let kwhGrossCharge = kwh * (1 + loss / 100);
-    soc -= kwhGrossCharge;
-    let kwhGot = kwh;
+    let kwhGot = 0;
 
-    if (soc < 0) {
+    if (soc - kwhGrossCharge < 0) {
         // Uups, storage is empty, not all kwh could be taken: Take all you get minus loss
         kwhGot = soc * (1 - loss / 100);
         soc = 0;
+    } else {
+        kwhGot = kwh;
+        soc -= kwhGrossCharge;
     }
     
     return [

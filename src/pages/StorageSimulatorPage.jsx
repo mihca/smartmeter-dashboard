@@ -17,7 +17,6 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 	const [timeRange, setTimeRange] = useState("");
 
 	function handleSimulationResult (eurProfit, cycles) {
-		console.log(cycles);
 		setEurProfit(eurProfit);
 		setTimeRange(format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy"));
 		setCycles(cycles);
