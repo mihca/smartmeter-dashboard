@@ -9,12 +9,11 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         
     const usageHourData = usagePDR.hourData;
     const feedinHourData = feedinPDR.hourData;
-    const capacity = Number(selectedStorageSize);
-    const ladeverluste = Number(selectedChargingLoss);
      
     let groupId = 0;
     let groupChange = (date, groupId) => date.getMonth() != groupId;
     let groupCounter = 0;
+    
     let lineDatePattern = "yyyy-MM";
     let sumKwhUsage = 0.0;
     let sumKwhFeedin = 0.0;
@@ -23,59 +22,52 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
     let sumSoc = 0.0;
     let sumEurProfit = 0.0;
 
+    let overallKwhUsage = 0.0;
+    let overallKwhFeedin = 0.0;
+    let overallKwhCharged = 0.0;
+    let overallKwhDischarged = 0.0;
+    let overallEurProfit = 0.0;
+
     let soc = 0.0;
-    let gewinn_eur = 0.0;
 
     usageHourData.forEach((usageHourEntry, idx, array) => {
 
-        const date = new Date (usageHourEntry.utcHour);
-        const kwh_verbrauch = usageHourEntry.kwh;
-        const kwh_einspeisung = feedinHourData[idx].kwh;
+        const kwhUsage = usageHourEntry.kwh;
+        const kwhFeedin = feedinHourData[idx].kwh;
         const marketPrice = mdr.hourMap.get(usageHourEntry.utcHour-3600000)
+        let eurProfit = 0.0;
     
-        // Akku laden
-        let kwh_ladung = 0;
+        // Charge storage
+        let kwhCharged = 0;
 
-        if (kwh_einspeisung > 0) {
-
-            let kwh_ladung_netto = kwh_einspeisung * (1 - ladeverluste / 100);
-            if (soc + kwh_ladung_netto > capacity) {
-                // Akku voll
-                kwh_ladung = (capacity - soc) * (1 + ladeverluste / 100);
-                soc = capacity;
-            } else {
-                // Komplette Einspeisung in den Akku geladen
-                soc = soc + kwh_ladung_netto;
-                kwh_ladung = kwh_einspeisung;
-            }
-
-            const eur_nicht_erhalten = calculateHour (selectedFeedinTariff, kwh_ladung, usageHourEntry.utcHour, marketPrice);
-            gewinn_eur = gewinn_eur - eur_nicht_erhalten
+        if (kwhFeedin > 0) {
+            // We have kwh left to charge the storage
+            const [kwh, socAfterCharging] = chargeStorage(selectedStorageSize, selectedChargingLoss, soc, kwhFeedin);
+            const eurFeedinLost = calculateHour (selectedFeedinTariff, kwh, usageHourEntry.utcHour, marketPrice);
+            soc = socAfterCharging;
+            kwhCharged = kwh;
+            eurProfit -= eurFeedinLost;
         }
 
-        // Akku entladen
-        let kwh_verbrauch_neu = kwh_verbrauch;
-        let kwh_gespart = 0;
+        // Discharge storage
+        let kwhDischarged = 0;
 
-        if (kwh_verbrauch > 0 && soc > 0) {
-            soc = soc - kwh_verbrauch;
-            kwh_verbrauch_neu = 0;
-            if (soc < 0) {
-                kwh_verbrauch_neu = -soc;
-                soc = 0;
-            }
-            kwh_gespart = kwh_verbrauch - kwh_verbrauch_neu;
-            let eur_gespart = calculateHour (selectedUsageTariff, kwh_gespart, usageHourEntry.utcHour, marketPrice);
-            eur_gespart += calculateNetfee (selectedNetfees, 0, kwh_gespart);
-            eur_gespart += addVat (eur_gespart);
-            gewinn_eur += eur_gespart;
+        if (kwhUsage > 0 && soc > 0) {
+            // We need kwh and storage is charged
+            const [kwh, socAfterDischarging] = dischargeStorage (selectedChargingLoss, soc, kwhUsage) 
+            let eurUsageSaved = calculateHour (selectedUsageTariff, kwh, usageHourEntry.utcHour, marketPrice);
+            if (selectedNetfees) eurUsageSaved += calculateNetfee (selectedNetfees, 0, kwh);
+            eurUsageSaved += addVat (eurUsageSaved);
+            soc = socAfterDischarging;
+            kwhDischarged = kwh;
+            eurProfit += eurUsageSaved;
         }
 
-        sumKwhUsage += kwh_verbrauch;
-        sumKwhFeedin += kwh_einspeisung;
-        sumKwhCharged += kwh_ladung;
-        sumKwhDischarged += kwh_gespart;
-        sumEurProfit += gewinn_eur;
+        sumKwhUsage += kwhUsage;
+        sumKwhFeedin += kwhFeedin;
+        sumKwhCharged += kwhCharged;
+        sumKwhDischarged += kwhDischarged;
+        sumEurProfit += eurProfit;
         sumSoc += soc;
         groupCounter += 1;
 
@@ -92,8 +84,14 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
                 dischargedKwh: sumKwhDischarged,
                 socKwh: sumSoc/groupCounter,
                 socPercent: sumSoc/groupCounter/selectedStorageSize,
-                eurSaved: gewinn_eur
+                eurProfit: sumEurProfit
             });
+
+            overallKwhUsage += sumKwhUsage;
+            overallKwhFeedin += sumKwhFeedin;
+            overallKwhCharged += sumKwhCharged;
+            overallKwhDischarged += sumKwhDischarged;
+            overallEurProfit += sumEurProfit;
 
             sumKwhUsage = 0.0;
             sumKwhFeedin = 0.0;
@@ -106,64 +104,61 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         }
     })
 
+    lineData.push({
+        date: "Gesamt",
+        usedKwh: overallKwhUsage,
+        feedinKwh: overallKwhFeedin,
+        chargedKwh: overallKwhCharged,
+        dischargedKwh: overallKwhDischarged,
+        socKwh: 0,
+        socPercent: 0,
+        eurProfit: overallEurProfit
+    });
+
     return lineData;
 }
 
-function chargeStorage (storageSize, chargingLoss, socKwh, availableGrossKwh) {
-    // money loss, because no feedin
-    if (availableGrossKwh === 0) {
-        return {
-            kwhCharged: 0,
-            kwhNotCharged: 0,
-            socKwhAfterCharging: socKwh
-        }
+// capacity=7 means 7 kWh storage
+// loss=10 means 10%
+// soc=10 means 10 kWh loaded in storage
+function chargeStorage (capacity, loss, soc, kwh) {
+
+    let kwhNetCharge = kwh * (1 - loss / 100);
+    let kwhCharged = 0.0;
+    if (soc + kwhNetCharge > capacity) {
+        // Storage fully charged, not all kwh charged
+        kwhCharged = (capacity - soc) * (1 + loss / 100);
+        soc = capacity;
+    } else {
+        // Charged all kwh
+        soc = soc + kwhNetCharge;
+        kwhCharged = kwh;
     }
 
-    const availableNetKwh = availableGrossKwh * (1 - chargingLoss / 100.0);
-    
-    if (socKwh + availableNetKwh > storageSize) {
-        // storage fully charged, cacluate the left gross kwh
-        const kwhGrossUsed = (storageSize - socKwh) * (1 + chargingLoss / 100.0);
-        console.log("Lade Akku mit ", kwhGrossUsed);
-        return {
-            kwhCharged: kwhGrossUsed,
-            kwhNotCharged: availableGrossKwh - kwhGrossUsed,
-            socKwhAfterCharging: storageSize
-        }
-    } else {
-        // charge all kwh to storage
-        console.log("Lade Akku mit ", availableGrossKwh);
-        return {
-            kwhCharged: availableGrossKwh,
-            kwhNotCharged: 0,
-            socKwhAfterCharging: socKwh + availableNetKwh
-        }
-    }
+    return [
+        kwhCharged,
+        soc
+    ]
+
 }
 
-function dischargeStorage (storageSize, chargingLoss, socKwh, neededNetKwh) {
-    // save money because net usage is reduced
-    if (socKwh === 0 || neededNetKwh === 0) {
-        console.log("Brauch nix aus dem Akku oder Akku leer");
-        return {
-            kwhDischarged: 0,
-            socKwhAfterDischarging: 0
-        }
-    }
+// loss=10 means 10%
+// soc=10 means 10 kWh loaded in storage
+function dischargeStorage (loss, soc, kwh) {
+    
+    // Assume all kwh can be taken from storage
+    let kwhGrossCharge = kwh * (1 + loss / 100);
+    soc -= kwhGrossCharge;
+    let kwhGot = kwh;
 
-    const neededGrossKwh = neededNetKwh * (1 + chargingLoss / 100.0);
-
-    if (socKwh >= neededGrossKwh) {
-        console.log("Entlade ", neededGrossKwh);
-        return {
-            kwhDischarged: neededGrossKwh,
-            socKwhAfterDischarging: socKwh - neededGrossKwh
-        }
-    } else {
-        console.log("Entlade ", socKwh * (1 - chargingLoss / 100.0));
-        return {
-            kwhDischarged: socKwh * (1 - chargingLoss / 100.0),
-            socKwhAfterDischarging: 0
-        }
+    if (soc < 0) {
+        // Uups, storage is empty, not all kwh could be taken: Take all minus loss
+        kwhGot = soc * (1 - loss / 100);
+        soc = 0;
     }
+    
+    return [
+        kwhGot,
+        soc
+    ]
 }

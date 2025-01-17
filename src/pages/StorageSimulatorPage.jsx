@@ -1,15 +1,23 @@
 import React from 'react'
+import { useState } from "react";
 
 import { motion } from "framer-motion"
 import { Zap, CalendarFold, Sun, Euro } from 'lucide-react'
+import { format } from "date-fns";
 
 import StatCard from '../components/StatCard'
 import Header from '../layout/Header'
 import StorageSimulatorTable from '../features/storage-simulator/StorageSimulatorTable'
+import { formatEUR } from '../scripts/round'
 
 export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 
-	function handleSimulationResult () {
+	const [eurProfit, setEurProfit] = useState(0);
+	const [timeRange, setTimeRange] = useState("");
+
+	function handleSimulationResult (eurProfit) {
+		setEurProfit(eurProfit);
+		setTimeRange(format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy"));
 	}
 
     return (
@@ -26,16 +34,16 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 				>
 					{ usagePDR.hourData && feedinPDR.hourData && (
 						<>
-							<StatCard title='Ersparnis pro Jahr' icon={Euro} text='' color='#8B5CF6' />
-							<StatCard title='Kosten' icon={Euro} text='' color='#6366F1' />
-							<StatCard title='Strommenge' icon={Zap} text='' color='#6366F1' />
-							<StatCard title='Gewählter Zeitraum' icon={CalendarFold} text='' color='#8B5CF6' />
+							<StatCard title='Ersparnis' icon={Euro} text={formatEUR(eurProfit)} color='#8B5CF6' />
+							<StatCard title='Ersparnis 10 Jahre' icon={Euro} text={formatEUR(eurProfit*10)} color='#6366F1' />
+							<StatCard title='Volle Ladezyklen' icon={Zap} text='' color='#6366F1' />
+							<StatCard title='Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
 						</>
 					)}
 				</motion.div>
 
 				{/* CHARTS */}
-				{ usagePDR && feedinPDR && (
+				{ usagePDR.hourData && feedinPDR.hourData && (
 					<>
 						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
 							<StorageSimulatorTable usagePDR={usagePDR} feedinPDR={feedinPDR} mdr={mdr} onSimulationResult={handleSimulationResult}/>

@@ -75,7 +75,9 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 		if (selectedNetfees !== null) netfees = NETFEES[selectedNetfees-1];
 
 		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, usageTariff, netfees, feedinTariff);
-
+		const overallLine = lineData[lineData.length-1];
+		const eurProfit = overallLine.eurProfit;
+		onSimulationResult(eurProfit);
 		return lineData;
 	}
 
@@ -138,31 +140,31 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 			</div>
 
 			<div className='overflow-x-auto'>
-				<table className='min-w-full divide-y divide-gray-700 table-fixed'>
+				<table className='min-w-full divide-y divide-gray-700 table-fixed text-right'>
 					<thead>
 						<tr>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='text-left px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Datum
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Verbraucht (kWh)
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Eingespeist (kWh)
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Laden (kWh)
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Entladen (kWh)
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								SOC (kWh)
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								SOC (%)
 							</th>
-							<th className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Geld gespart (EUR)
 							</th>
 						</tr>
@@ -176,29 +178,29 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
-								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+								<td className='px-2 py-2 whitespace-nowrap text-sm text-left font-medium'>
 									<p className='text-gray-100'>{lineData.date}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{format2Digit(lineData.usedKwh)}</p>
+									<p className='text-gray-400'>{format1Digit(lineData.usedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{format2Digit(lineData.feedinKwh)}</p>
+									<p className='text-gray-400'>{format1Digit(lineData.feedinKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{format2Digit(lineData.chargedKwh)}</p>
+									<p className='text-gray-400'>{format1Digit(lineData.chargedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{format2Digit(lineData.dischargedKwh)}</p>
+									<p className='text-gray-400'>{format1Digit(lineData.dischargedKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{format1Digit(lineData.socKwh)}</p>
+									<p className='text-gray-400'>{format1Digit(lineData.socKwh)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{formatPercent(lineData.socPercent)}</p>
+									<p className='text-gray-400'>{formatPercent(lineData.socPercent)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
-									<p className='text-gray-100'>{formatEUR(lineData.eurSaved)}</p>
+									<p className='text-gray-400'>{formatEUR(lineData.eurProfit)}</p>
 								</td>
 							</motion.tr>
 						))}
