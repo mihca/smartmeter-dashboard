@@ -13,11 +13,3 @@ export const NETFEES = [
         tax_per_kwh_ct: 0.10
     }
 ];
-
-// Fixkosten
-// Grundgebühr: 2,49
-// 30 Tage Netz: 5,11
-// Brutto: 9,12 EUR
-// kwh + 1,2 + 6,553
-// 10ct = 21ct brutto = 4,2 EUR/100 km
-// 15ct = 27ct brutto = 5,4 EUR/100 km
