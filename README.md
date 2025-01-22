@@ -1,5 +1,5 @@
 # [Smartmeter-Dashboard](https://mihca.github.io/smartmeter-dashboard/)
-Ein Dashboard für die Auswertung von Smartmeter-Aufzeichnungen
+Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung mit Börsenstrom
 - Lohnt sich ein dynamischer Stromtarif für mich?
 - Was würde ich bei einer dynamischen Einspeisevergütung erhalten?
 - Lohnt sich ein Speicher für meine Solaranlage?
@@ -29,7 +29,7 @@ Features:
 
 Aktuell werden nur österreichische Formate und Tarife unterstützt.
 
-TODOs:
+**TODOs**:
 - Layout für Tablet und Mobile mit Tailwind CSS
 - Weitere Stromtarife
 - Weitere Smartmeter-Dateiformate
@@ -143,9 +143,11 @@ let mdr = {
 npm install
 npm run dev
 ```
+Developed with npm 10.9.0 und node v22.11.0. Maybe its a good idea to use 
+[nvm](https://github.com/coreybutler/nvm-windows).
 
 ## React + Vite
-Das Projekt basiert auf React, Javascript, Vite und dem react-admin-dashboard:
+Das Projekt basiert auf React, Javascript, Vite und dem react-admin-dashboard von Burak:
 - [react-admin-dashboard](https://github.com/burakorkmez/react-admin-dashboard) on github
 - [Tutorial Video](https://youtu.be/gK0v_d91epk) on Youtube
 
