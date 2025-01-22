@@ -1,6 +1,7 @@
 import Papa from "papaparse"
 
 import { findProvider } from "./provider-selector";
+import { round3Digits } from "../../scripts/round.js"
 
 export function importProviderFile (fileContentText, providers) {
 
@@ -63,7 +64,7 @@ function transformHourly (provider, csvObjectLines) {
             
             data.push ({
                 utcHour: hourTimestamp,
-                kwh: hourSumKwh
+                kwh: round3Digits(hourSumKwh)
             });
             
             overallSumKwh += hourSumKwh;
@@ -73,7 +74,7 @@ function transformHourly (provider, csvObjectLines) {
     });
     
     return {
-        sumKwh: overallSumKwh,
+        sumKwh: round3Digits(overallSumKwh),
         data: data
     }
 }
