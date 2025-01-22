@@ -111,9 +111,9 @@ Alle Zeitstempel werden intern immer in **UTC** gespeichert, während die Netzbe
 ## Alle Beträge in netto ohne MwSt
 Alle Preise in Tarifen oder Gebühren werden immer in netto ohne MwSt erfasst.
 ## PDR 
-Power Data Record: Speichert die kumulierten Verbrauchs- und Einspeisedaten auf Stundenebene.
+Power Data Record: Enthält die kumulierten Verbrauchs- oder Einspeisedaten auf Stundenebene mit Zeitstempel in UTC.
 
-ACHTUNG: Die Zeitangabe bezieht sich auf das Ende der Stunde.
+ACHTUNG: Die Zeitangabe bezieht sich auf das **Ende der Stunde**.
 ```
 let pdr = {
     provider: "Netz NÖ",
@@ -128,9 +128,9 @@ let pdr = {
 }
 ```
 ## MDR 
-Market Data Record: Speichert die Preise der Strombörse für jede Stunde in UTC. 
+Market Data Record: Enthält die Preise der Strombörse für jede Stunde in UTC. 
 
-ACHTUNG: Die Zeitangabe bezieht sich auf den Anfang der Stunde.
+ACHTUNG: Die Zeitangabe bezieht sich auf den **Anfang der Stunde**.
 ```
 let mdr = {
 	country: "at",
