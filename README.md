@@ -1,5 +1,5 @@
 # [Smartmeter-Dashboard](https://mihca.github.io/smartmeter-dashboard/)
-Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung mit Smartmeter und Börsenstrompreisen
+Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung (optional) mit Smartmeter und Börsenstrompreisen
 - Lohnt sich ein dynamischer Stromtarif für mich?
 - Was würde ich bei einer dynamischen Einspeisevergütung erhalten?
 - Lohnt sich ein Speicher für meine Solaranlage bei dynamischen Strompreisen?
@@ -7,7 +7,7 @@ Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung mit Sm
 [Ausprobieren: "Lade Demo-Datei"](https://mihca.github.io/smartmeter-dashboard/)
 
 Features:
-- Import von CSV- und XLS-Dateien verschiedener Netzbetreiber
+- Import von CSV- und XLS-Dateien verschiedener Netzbetreiber (Stromeinspeisung ist optional)
 
 ![Upload](./doc/screenshot-upload.png)
 
