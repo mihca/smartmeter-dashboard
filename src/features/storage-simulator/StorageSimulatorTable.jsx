@@ -155,10 +155,10 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								Datum
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Verbraucht<br/>(kWh)
+								Netzbezug<br/>(kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Verbraucht mit<br/>Speicher (kWh)
+								Netzbezug mit<br/>Speicher (kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
 								Eingespeist<br/>(kWh)
