@@ -38,7 +38,7 @@ TODOs:
 - Erweiterung Auswertung Börsenstrompreise nach Jahren/Monaten/Uhrzeiten
 
 # How to contribute
-## Hinzufügen neues Netzbetreiber-Format
+## Hinzufügen eines neuen Netzbetreiber-Formats
 - Neuer Eintrag (Liste von Objekten) in
 [providers-usage.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/providers-usage.js) (Verbrauchsdaten) oder
 [providers-feedin.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/providers-feedin.js) (Einspeisedaten)
@@ -59,7 +59,8 @@ TODOs:
 - Test schreiben: [Beispiel](https://github.com/mihca/smartmeter-dashboard/blob/main/__test__/netznoe.test.js)
 - Dateibeispiel in `/samples` ablegen
 - Tests ausführen mit `npm run test`
-## Hinzufügen eines neues Verbrauchtarifs
+
+## Hinzufügen eines neues Verbrauchs- oder Einspeisetarifs
 - Neuer Eintrag (Map!) in [tariffs-feedin.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/tariffs-usage.js) (Bezugstarif) oder
 [tariffs-usage.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/tariffs-feedin.js) (Einspeisetarif)
 - Beispiel:
