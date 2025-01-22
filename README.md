@@ -13,7 +13,7 @@ Features:
 
 - Vergleich von dynamischen Stromtarifen anhand des historischen Börsenstrompreises
 
-![Tarifvergleich](./doc/screenshot-usage-calculator.png)
+![Tarifvergleich Verbrauchstarife](./doc/screenshot-usage-calculator.png)
 
 - Detaillierte Rechnung mit allen Gebühren beim Klick auf einen Monatsbetrag
 
@@ -24,6 +24,9 @@ Features:
 ![Speicher-Simulator](./doc/screenshot-storage-simulator.png)
 
 - Vergleich von dynamischen Einspeisetarifen
+
+![Tarifvergleich Einspeisetarife](./doc/screenshot-feedin-calculator.png)
+
 - Visualisierung des historischen Börsenstrompreises
 - ...
 
