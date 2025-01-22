@@ -1,5 +1,5 @@
 // ATTENTION: 
-// 1. All prices are net prices without tax (ohne MwSt!)
+// 1. All prices should be calculated as net prices without tax (ohne MwSt!)
 // 2. "hour" passed as parameter to calculate is the begin of the hour, with the collected kwh from the end of the hour
 
 
@@ -60,14 +60,14 @@ export const TARIFFS_USAGE = new Map([
         }
     }],
     ['evn.smartaktiv', {
-        name: 'EVN Smart Aktiv',
+        name: 'Optima Smart Aktiv',
         description: 'Dynamischer Tarif mit Uhrzeiten',
         company: 'EVN',
         link: 'https://www.evn.at/getmedia/ac578f80-3dcf-4b4c-88fa-bb56b29a76c7/B914_Preisblatt_Strom_Optima_Smart_Aktiv.pdf',
         base_fee_monthly_eur: 5.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             const matrix = new Map([
-                // year.month: day, freetime
+                // year.month: day, freetime / gross prices!
                 ["2024.1", [20.664, 15.144]],
                 ["2024.2", [18.108, 14.448]],
                 ["2024.3", [13.356, 11.844]],
@@ -79,7 +79,8 @@ export const TARIFFS_USAGE = new Map([
                 ["2024.9", [16.968, 15.648]],
                 ["2024.10", [18.096, 14.160]],
                 ["2024.11", [20.508, 14.532]],
-                ["2024.12", [22.896, 16.608]]
+                ["2024.12", [22.896, 16.608]],
+                ["2025.1", [26.004, 18.180]],
             ]);
             let key = year + "." + (month+1);
             if (matrix.has(key)) {
@@ -93,21 +94,22 @@ export const TARIFFS_USAGE = new Map([
         }
     }],
     ['evn.smartgarant', {
-        name: 'EVN Smart Garant',
-        description: 'Garantierter Tarif mit Uhrzeiten',
+        name: 'Optima Smart Garant',
+        description: '12 Monate garantierter Tarif mit Uhrzeiten',
         company: 'EVN',
         link: 'https://www.evn.at/getmedia/ac578f80-3dcf-4b4c-88fa-bb56b29a76c7/B914_Preisblatt_Strom_Optima_Smart_Aktiv.pdf',
-        base_fee_monthly_eur: 5.00,
+        base_fee_monthly_eur: 4.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             const matrix = new Map([
-                // year.month: day, freetime
-                ["2024", [21.8640, 17.6520]],
+                // year.month: freetime, day / price is gross!
+                ["2024", [17.6520, 21.8640]],
+                ["2025", [17.9040, 22.5720]],
             ]);
             let key = "2024";
             if (matrix.has(key)) {
                 let priceArray = matrix.get(key);
-                let price_ct = priceArray[1]/1.2; // we need net prices
-                if (hour > 8 && hour <= 20) price_ct = priceArray[0];
+                let price_ct = priceArray[0]/1.2; // we need net prices
+                if (hour > 8 && hour <= 20) price_ct = priceArray[1];
                 return kwh * price_ct;
             }
             return null;
