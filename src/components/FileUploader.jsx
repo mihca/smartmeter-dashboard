@@ -24,7 +24,7 @@ export default function FileUploader({title, importError, onFileUploaded, demoFi
   };
 
   function handleDemoUpload() {
-    fetch(`./smartmeter-dashboard/${demoFile}`)
+    fetch(`./${demoFile}`)
       .then(response => response.text())
       .then(data => {
         setFilename(demoFile);

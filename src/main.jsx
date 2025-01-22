@@ -9,7 +9,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <NextUIProvider>
       <main className="dark text-foreground bg-background">
-        <BrowserRouter basename='smartmeter-dashboard'>
+        <BrowserRouter>
           <App />
         </BrowserRouter>
       </main>
