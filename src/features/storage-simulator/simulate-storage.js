@@ -21,6 +21,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
     let lineCounter = 0;
     
     let sumKwhUsage = 0.0;
+    let sumKwhUsageNew = 0.0;
     let sumKwhFeedin = 0.0;
     let sumKwhCharged = 0.0;
     let sumKwhDischarged = 0.0;
@@ -28,6 +29,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
     let sumEurProfit = 0.0;
 
     let overallKwhUsage = 0.0;
+    let overallKwhUsageNew = 0.0;
     let overallKwhFeedin = 0.0;
     let overallKwhCharged = 0.0;
     let overallKwhDischarged = 0.0;
@@ -41,6 +43,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         const kwhFeedin = feedinHourData[idx].kwh;
         const marketPrice = mdr.hourMap.get(usageHourEntry.utcHour-3600000)
         let eurProfit = 0.0;
+        let kwhUsageNew = kwhUsage;
     
         // Charge storage
         let kwhCharged = 0;
@@ -68,11 +71,13 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             soc = socAfterDischarging;
             kwhDischarged = kwh;
             eurProfit += eurUsageSaved;
+            kwhUsageNew = kwhUsage - kwhDischarged;
         }
 
         // console.log(new Date(usageHourEntry.utcHour), "verbraucht: "+kwhUsage.toFixed(2), "einspeist: "+kwhFeedin.toFixed(2), "laden: "+kwhCharged.toFixed(2), "entladen: "+kwhDischarged.toFixed(2), "soc: "+soc.toFixed(2), "verloren: "+eurFeedinLost.toFixed(2), "gespart: "+eurUsageSaved.toFixed(2));
 
         sumKwhUsage += kwhUsage;
+        sumKwhUsageNew += kwhUsageNew;
         sumKwhFeedin += kwhFeedin;
         sumKwhCharged += kwhCharged;
         sumKwhDischarged += kwhDischarged;
@@ -88,6 +93,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             lineData.push({
                 date: format(endDate, lineDatePattern),
                 usedKwh: sumKwhUsage,
+                usedKwhNew: sumKwhUsageNew,
                 feedinKwh: sumKwhFeedin,
                 chargedKwh: sumKwhCharged,
                 dischargedKwh: sumKwhDischarged,
@@ -97,12 +103,14 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             });
 
             overallKwhUsage += sumKwhUsage;
+            overallKwhUsageNew += sumKwhUsageNew;
             overallKwhFeedin += sumKwhFeedin;
             overallKwhCharged += sumKwhCharged;
             overallKwhDischarged += sumKwhDischarged;
             overallEurProfit += sumEurProfit;
 
             sumKwhUsage = 0.0;
+            sumKwhUsageNew = 0.0;
             sumKwhFeedin = 0.0;
             sumKwhCharged = 0.0;
             sumKwhDischarged = 0.0;
@@ -116,6 +124,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
     lineData.push({
         date: "Gesamt",
         usedKwh: overallKwhUsage,
+        usedKwhNew: overallKwhUsageNew,
         feedinKwh: overallKwhFeedin,
         chargedKwh: overallKwhCharged,
         dischargedKwh: overallKwhDischarged,

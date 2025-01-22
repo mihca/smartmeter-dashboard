@@ -155,25 +155,28 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								Datum
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Verbraucht (kWh)
+								Verbraucht<br/>(kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Eingespeist (kWh)
+								Verbraucht mit<br/>Speicher (kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Laden (kWh)
+								Eingespeist<br/>(kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Entladen (kWh)
+								Laden<br/>(kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Ø SOC (kWh)
+								Entladen<br/>(kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Ø SOC (%)
+								Ø SOC<br/>(kWh)
 							</th>
 							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
-								Geld gespart (EUR)
+								Ø SOC<br/>(%)
+							</th>
+							<th className='px-2 py-2 text-xs font-medium text-gray-400 tracking-wider'>
+								Geld gespart<br/>(EUR)
 							</th>
 						</tr>
 					</thead>
@@ -191,6 +194,9 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
 									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.usedKwh)}</p>
+								</td>
+								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
+									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.usedKwhNew)}</p>
 								</td>
 								<td className='px-2 py-2 whitespace-nowrap text-sm font-medium'>
 									<p className={highlight(idx === array.length-1)}>{format1Digit(lineData.feedinKwh)}</p>
