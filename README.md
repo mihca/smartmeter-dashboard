@@ -1,8 +1,8 @@
 # [Smartmeter-Dashboard](https://mihca.github.io/smartmeter-dashboard/)
-Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung mit Börsenstrom
+Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung mit Smartmeter und Börsenstrompreisen
 - Lohnt sich ein dynamischer Stromtarif für mich?
 - Was würde ich bei einer dynamischen Einspeisevergütung erhalten?
-- Lohnt sich ein Speicher für meine Solaranlage?
+- Lohnt sich ein Speicher für meine Solaranlage bei dynamischen Strompreisen?
 
 [Ausprobieren: "Lade Demo-Datei"](https://mihca.github.io/smartmeter-dashboard/)
 
@@ -31,6 +31,7 @@ Aktuell werden nur österreichische Formate und Tarife unterstützt.
 
 **TODOs**:
 - Layout für Tablet und Mobile mit Tailwind CSS
+- Fehlerbehandlung
 - Weitere Stromtarife
 - Weitere Smartmeter-Dateiformate
 - Weitere Netzgebühren
