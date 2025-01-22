@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const SIDEBAR_ITEMS = [
-    { name: "Upload", icon: Upload, color: "#6366f1", href: "/" },
+    { name: "Upload", icon: Upload, color: "#6366f1", href: "//" },
     { name: "Tarifrechner", icon: ReceiptEuro, color: "#6366f1", href: "/usage-calculator" },
     { name: "Einspeisevergütung", icon: HandCoins, color: "#6366f1", href: "/feedin-calculator" },
     { name: "Speicher-Simulator", icon: ServerCrash, color: "#6366f1", href: "/storage-simulator" },
