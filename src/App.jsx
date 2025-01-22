@@ -38,6 +38,7 @@ function App() {
 	async function usagePDRChanged(pdr) {
 		setUsagePDR(pdr);
 		updateMarketDataRecord(pdr);
+		console.log(pdr);
 	}
 
 	async function feedinPDRChanged(pdr) {
@@ -53,6 +54,7 @@ function App() {
 			const fetchedMDR = await fetchMarketDataRecord (marketDataRecord, pdr.utcHourFrom - 3600000, pdr.utcHourTo);
 			setMarketDataRecord(fetchedMDR);
 			setIsFetching(false);
+			console.log(fetchedMDR);
 		} catch (error) {
 			setError(error.message);
 			setIsFetching(false);
