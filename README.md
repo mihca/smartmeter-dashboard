@@ -162,10 +162,10 @@ A utility-first CSS framework
 - [CheatSheet](https://nerdcave.com/tailwind-cheat-sheet)
 - [Responsive Design](https://tailwindcss.com/docs/responsive-design)
 
-### Next UI
+### Hero UI
 Component library with good integration in tailwind CSS
-- [Homepage](https://nextui.org/)
-- [Components](https://nextui.org/docs/components)
+- [Homepage](https://www.heroui.com/)
+- [Components](https://www.heroui.com/docs/components)
 
 ### Lucide
 For icons

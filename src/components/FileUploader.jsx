@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { motion } from "framer-motion"
 
 export default function FileUploader({title, importError, onFileUploaded, demoFile}) {

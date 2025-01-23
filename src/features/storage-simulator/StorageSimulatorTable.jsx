@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/select";
 
 import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
 import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";

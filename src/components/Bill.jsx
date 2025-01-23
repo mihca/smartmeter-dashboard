@@ -1,4 +1,4 @@
-import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
+import {Popover, PopoverTrigger, PopoverContent} from "@heroui/popover";
 
 export default function Bill ({bill, ...props}) {
 

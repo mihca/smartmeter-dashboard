@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/checkbox";
+import { Select, SelectItem } from "@heroui/select";
+import { Checkbox } from "@heroui/checkbox";
 
 import { calculateFeedinTable, findBestTariff } from "./calculator.js";
 import { title, monthOptions, highlightBestPrice } from "./helpers.js";

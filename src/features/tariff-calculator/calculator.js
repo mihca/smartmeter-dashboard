@@ -2,7 +2,7 @@ import { round1Digit, round2Digits, round3Digits, formatEUR } from "../../script
 import { format } from "date-fns";
 import { NETFEES } from "../../data/netfees.js";
 
-const VAT_RATE = 20;
+export const VAT_RATE = 20;
 
 export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasefee, withVat, selectedNetfeesIdx) {
 
@@ -65,7 +65,7 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
                 let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
                 lineTariffPriceSum[idx] += withBasefee ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
                 lineTariffPriceSum[idx] += selectedNetfeesIdx > 0 ? calculateNetfee(NETFEES[selectedNetfeesIdx-1], days, lineSumKwh, bill) : 0;
-                lineTariffPriceSum[idx] += withVat ? addVat(lineTariffPriceSum[idx], bill) : 0;
+                lineTariffPriceSum[idx] += withVat ? vat(lineTariffPriceSum[idx], bill) : 0;
                 bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
                 bills.push(bill);
             })
@@ -261,7 +261,7 @@ export function calculateBasefee(tariff, date, monthOption, bill=undefined) {
     return round2Digits(basefee);
 }
 
-export function addVat(amount, bill=undefined) {
+export function vat(amount, bill=undefined) {
     let vat = amount * VAT_RATE / 100;
     if (bill) bill.push ({item: "MwSt " + VAT_RATE + "%" , value: formatEUR (vat)});
     return vat;
