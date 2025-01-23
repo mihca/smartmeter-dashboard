@@ -5,9 +5,6 @@ import { round1Digit } from "../scripts/round";
 
 export default function MarketChart ({marketHourMap}) {
 
-	console.log (marketHourMap);
-	console.log (Array.from(marketHourMap, ([start, price]) => ({start, price})));
-
 	function groupByMonth(marketHourMap) {
 
 		let dataByMonth = [];
