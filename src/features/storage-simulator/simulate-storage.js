@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { calculateHour, calculateNetfee, addVat } from "../tariff-calculator/calculator";
+import { calculateHour, calculateNetfee, vat } from "../tariff-calculator/calculator";
 
 export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedUsageTariff, selectedNetfees, selectedFeedinTariff) {
     const lineData = [];
@@ -67,7 +67,7 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
             const [kwh, socAfterDischarging] = dischargeStorage (loss, soc, kwhUsage) 
             eurUsageSaved = calculateHour (selectedUsageTariff, kwh, usageHourEntry.utcHour, marketPrice);
             if (selectedNetfees) eurUsageSaved += calculateNetfee (selectedNetfees, 0, kwh);
-            eurUsageSaved += addVat (eurUsageSaved);
+            eurUsageSaved += vat (eurUsageSaved);
             soc = socAfterDischarging;
             kwhDischarged = kwh;
             eurProfit += eurUsageSaved;
