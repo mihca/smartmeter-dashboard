@@ -3,7 +3,8 @@ export const TARIFFS_FEEDIN = new Map([
         name: 'aWATTar SUNNY',
         description: 'Monatliche Anpassung auf Basis EEX Month Futures',
         company: 'aWATTar',
-        link: 'https://api.awattar.at/v1/templates/13dd4578-a73e-47ef-b6bf-6f724e330bfd/content?accept-override=application/pdf',
+        link_url: 'https://www.awattar.at/tariffs/sunny',
+        link_pdf: 'https://api.awattar.at/v1/templates/13dd4578-a73e-47ef-b6bf-6f724e330bfd/content?accept-override=application/pdf',
         base_fee_yearly_eur: 57.48,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             const matrix = new Map([
@@ -46,7 +47,8 @@ export const TARIFFS_FEEDIN = new Map([
         name: 'smartSUNHOURLY',
         description: 'Börsenstrompreis mit 20% Abschlag',
         company: 'smartENERGY',
-        link: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartSUNHOURLY.pdf',
+        link_url: 'https://www.smartenergy.at/smartsunhourly',
+        link_pdf: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartSUNHOURLY.pdf',
         base_fee_monthly_eur: 0,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             return kwh * ( market_price_ct - market_price_ct * 0.2 );
@@ -56,7 +58,7 @@ export const TARIFFS_FEEDIN = new Map([
         name: 'OeMAG',
         description: 'Monatlich angepasster Tarif',
         company: 'OeMAG',
-        link: 'https://www.oem-ag.at/de/marktpreis/',
+        link_url: 'https://www.oem-ag.at/de/marktpreis/',
         base_fee_monthly_eur: 0,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             const matrix = new Map([

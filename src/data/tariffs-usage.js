@@ -8,7 +8,7 @@ export const TARIFFS_USAGE = new Map([
         name: 'aWATTar HOURLY',
         description: 'Börsenstrompreis mit 3% und 1,5 ct Aufschlag',
         company: 'aWATTar',
-        link_company: 'https://www.awattar.at/',
+        link_url: 'https://www.awattar.at/tariffs/hourly',
         link_pdf: 'https://api.awattar.at/v1/templates/bba9e568-777c-43a7-b181-79de2188439f/content?accept-override=application/pdf',
         base_fee_yearly_eur: 57.48,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
@@ -19,7 +19,7 @@ export const TARIFFS_USAGE = new Map([
         name: 'smartCONTROL',
         description: 'Börsenstrompreis mit 1,2 ct netto Aufschlag',
         company: 'smartENERGY',
-        link_company: 'https://smartenergy.at/',
+        link_url: 'https://www.smartenergy.at/smartcontrol',
         link_pdf: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartCONTROL.pdf',
         base_fee_monthly_eur: 2.49,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
@@ -30,7 +30,7 @@ export const TARIFFS_USAGE = new Map([
         name: 'smartTIMES',
         description: 'Monatlich angepasster Tarif mit 3 Preiszonen',
         company: 'smartENERGY',
-        link_company: 'https://smartenergy.at/',
+        link_url: 'https://www.smartenergy.at/smarttimes',
         link_pdf: 'https://www.smartenergy.at/fileadmin/user_upload/downloads/Kundeninformation_und_Preisblatt_-_smartCONTROL.pdf',
         base_fee_monthly_eur: 2.49,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
@@ -66,7 +66,7 @@ export const TARIFFS_USAGE = new Map([
         name: 'Optima Smart Aktiv',
         description: 'Tarif mit monatlicher Preisanpassung',
         company: 'EVN',
-        link_company: 'https://www.evn.at/home/strom',
+        link_url: 'https://www.evn.at/home/strom/optimasmartaktivnatur',
         link_pdf: 'https://www.evn.at/getmedia/ac578f80-3dcf-4b4c-88fa-bb56b29a76c7/B914_Preisblatt_Strom_Optima_Smart_Aktiv.pdf',
         base_fee_monthly_eur: 5.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
@@ -101,7 +101,7 @@ export const TARIFFS_USAGE = new Map([
         name: 'Optima Smart Garant',
         description: '12 Monate garantierter Tarif mit zwei Preiszonen von 08-20 Uhr und 20-08 Uhr',
         company: 'EVN',
-        link_company: 'https://www.evn.at/home/strom',
+        link_url: 'https://www.evn.at/home/strom/optimasmartgarant',
         link_pdf: 'https://www.evn.at/getmedia/ac578f80-3dcf-4b4c-88fa-bb56b29a76c7/B914_Preisblatt_Strom_Optima_Smart_Aktiv.pdf',
         base_fee_monthly_eur: 4.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
@@ -124,7 +124,7 @@ export const TARIFFS_USAGE = new Map([
         name: 'WEB Privat investor',
         description: 'Fix Strompreis gültig ab 01/2024 mit 12,90/15,48 ct/kWh',
         company: 'W.E.B',
-        link_company: 'https://www.web.energy/at-de/privatkunde/gruenstrom-privat',
+        link_url: 'https://www.web.energy/at-de/privatkunde/gruenstrom-privat',
         link_pdf: 'https://www.web.energy/fileadmin/media/documents/Gruenstrom/W.E.B_Gruenstrom_Produktblatt_investor_01.pdf',
         base_fee_yearly_eur: 42.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
