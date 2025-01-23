@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/checkbox";
+import { Select, SelectItem } from "@heroui/select";
+import { Checkbox } from "@heroui/checkbox";
+import { Tooltip } from "@heroui/tooltip";
 
-import { calculateTariffsTable, findBestTariff } from "./calculator.js";
+import { VAT_RATE, calculateTariffsTable, findBestTariff } from "./calculator.js";
 import { formatEUR, format1Digit, format2Digit } from "../../scripts/round.js";
 import { monthOptions, title, highlightBestPrice } from "./helpers.js";
 
@@ -92,7 +93,22 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 							</th>
 							{Array.from(TARIFFS_USAGE.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
-									{tariff.name}
+									<Tooltip content={
+										<div className="px-1 py-2 text-small">
+											<div className="font-bold">{tariff.name}</div>
+											<div className="text-small">{tariff.description}</div>
+											<div className="text-small"><a href="{tariff.link_company}" target="_blank">{tariff.company}</a></div>
+											{ tariff.base_fee_monthly_eur && (
+											  <div className="text-small">Grundgebühr monatl.: {formatEUR(tariff.base_fee_monthly_eur*(100+VAT_RATE)/100)}</div>
+											)}
+											{ tariff.base_fee_yearly_eur && (
+											  <div className="text-small">Grundgebühr monatl. auf Jahresbasis: {formatEUR(tariff.base_fee_yearly_eur*(100+VAT_RATE)/100/12)}</div>
+											)}
+											<div className="text-small"><a href={tariff.link_pdf} target="_blank">Tarifblatt</a></div>
+										</div>
+									}>
+										{tariff.name}
+									</Tooltip>
 								</th>
 							))}
 						</tr>

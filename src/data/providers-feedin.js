@@ -19,19 +19,4 @@ export const PROVIDERS_FEEDIN = [
             kwh: parseFloat(lineObject['Einspeisung (kWh)'].replace(",", "."))
         }),
     },
-    {
-        name: "Wiener Netze",
-        description: "Wiener Netze Einspeiser",
-        descriptorUsage: "!Einspeiser [kWh]",
-        descriptorTimestamp: "Datum",
-        descriptorTimeSub: "Zeit von",
-        dateFormatString: "dd.MM.yyyy HH:mm",
-        usageParse: (usage) => parseFloat(usage.replace(",", ".")),
-        otherFields: ["Zeit bis"],
-        shouldSkip: null,
-        fixupTimestamp: false,
-        feedin: true,
-        endDescriptorTimestamp: null,
-        preprocessDateString: (date) => date
-    }
 ]
