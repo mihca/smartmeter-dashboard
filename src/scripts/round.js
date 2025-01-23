@@ -31,6 +31,13 @@ export function formatEUR (number) {
         return ((Math.round(number * 100) / 100).toFixed(2) + " EUR").replace(".", ",");
 }
 
+export function formatCt (number) {
+    if (isNaN(number)) 
+        return "-"
+    else
+        return ((Math.round(number * 100) / 100).toFixed(2) + " ct").replace(".", ",");
+}
+
 export function formatPercent (number) {
     if (isNaN(number)) 
         return "-"
