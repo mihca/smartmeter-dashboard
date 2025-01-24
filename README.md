@@ -7,7 +7,7 @@ Ein Dashboard für die Auswertung von Stromverbrauch und Stromeinspeisung (optio
 [Ausprobieren: "Lade Demo-Datei"](https://mihca.github.io/smartmeter-dashboard/)
 
 Features:
-- Import von CSV- und XLS-Dateien verschiedener Netzbetreiber (Stromeinspeisung ist optional)
+- Import von CSV- und XLS-Dateien verschiedener Netzbetreiber
 
 ![Upload](./doc/screenshot-upload.png)
 
