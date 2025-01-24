@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
 
-import TariffTooltip from "../../components/TariffTooltip.jsx";
+import TariffPopover from "../../components/TariffPopover.jsx";
 
 import { calculateFeedinTable, findBestTariff } from "./calculator.js";
-import { title, monthOptions, highlightBestPrice } from "./helpers.js";
+import { formatBasefee, title, monthOptions, highlightBestPrice } from "./helpers.js";
 
 import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
 import { format1Digit, format2Digit, formatEUR } from "../../scripts/round.js";
@@ -66,11 +66,14 @@ export default function FeedinTable ({pdr, mdr, onBestTariffFound}) {
 							</th>
 							{Array.from(TARIFFS_FEEDIN.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
-									<TariffTooltip tariff={tariff}>
-										<span className='cursor-default'>
-											{tariff.name}
+									<TariffPopover tariff={tariff}>
+										<span className='cursor-pointer'>
+											<p>{ tariff.name }</p>
+											{ basefeeChecked && (
+											<p>{ formatBasefee(tariff) }</p>
+											)}
 										</span>
-									</TariffTooltip>
+									</TariffPopover>
 								</th>
 							))}
 						</tr>

@@ -2,7 +2,7 @@ import {Popover, PopoverTrigger, PopoverContent} from "@heroui/popover";
 import { VAT_RATE } from "../features/tariff-calculator/calculator.js";
 import { formatEUR } from "../scripts/round.js";
 
-export default function TariffTooltip ({tariff, ...props}) {
+export default function TariffPopover ({tariff, ...props}) {
 
     return (
         <Popover placement="bottom">

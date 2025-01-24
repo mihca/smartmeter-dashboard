@@ -1,3 +1,5 @@
+import { formatEUR } from "../../scripts/round.js";
+import { VAT_RATE } from "./calculator.js";
 
 export function monthOptions (pdr) {
     let months = [{key: 0, label: "Gesamt"}];
@@ -35,4 +37,12 @@ export function highlightBestPrice (price, prices, lastLine, bestColor, bestFunc
     let fontColor = "text-gray-100";
     if (price == bestPrice) fontColor = bestColor;
     return fontColor + " " + fontStyle;
+}
+
+export function formatBasefee (tariff) {
+    if (tariff.base_fee_monthly_eur) {
+        return formatEUR(tariff.base_fee_monthly_eur*(100+VAT_RATE)/100);
+    } else {
+        return formatEUR(tariff.base_fee_yearly_eur/12*(100+VAT_RATE)/100);
+    }
 }

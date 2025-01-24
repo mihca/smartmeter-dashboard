@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
 
-import { calculateTariffsTable, findBestTariff } from "./calculator.js";
+import { calculateTariffsTable, findBestTariff, VAT_RATE } from "./calculator.js";
 import { formatEUR, format1Digit, format2Digit } from "../../scripts/round.js";
-import { monthOptions, title, highlightBestPrice } from "./helpers.js";
+import { formatBasefee, monthOptions, title, highlightBestPrice } from "./helpers.js";
 
 import Bill from "../../components/Bill.jsx";
-import TariffTooltip from "../../components/TariffTooltip.jsx";
+import TariffPopover from "../../components/TariffPopover.jsx";
 
 import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
 import { NETFEES } from "../../data/netfees.js";
@@ -93,11 +93,14 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 							</th>
 							{Array.from(TARIFFS_USAGE.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
-									<TariffTooltip tariff={tariff}>
-										<span className='cursor-default'>
-											{tariff.name}
+									<TariffPopover tariff={tariff}>
+										<span className='cursor-pointer'>
+											<p>{ tariff.name }</p>
+											{ basefeeChecked && (
+											<p>{ formatBasefee(tariff) }</p>
+											)}
 										</span>
-									</TariffTooltip>
+									</TariffPopover>
 								</th>
 							))}
 						</tr>
