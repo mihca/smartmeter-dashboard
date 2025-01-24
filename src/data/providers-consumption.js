@@ -1,6 +1,6 @@
 import {parse} from "date-fns"
 
-export const PROVIDERS_USAGE = [
+export const PROVIDERS_CONSUMPTION = [
     {
         name: "Netz NÖ",
         description: "Netz NÖ Verbrauch",

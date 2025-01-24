@@ -10,7 +10,7 @@ import Header from '../layout/Header'
 import StatCard from '../components/StatCard'
 import TariffsTable from '../features/tariff-calculator/TariffsTable'
 
-export default function UsageCalcuclatorPage({pdr, mdr}) {
+export default function ConsumptionCalcuclatorPage({pdr, mdr}) {
 
 	const [timeRange, setTimeRange] = useState("");
 	const [bestTariff, setBestTariff] = useState(null);

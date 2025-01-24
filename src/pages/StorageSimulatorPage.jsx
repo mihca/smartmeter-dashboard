@@ -10,7 +10,7 @@ import Header from '../layout/Header'
 import StorageSimulatorTable from '../features/storage-simulator/StorageSimulatorTable'
 import { format1Digit, formatEUR } from '../scripts/round'
 
-export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
+export default function StorageSimulatorPage({consumptionPDR, feedinPDR, mdr}) {
 
 	const [eurProfit, setEurProfit] = useState(0);
 	const [cycles, setCycles] = useState(0);
@@ -18,7 +18,7 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 
 	function handleSimulationResult (eurProfit, cycles) {
 		setEurProfit(eurProfit);
-		setTimeRange(format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy"));
+		setTimeRange(format(consumptionPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(consumptionPDR.utcHourTo-3600000, "dd.MM.yyyy"));
 		setCycles(cycles);
 	}
 
@@ -34,7 +34,7 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					{ usagePDR.hourData && feedinPDR.hourData && (
+					{ consumptionPDR.hourData && feedinPDR.hourData && (
 						<>
 							<StatCard title='Ersparnis' icon={Euro} text={formatEUR(eurProfit)} color='#8B5CF6' />
 							<StatCard title='Ersparnis 15 Jahre' icon={Euro} text={formatEUR(eurProfit*15)} color='#6366F1' />
@@ -45,10 +45,10 @@ export default function StorageSimulatorPage({usagePDR, feedinPDR, mdr}) {
 				</motion.div>
 
 				{/* CHARTS */}
-				{ usagePDR.hourData && feedinPDR.hourData && (
+				{ consumptionPDR.hourData && feedinPDR.hourData && (
 					<>
 						<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-							<StorageSimulatorTable usagePDR={usagePDR} feedinPDR={feedinPDR} mdr={mdr} onSimulationResult={handleSimulationResult}/>
+							<StorageSimulatorTable consumptionPDR={consumptionPDR} feedinPDR={feedinPDR} mdr={mdr} onSimulationResult={handleSimulationResult}/>
 						</div>
 					</>
 				)}

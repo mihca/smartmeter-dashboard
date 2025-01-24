@@ -10,7 +10,7 @@ import { formatBasefee, monthOptions, title, highlightBestPrice } from "./helper
 import Bill from "../../components/Bill.jsx";
 import TariffPopover from "../../components/TariffPopover.jsx";
 
-import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
+import { TARIFFS_CONSUMPTION } from "../../data/tariffs-consumption.js";
 import { NETFEES } from "../../data/netfees.js";
 
 export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
@@ -39,7 +39,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 	}
 
 	function fillTable (pdr, mdr, selectedMonth) {
-		const tariffs = Array.from(TARIFFS_USAGE.values());
+		const tariffs = Array.from(TARIFFS_CONSUMPTION.values());
 		const lineData = calculateTariffsTable (tariffs, pdr, mdr, selectedMonth, basefeeChecked, vatChecked, selectedNetfees);
 		const overallLine = lineData[lineData.length-1];
 		const bestTariff = findBestTariff(tariffs, overallLine.tariffPricesEUR, Math.min);
@@ -91,7 +91,7 @@ export default function TariffsTable ({pdr, mdr, onBestTariffFound}) {
 							<th className='px-2 py-1 text-left text-xs font-medium text-gray-400 tracking-wider'>
 								Energie
 							</th>
-							{Array.from(TARIFFS_USAGE.values()).map((tariff) => (
+							{Array.from(TARIFFS_CONSUMPTION.values()).map((tariff) => (
 								<th key={tariff.name} className='px-2 py-2 text-left text-xs font-medium text-gray-400 tracking-wider'>
 									<TariffPopover tariff={tariff}>
 										<span className='cursor-pointer'>

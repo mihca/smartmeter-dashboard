@@ -1,13 +1,13 @@
 import { format } from "date-fns";
 import { calculateHour, calculateNetfee, vat } from "../tariff-calculator/calculator";
 
-export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedUsageTariff, selectedNetfees, selectedFeedinTariff) {
+export function simulateStorage (consumptionPDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, selectedConsumptionTariff, selectedNetfees, selectedFeedinTariff) {
     const lineData = [];
 
-    if (!usagePDR || !feedinPDR) 
+    if (!consumptionPDR || !feedinPDR) 
         return lineData;
         
-    const usageHourData = usagePDR.hourData;
+    const consumptionHourData = consumptionPDR.hourData;
     const feedinHourData = feedinPDR.hourData;
     const capacity = Number(selectedStorageSize);
     const loss = Number(selectedChargingLoss);
@@ -20,16 +20,16 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
     //let lineDatePattern = "yyyy-MM-dd";
     let lineCounter = 0;
     
-    let sumKwhUsage = 0.0;
-    let sumKwhUsageNew = 0.0;
+    let sumKwhConsumption = 0.0;
+    let sumKwhConsumptionNew = 0.0;
     let sumKwhFeedin = 0.0;
     let sumKwhCharged = 0.0;
     let sumKwhDischarged = 0.0;
     let sumSoc = 0.0;
     let sumEurProfit = 0.0;
 
-    let overallKwhUsage = 0.0;
-    let overallKwhUsageNew = 0.0;
+    let overallKwhConsumption = 0.0;
+    let overallKwhConsumptionNew = 0.0;
     let overallKwhFeedin = 0.0;
     let overallKwhCharged = 0.0;
     let overallKwhDischarged = 0.0;
@@ -37,23 +37,23 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
 
     let soc = 0.0;
 
-    usageHourData.forEach((usageHourEntry, idx, array) => {
+    consumptionHourData.forEach((consumptionHourEntry, idx, array) => {
 
-        const kwhUsage = usageHourEntry.kwh;
+        const kwhConsumption = consumptionHourEntry.kwh;
         const kwhFeedin = feedinHourData[idx].kwh;
-        const marketPrice = mdr.hourMap.get(usageHourEntry.utcHour-3600000)
+        const marketPrice = mdr.hourMap.get(consumptionHourEntry.utcHour-3600000)
         let eurProfit = 0.0;
-        let kwhUsageNew = kwhUsage;
+        let kwhConsumptionNew = kwhConsumption;
     
         // Charge storage
         let kwhCharged = 0;
         let eurFeedinLost = 0;
-        let eurUsageSaved = 0;
+        let eurConsumptionSaved = 0;
 
         if (kwhFeedin > 0) {
             // We have kwh left to charge the storage
             const [kwh, socAfterCharging] = chargeStorage(capacity, loss, soc, kwhFeedin);
-            eurFeedinLost = calculateHour (selectedFeedinTariff, kwh, usageHourEntry.utcHour, marketPrice);
+            eurFeedinLost = calculateHour (selectedFeedinTariff, kwh, consumptionHourEntry.utcHour, marketPrice);
             soc = socAfterCharging;
             kwhCharged = kwh;
             eurProfit -= eurFeedinLost;
@@ -62,22 +62,22 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         // Discharge storage
         let kwhDischarged = 0;
 
-        if (kwhUsage > 0 && soc > 0) {
+        if (kwhConsumption > 0 && soc > 0) {
             // We need kwh and storage is charged
-            const [kwh, socAfterDischarging] = dischargeStorage (loss, soc, kwhUsage) 
-            eurUsageSaved = calculateHour (selectedUsageTariff, kwh, usageHourEntry.utcHour, marketPrice);
-            if (selectedNetfees) eurUsageSaved += calculateNetfee (selectedNetfees, 0, kwh);
-            eurUsageSaved += vat (eurUsageSaved);
+            const [kwh, socAfterDischarging] = dischargeStorage (loss, soc, kwhConsumption) 
+            eurConsumptionSaved = calculateHour (selectedConsumptionTariff, kwh, consumptionHourEntry.utcHour, marketPrice);
+            if (selectedNetfees) eurConsumptionSaved += calculateNetfee (selectedNetfees, 0, kwh);
+            eurConsumptionSaved += vat (eurConsumptionSaved);
             soc = socAfterDischarging;
             kwhDischarged = kwh;
-            eurProfit += eurUsageSaved;
-            kwhUsageNew = kwhUsage - kwhDischarged;
+            eurProfit += eurConsumptionSaved;
+            kwhConsumptionNew = kwhConsumption - kwhDischarged;
         }
 
-        // console.log(new Date(usageHourEntry.utcHour), "verbraucht: "+kwhUsage.toFixed(2), "einspeist: "+kwhFeedin.toFixed(2), "laden: "+kwhCharged.toFixed(2), "entladen: "+kwhDischarged.toFixed(2), "soc: "+soc.toFixed(2), "verloren: "+eurFeedinLost.toFixed(2), "gespart: "+eurUsageSaved.toFixed(2));
+        // console.log(new Date(consumptionHourEntry.utcHour), "verbraucht: "+kwhConsumption.toFixed(2), "einspeist: "+kwhFeedin.toFixed(2), "laden: "+kwhCharged.toFixed(2), "entladen: "+kwhDischarged.toFixed(2), "soc: "+soc.toFixed(2), "verloren: "+eurFeedinLost.toFixed(2), "gespart: "+eurConsumptionSaved.toFixed(2));
 
-        sumKwhUsage += kwhUsage;
-        sumKwhUsageNew += kwhUsageNew;
+        sumKwhConsumption += kwhConsumption;
+        sumKwhConsumptionNew += kwhConsumptionNew;
         sumKwhFeedin += kwhFeedin;
         sumKwhCharged += kwhCharged;
         sumKwhDischarged += kwhDischarged;
@@ -86,14 +86,14 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
         lineCounter += 1;
 
         // Change of day or month
-        if (groupChange(new Date(usageHourEntry.utcHour), groupId) || (idx === array.length - 1)) {
+        if (groupChange(new Date(consumptionHourEntry.utcHour), groupId) || (idx === array.length - 1)) {
 
             const endDate = new Date(array[idx-1].utcHour);
 
             lineData.push({
                 date: format(endDate, lineDatePattern),
-                usedKwh: sumKwhUsage,
-                usedKwhNew: sumKwhUsageNew,
+                usedKwh: sumKwhConsumption,
+                usedKwhNew: sumKwhConsumptionNew,
                 feedinKwh: sumKwhFeedin,
                 chargedKwh: sumKwhCharged,
                 dischargedKwh: sumKwhDischarged,
@@ -102,15 +102,15 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
                 eurProfit: sumEurProfit
             });
 
-            overallKwhUsage += sumKwhUsage;
-            overallKwhUsageNew += sumKwhUsageNew;
+            overallKwhConsumption += sumKwhConsumption;
+            overallKwhConsumptionNew += sumKwhConsumptionNew;
             overallKwhFeedin += sumKwhFeedin;
             overallKwhCharged += sumKwhCharged;
             overallKwhDischarged += sumKwhDischarged;
             overallEurProfit += sumEurProfit;
 
-            sumKwhUsage = 0.0;
-            sumKwhUsageNew = 0.0;
+            sumKwhConsumption = 0.0;
+            sumKwhConsumptionNew = 0.0;
             sumKwhFeedin = 0.0;
             sumKwhCharged = 0.0;
             sumKwhDischarged = 0.0;
@@ -123,8 +123,8 @@ export function simulateStorage (usagePDR, feedinPDR, mdr, selectedStorageSize, 
 
     lineData.push({
         date: "Gesamt",
-        usedKwh: overallKwhUsage,
-        usedKwhNew: overallKwhUsageNew,
+        usedKwh: overallKwhConsumption,
+        usedKwhNew: overallKwhConsumptionNew,
         feedinKwh: overallKwhFeedin,
         chargedKwh: overallKwhCharged,
         dischargedKwh: overallKwhDischarged,

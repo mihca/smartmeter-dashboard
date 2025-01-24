@@ -4,7 +4,7 @@ import { Routes } from "react-router-dom"
 
 import UploadPage from "./pages/UploadPage"
 import MarketpricePage from "./pages/MarketpricePage"
-import UsageCalculatorPage from './pages/UsageCalculatorPage'
+import ConsumptionCalculatorPage from './pages/ConsumptionCalculatorPage'
 import FeedinCalculatorPage from './pages/FeedinCalculatorPage'
 import StorageSimulatorPage from './pages/StorageSimulatorPage'
 
@@ -29,14 +29,14 @@ const EMPTY_MDR = {
 
 function App() {
 
-	const [usagePDR, setUsagePDR] = useState(EMPTY_PDR);
+	const [consumptionPDR, setConsumptionPDR] = useState(EMPTY_PDR);
 	const [feedinPDR, setFeedinPDR] = useState(EMPTY_PDR);
 	const [marketDataRecord, setMarketDataRecord] = useLocalStorage("smartmeter.dashboard.mdr.at", EMPTY_MDR);
 	const [isFetching, setIsFetching] = useState(false);
 	const [error, setError] = useState(null);
 
-	async function usagePDRChanged(pdr) {
-		setUsagePDR(pdr);
+	async function consumptionPDRChanged(pdr) {
+		setConsumptionPDR(pdr);
 		updateMarketDataRecord(pdr);
 	}
 
@@ -48,8 +48,8 @@ function App() {
 	async function updateMarketDataRecord(pdr) {
 		setIsFetching(true);
 		try {
-			// Fetch market data one hour earlier (-3600000) than usage data, 
-			// because usage data shows end of hour and marketprice is valid at start of hour
+			// Fetch market data one hour earlier (-3600000) than consumption data, 
+			// because consumption data shows end of hour and marketprice is valid at start of hour
 			const fetchedMDR = await fetchMarketDataRecord (marketDataRecord, pdr.utcHourFrom - 3600000, pdr.utcHourTo);
 			setMarketDataRecord(fetchedMDR);
 			setIsFetching(false);
@@ -71,15 +71,15 @@ function App() {
 			<Routes>
 				<Route path='/' element={
 					<UploadPage 
-						usagePDR={usagePDR} 
+						consumptionPDR={consumptionPDR} 
 						feedinPDR={feedinPDR}
-						onUsagePDRChanged={usagePDRChanged}
+						onConsumptionPDRChanged={consumptionPDRChanged}
 						onFeedinPDRChanged={feedinPDRChanged}
 					/>} 
 				/>
-				<Route path='/usage-calculator' element={
-					<UsageCalculatorPage
-						pdr={usagePDR}
+				<Route path='/consumption-calculator' element={
+					<ConsumptionCalculatorPage
+						pdr={consumptionPDR}
 						mdr={marketDataRecord}
 					/>} 
 				/>
@@ -91,7 +91,7 @@ function App() {
 				/>
 				<Route path='/storage-simulator' element={
 					<StorageSimulatorPage
-						usagePDR={usagePDR}
+						consumptionPDR={consumptionPDR}
 						feedinPDR={feedinPDR}
 						mdr={marketDataRecord}
 					/>} 

@@ -12,21 +12,21 @@ import QuantityChart from '../charts/QuantityChart'
 import { importProviderFile } from '../features/import/smartmeter-file-adapter'
 import { round1Digit } from '../scripts/round';
 
-import { PROVIDERS_USAGE } from "../data/providers-usage"
+import { PROVIDERS_CONSUMPTION } from "../data/providers-consumption"
 import { PROVIDERS_FEEDIN } from "../data/providers-feedin"
 
-export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFeedinPDRChanged}) {
+export default function UploadPage({consumptionPDR, feedinPDR, onConsumptionPDRChanged, onFeedinPDRChanged}) {
 
-	const [errorUsage, setErrorUsage] = useState(false);
+	const [errorConsumption, setErrorConsumption] = useState(false);
 	const [errorFeedin, setErrorFeedin] = useState(false);
 
-	function handleFileUsageUploaded(fileName, fileContent) {
-		const usagePDRFound = importProviderFile(fileContent, PROVIDERS_USAGE);
-		usagePDRFound.fileName = fileName;
-		if (usagePDRFound.hourData)
-			onUsagePDRChanged(usagePDRFound);
+	function handleFileConsumptionUploaded(fileName, fileContent) {
+		const consumptionPDRFound = importProviderFile(fileContent, PROVIDERS_CONSUMPTION);
+		consumptionPDRFound.fileName = fileName;
+		if (consumptionPDRFound.hourData)
+			onConsumptionPDRChanged(consumptionPDRFound);
 		else
-			setErrorUsage(true);	
+			setErrorConsumption(true);	
 	}
 
 	function handleFileFeedinUploaded(fileName, fileContent) {
@@ -45,7 +45,7 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 				
 				{/* UPLOADER */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-					<FileUploader title="Strombezug" importError={errorUsage} onFileUploaded={handleFileUsageUploaded} pdr={usagePDR} demoFile="NetzNOE-Jahresverbrauch-2024.csv"/>
+					<FileUploader title="Strombezug" importError={errorConsumption} onFileUploaded={handleFileConsumptionUploaded} pdr={consumptionPDR} demoFile="NetzNOE-Jahresverbrauch-2024.csv"/>
 					<FileUploader title="Stromeinspeisung" importError={errorFeedin} onFileUploaded={handleFileFeedinUploaded} pdr={feedinPDR} demoFile="NetzNOE-Jahreseinspeisung-2024.csv"/>
 				</div>
 				
@@ -56,13 +56,13 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					{ usagePDR.utcHourFrom && (
+					{ consumptionPDR.utcHourFrom && (
 						<>
-							<StatCard title='Netzanbieter Bezug' icon={Zap} text={usagePDR.provider} color='#6366F1' />
-							<StatCard title='Zeitraum Bezug' icon={CalendarFold} text={format(usagePDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(usagePDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(usagePDR.kwh) + " kWh"} color='#8B5CF6' />
+							<StatCard title='Netzanbieter Bezug' icon={Zap} text={consumptionPDR.provider} color='#6366F1' />
+							<StatCard title='Zeitraum Bezug' icon={CalendarFold} text={format(consumptionPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(consumptionPDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(consumptionPDR.kwh) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
-					{ !usagePDR.hourData && (
+					{ !consumptionPDR.hourData && (
 						<>
 							<div className='p-6'/>
 							<div className='p-6'/>
@@ -78,10 +78,10 @@ export default function UploadPage({usagePDR, feedinPDR, onUsagePDRChanged, onFe
 
 				{/* CHARTS */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-				{ usagePDR.hourData && (
-					<QuantityChart title="Bezug nach Monat" hourData={usagePDR.hourData}/>
+				{ consumptionPDR.hourData && (
+					<QuantityChart title="Bezug nach Monat" hourData={consumptionPDR.hourData}/>
 				)}
-				{ !usagePDR.hourData && (
+				{ !consumptionPDR.hourData && (
 					<div className='p-6'/>
 				)}
 				{ feedinPDR.hourData && (

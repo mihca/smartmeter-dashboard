@@ -1,13 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
 import {importProviderFile} from '../src/features/import/smartmeter-file-adapter'
-import {PROVIDERS_USAGE} from '../src/data/providers-usage'
+import {PROVIDERS_CONSUMPTION} from '../src/data/providers-consumption'
 import fs from 'fs';
 import path from 'path';
 
 describe('NetzNÖ', () => {
   test('import NetzNÖ file with summertime backswitch', () => {
     let fileContent = fs.readFileSync(path.join(__dirname, './samples/NetzNOE-2024-10-27.csv'), 'utf8');
-    expect(importProviderFile(fileContent, PROVIDERS_USAGE)).toStrictEqual(
+    expect(importProviderFile(fileContent, PROVIDERS_CONSUMPTION)).toStrictEqual(
       {
         "provider": "Netz NÖ",
         "kwh": 27.754,

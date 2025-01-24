@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Select, SelectItem } from "@heroui/select";
 
 import { TARIFFS_FEEDIN } from "../../data/tariffs-feedin.js";
-import { TARIFFS_USAGE } from "../../data/tariffs-usage.js";
+import { TARIFFS_CONSUMPTION } from "../../data/tariffs-consumption.js";
 import { NETFEES } from "../../data/netfees.js";
 import { simulateStorage } from "./simulate-storage.js";
 import { format1Digit, format2Digit, formatPercent, formatEUR } from "../../scripts/round.js";
@@ -24,11 +24,11 @@ const STORAGE_SIZES = [
 	{ key: "22.1", label: "BYD HVM 22.1"},
 ];
 
-export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimulationResult}) {
+export default function StorageSimulatorTable ({consumptionPDR, feedinPDR, mdr, onSimulationResult}) {
 
 	const [selectedNetfees, setSelectedNetfees] = useState(null);
 	const [selectedFeedinTariff, setSelectedFeedinTariff] = useState(null);
-	const [selectedUsageTariff, setSelectedUsageTariff] = useState(null);
+	const [selectedConsumptionTariff, setSelectedConsumptionTariff] = useState(null);
 	const [selectedStorageSize, setSelectedStorageSize] = useState("7.7");
 	const [selectedChargingLoss, setSelectedChargingLoss] = useState("10");
 
@@ -40,8 +40,8 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 		setSelectedChargingLoss(e.target.value);
 	}
 
-	function handleUsageTariffChange (e) {
-		setSelectedUsageTariff(e.target.value);
+	function handleConsumptionTariffChange (e) {
+		setSelectedConsumptionTariff(e.target.value);
 	}
 
 	function handleFeedinTariffChange (e) {
@@ -73,16 +73,16 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 			return "text-gray-400";
 	}
 
-	function fillTable (usagePDR, feedinPDR, mdr) {
-		if (selectedUsageTariff === null) return [];
+	function fillTable (consumptionPDR, feedinPDR, mdr) {
+		if (selectedConsumptionTariff === null) return [];
 		if (selectedFeedinTariff === null) return [];
-		const usageTariff = TARIFFS_USAGE.get(selectedUsageTariff);
+		const consumptionTariff = TARIFFS_CONSUMPTION.get(selectedConsumptionTariff);
 		const feedinTariff = TARIFFS_FEEDIN.get(selectedFeedinTariff);
 		
 		let netfees = null;
 		if (selectedNetfees !== null) netfees = NETFEES[selectedNetfees-1];
 
-		const lineData = simulateStorage(usagePDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, usageTariff, netfees, feedinTariff);
+		const lineData = simulateStorage(consumptionPDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, consumptionTariff, netfees, feedinTariff);
 		const overallLine = lineData[lineData.length-1];
 		const eurProfit = overallLine.eurProfit;
 		onSimulationResult(eurProfit, overallLine.chargedKwh/selectedStorageSize);
@@ -138,11 +138,11 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 					<Select 
 						className="max-w-xs" 
 						label="Verbrauchstarif" 
-						onChange={handleUsageTariffChange} 
-						selectedKeys={[selectedUsageTariff]} 
+						onChange={handleConsumptionTariffChange} 
+						selectedKeys={[selectedConsumptionTariff]} 
 						size="sm" 
 						variant="bordered">
-							{tariffOptions(TARIFFS_USAGE).map((tariff)=> ( <SelectItem key={tariff.key}>{tariff.name}</SelectItem> ))} 
+							{tariffOptions(TARIFFS_CONSUMPTION).map((tariff)=> ( <SelectItem key={tariff.key}>{tariff.name}</SelectItem> ))} 
 					</Select>
 				</div>
 			</div>
@@ -182,7 +182,7 @@ export default function StorageSimulatorTable ({usagePDR, feedinPDR, mdr, onSimu
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{ fillTable(usagePDR, feedinPDR, mdr).map((lineData, idx, array) => (
+						{ fillTable(consumptionPDR, feedinPDR, mdr).map((lineData, idx, array) => (
 							<motion.tr
 								key={lineData.date}
 								initial={{ opacity: 0 }}

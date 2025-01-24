@@ -210,7 +210,7 @@ export function calculateFeedinTable (tariffs, pdr, mdr, monthOption, withBasefe
 // returns EUR
 export function calculateHour (tariff, kwh, utcHour, marketPrice) {
     const date = new Date(utcHour);
-    // Usage and feedin values are at the end of each hour, prices are at the beginning
+    // Consumption and feedin values are at the end of each hour, prices are at the beginning
     // For ex.: 01.12.2023 00:00 will take the tariff price of 30.11.2023 23:00
     date.setHours(date.getHours() - 1);
     const year = date.getFullYear();
@@ -292,4 +292,10 @@ function calculatePricePerAdditionalKwh (netfee, averageNetPriceEur) {
     let priceCt = averageNetPriceEur * 100 + netfee.netfee_per_kwh_ct + netfee.tax_per_kwh_ct;
     priceCt += vat(priceCt);
     return priceCt;
+}
+
+function calculateGrundgebuehr (tariff, netfee, days) {
+    let eur = netfee.netfee_per_day_ct;
+    priceCt += vat(priceCt);
+    return eur;
 }

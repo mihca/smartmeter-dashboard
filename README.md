@@ -13,11 +13,11 @@ Features:
 
 - Vergleich von dynamischen Stromtarifen anhand des historischen Börsenstrompreises
 
-![Tarifvergleich Verbrauchstarife](./doc/screenshot-usage-calculator.png)
+![Tarifvergleich Verbrauchstarife](./doc/screenshot-consumption-calculator.png)
 
 - Detaillierte Rechnung mit allen Gebühren beim Klick auf einen Monatsbetrag
 
-![Rechnungssimulation](./doc/screenshot-usage-bill.png)
+![Rechnungssimulation](./doc/screenshot-consumption-bill.png)
 
 - Simulation eines Stromspeichers
 
@@ -44,7 +44,7 @@ Aktuell werden nur österreichische Formate und Tarife unterstützt.
 # How to contribute
 ## Hinzufügen eines neuen Netzbetreiber-Formats
 - Neuer Eintrag (Liste von Objekten) in
-[providers-usage.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/providers-usage.js) (Verbrauchsdaten) oder
+[providers-consumption.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/providers-consumption.js) (Verbrauchsdaten) oder
 [providers-feedin.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/providers-feedin.js) (Einspeisedaten)
 - Beispiel:
 ```
@@ -65,8 +65,8 @@ Aktuell werden nur österreichische Formate und Tarife unterstützt.
 - Tests ausführen mit `npm run test`
 
 ## Hinzufügen eines neues Verbrauchs- oder Einspeisetarifs
-- Neuer Eintrag (Map!) in [tariffs-feedin.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/tariffs-usage.js) (Bezugstarif) oder
-[tariffs-usage.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/tariffs-feedin.js) (Einspeisetarif)
+- Neuer Eintrag (Map!) in [tariffs-feedin.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/tariffs-consumption.js) (Bezugstarif) oder
+[tariffs-consumption.js](https://github.com/mihca/smartmeter-dashboard/blob/main/src/data/tariffs-feedin.js) (Einspeisetarif)
 - Beispiel:
 ```
 ['smartENERGY.smartCONTROL', {
