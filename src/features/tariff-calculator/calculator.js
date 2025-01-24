@@ -1,4 +1,4 @@
-import { round1Digit, round2Digits, round3Digits, formatEUR } from "../../scripts/round.js";
+import { round1Digit, round2Digits, round3Digits, formatEUR, formatCt } from "../../scripts/round.js";
 import { format } from "date-fns";
 import { NETFEES } from "../../data/netfees.js";
 
@@ -67,6 +67,10 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
                 lineTariffPriceSum[idx] += selectedNetfeesIdx > 0 ? calculateNetfee(NETFEES[selectedNetfeesIdx-1], days, lineSumKwh, bill) : 0;
                 lineTariffPriceSum[idx] += withVat ? vat(lineTariffPriceSum[idx], bill) : 0;
                 bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
+                if (selectedNetfeesIdx > 0) {
+                    const pricePerAdditionalKwh = calculatePricePerAdditionalKwh(NETFEES[selectedNetfeesIdx-1], lineTariffPriceSum[idx] / lineSumKwh);
+                    bill.push ({item: "Preis pro zusätzlicher kWh", value: formatCt (pricePerAdditionalKwh)});
+                }
                 bills.push(bill);
             })
 
@@ -283,3 +287,9 @@ function daysInMonth (date) {
     return new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
 }
 
+function calculatePricePerAdditionalKwh (netfee, averageNetPriceEur) {
+    let price = averageNetPriceEur*100 + netfee.netfee_per_kwh_ct + netfee.tax_per_kwh_ct;
+    price += vat(price);
+    console.log (netfee.netfee_per_kwh_ct, netfee.tax_per_kwh_ct, averageNetPriceEur, price);
+    return price;
+}
