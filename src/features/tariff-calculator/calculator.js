@@ -63,13 +63,14 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
 
             tariffs.forEach((tariff, idx) => {
                 let bill = [{item: "Energiepreis", value: formatEUR (lineTariffPriceSum[idx])}];
+                let netPrice = lineTariffPriceSum[idx];
                 lineTariffPriceSum[idx] += withBasefee ? calculateBasefee(tariff, endDate, monthOption, bill) : 0;
                 lineTariffPriceSum[idx] += selectedNetfeesIdx > 0 ? calculateNetfee(NETFEES[selectedNetfeesIdx-1], days, lineSumKwh, bill) : 0;
                 lineTariffPriceSum[idx] += withVat ? vat(lineTariffPriceSum[idx], bill) : 0;
-                bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx])});
+                bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx]), className:"divide-y divide-gray-700"});
                 if (selectedNetfeesIdx > 0) {
-                    const pricePerAdditionalKwh = calculatePricePerAdditionalKwh(NETFEES[selectedNetfeesIdx-1], lineTariffPriceSum[idx] / lineSumKwh);
-                    bill.push ({item: "Preis pro zusätzlicher kWh", value: formatCt (pricePerAdditionalKwh)});
+                    const arbeitspreis = calculatePricePerAdditionalKwh(NETFEES[selectedNetfeesIdx-1], netPrice / lineSumKwh);
+                    bill.push ({item: "Zusätzliche kWh inkl. MwSt", value: formatCt (arbeitspreis), className: "text-xs py-1"});
                 }
                 bills.push(bill);
             })
@@ -288,8 +289,7 @@ function daysInMonth (date) {
 }
 
 function calculatePricePerAdditionalKwh (netfee, averageNetPriceEur) {
-    let price = averageNetPriceEur*100 + netfee.netfee_per_kwh_ct + netfee.tax_per_kwh_ct;
-    price += vat(price);
-    console.log (netfee.netfee_per_kwh_ct, netfee.tax_per_kwh_ct, averageNetPriceEur, price);
-    return price;
+    let priceCt = averageNetPriceEur * 100 + netfee.netfee_per_kwh_ct + netfee.tax_per_kwh_ct;
+    priceCt += vat(priceCt);
+    return priceCt;
 }

@@ -20,7 +20,7 @@ export default function Bill ({bill, ...props}) {
                         <table>
                             <tbody>
                                 { bill.map( ( line, idx, array ) => (
-                                    <tr className={"text-small " + ((idx === (array.length-1)) ? "divide-y divide-gray-700" : "")} key={idx}>
+                                    <tr className={line.className} key={idx}>
                                         <td>{ line.item }</td>
                                         <td></td>
                                         <td className="text-right">{ line.value}</td>
