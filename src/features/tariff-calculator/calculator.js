@@ -69,8 +69,10 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
                 lineTariffPriceSum[idx] += withVat ? vat(lineTariffPriceSum[idx], bill) : 0;
                 bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx]), className:"divide-y divide-gray-700"});
                 if (selectedNetfeesIdx > 0) {
-                    const arbeitspreis = calculatePricePerAdditionalKwh(NETFEES[selectedNetfeesIdx-1], netPrice / lineSumKwh);
-                    bill.push ({item: "Zusätzliche kWh inkl. MwSt", value: formatCt (arbeitspreis), className: "text-xs py-1"});
+                    const grundpreis = calculateGrundpreis(tariff, NETFEES[selectedNetfeesIdx-1], endDate, monthOption, days, withVat);
+                    bill.push ({item: "Grundpreis", value: formatEUR (grundpreis), className: "text-xs py-1"});
+                    const arbeitspreis = calculatePricePerAdditionalKwh(NETFEES[selectedNetfeesIdx-1], netPrice / lineSumKwh, withVat);
+                    bill.push ({item: "Arbeitspreis", value: formatCt (arbeitspreis), className: "text-xs py-1"});
                 }
                 bills.push(bill);
             })
@@ -243,7 +245,7 @@ export function calculateNetfee(netfee, days, kwh, bill=undefined) {
 // returns EUR
 // monthOption=0 => Whole month for overall view
 // monthOption>0 => One day in dedicated month (January, ...)
-export function calculateBasefee(tariff, date, monthOption, bill=undefined) {
+function calculateBasefee(tariff, date, monthOption, bill=undefined) {
     let basefee = 0.0;
     if (monthOption == 0) {
         // Calculate for whole month with number of days
@@ -288,14 +290,20 @@ function daysInMonth (date) {
     return new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
 }
 
-function calculatePricePerAdditionalKwh (netfee, averageNetPriceEur) {
+function calculatePricePerAdditionalKwh (netfee, averageNetPriceEur, withVat) {
     let priceCt = averageNetPriceEur * 100 + netfee.netfee_per_kwh_ct + netfee.tax_per_kwh_ct;
-    priceCt += vat(priceCt);
+    if (withVat) {
+        priceCt += vat(priceCt);
+    }
     return priceCt;
 }
 
-function calculateGrundgebuehr (tariff, netfee, days) {
-    let eur = netfee.netfee_per_day_ct;
-    priceCt += vat(priceCt);
-    return eur;
+function calculateGrundpreis (tariff, netfee, date, monthOption, days, withVat) {
+    let netfeeEur = calculateNetfee(netfee, days, 0);
+    let basefeeEur = calculateBasefee(tariff, date, monthOption);
+    let priceEur = basefeeEur + netfeeEur;
+    if (withVat) {
+        priceEur += vat(priceEur);
+    }
+    return priceEur;
 }
