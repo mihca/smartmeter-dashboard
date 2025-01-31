@@ -70,9 +70,9 @@ export function calculateTariffsTable (tariffs, pdr, mdr, monthOption, withBasef
                 bill.push ({item: "Gesamtpreis", value: formatEUR (lineTariffPriceSum[idx]), className:"divide-y divide-gray-700"});
                 if (selectedNetfeesIdx > 0) {
                     const grundpreis = calculateGrundpreis(tariff, NETFEES[selectedNetfeesIdx-1], endDate, monthOption, days, withVat);
-                    bill.push ({item: "Grundpreis", value: formatEUR (grundpreis), className: "text-xs py-1"});
+                    bill.push ({item: "Grundpreis/Monat", value: formatEUR (grundpreis), className: "text-xs py-1"});
                     const arbeitspreis = calculatePricePerAdditionalKwh(NETFEES[selectedNetfeesIdx-1], netPrice / lineSumKwh, withVat);
-                    bill.push ({item: "Arbeitspreis", value: formatCt (arbeitspreis), className: "text-xs py-1"});
+                    bill.push ({item: "Arbeitspreis/kWh", value: formatCt (arbeitspreis), className: "text-xs py-1"});
                 }
                 bills.push(bill);
             })
