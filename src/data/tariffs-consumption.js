@@ -48,15 +48,22 @@ export const TARIFFS_CONSUMPTION = new Map([
                 ["2024.10", [8.55, 9.23, 11.97]],
                 ["2024.11", [9.53, 10.96, 13.34]],
                 ["2024.12", [10.93, 12.57, 15.30]],
-                ["2025.1", [12.33, 14.18, 17.26]]
+                ["2025.1", [12.33, 14.18, 17.26]],
+                ["2025.2", [12.40, 14.26, 17.36]]
             ]);
             let key = year + "." + (month+1);
             if (matrix.has(key)) {
                 let priceArray = matrix.get(key);
                 // console.log(key, ": [", priceArray[0], ",", priceArray[1], ",", priceArray[2], "]");
                 let price_ct = priceArray[1]; // Default is shoulder, define other ranges:
-                if ((hour >= 0 && hour < 6) || (hour >= 13 && hour < 15)) price_ct = priceArray[0]; // off-peak
-                if ((hour >= 7 && hour < 10) || (hour >= 17 && hour < 22)) price_ct = priceArray[2]; // peak
+                if (year >= 2025 && month>=2) {
+                    // New zones from 2025.2
+                    if ((hour >= 1 && hour < 5) || (hour >= 11 && hour < 15)) price_ct = priceArray[0]; // off-peak
+                    if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 23)) price_ct = priceArray[2]; // peak
+                } else {
+                    if ((hour >= 0 && hour < 6) || (hour >= 13 && hour < 15)) price_ct = priceArray[0]; // off-peak
+                    if ((hour >= 7 && hour < 10) || (hour >= 17 && hour < 22)) price_ct = priceArray[2]; // peak
+                }
                 return kwh * price_ct;
             }
             return NaN;
