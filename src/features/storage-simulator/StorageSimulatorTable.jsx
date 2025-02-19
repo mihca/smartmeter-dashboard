@@ -84,8 +84,10 @@ export default function StorageSimulatorTable ({consumptionPDR, feedinPDR, mdr, 
 
 		const lineData = simulateStorage(consumptionPDR, feedinPDR, mdr, selectedStorageSize, selectedChargingLoss, consumptionTariff, netfees, feedinTariff);
 		const overallLine = lineData[lineData.length-1];
-		const eurProfit = overallLine.eurProfit;
-		onSimulationResult(eurProfit, overallLine.chargedKwh/selectedStorageSize);
+		const days = (feedinPDR.utcHourTo - feedinPDR.utcHourFrom) / 86400000;
+		const eurProfit = overallLine.eurProfit * 365 / days;
+		const eurProfitYear = eurProfit;
+		onSimulationResult(eurProfit, eurProfitYear, overallLine.chargedKwh/selectedStorageSize);
 		return lineData;
 	}
 

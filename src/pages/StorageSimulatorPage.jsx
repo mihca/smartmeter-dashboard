@@ -13,11 +13,13 @@ import { format1Digit, formatEUR } from '../scripts/round'
 export default function StorageSimulatorPage({consumptionPDR, feedinPDR, mdr}) {
 
 	const [eurProfit, setEurProfit] = useState(0);
+	const [eurProfit15, setEurProfit15] = useState(0);
 	const [cycles, setCycles] = useState(0);
 	const [timeRange, setTimeRange] = useState("");
 
-	function handleSimulationResult (eurProfit, cycles) {
+	function handleSimulationResult (eurProfit, eurProfitYear, cycles) {
 		setEurProfit(eurProfit);
+		setEurProfit15(eurProfitYear*15);
 		setTimeRange(format(consumptionPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(consumptionPDR.utcHourTo-3600000, "dd.MM.yyyy"));
 		setCycles(cycles);
 	}
@@ -37,7 +39,7 @@ export default function StorageSimulatorPage({consumptionPDR, feedinPDR, mdr}) {
 					{ consumptionPDR.hourData && feedinPDR.hourData && (
 						<>
 							<StatCard title='Ersparnis' icon={Euro} text={formatEUR(eurProfit)} color='#8B5CF6' />
-							<StatCard title='Ersparnis 15 Jahre' icon={Euro} text={formatEUR(eurProfit*15)} color='#6366F1' />
+							<StatCard title='Ersparnis 15 Jahre' icon={Euro} text={formatEUR(eurProfit15)} color='#6366F1' />
 							<StatCard title='Volle Ladezyklen' icon={Zap} text={Math.round(cycles)} color='#6366F1' />
 							<StatCard title='Zeitraum' icon={CalendarFold} text={timeRange} color='#8B5CF6' />
 						</>
