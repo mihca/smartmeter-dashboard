@@ -89,7 +89,7 @@ export default function UploadPage({consumptionPDR, feedinPDR, onConsumptionPDRC
 				)}
 				{ feedinPDR.hourData && consumptionPDR.hourData && (
 					<QuantityChart 
-						title="Vebrauch und Einspeisung nach Monat" 
+						title="Bezug und Einspeisung nach Monat" 
 						hourData1={consumptionPDR.hourData} 
 						hourData2={feedinPDR.hourData}
 						name1="Bezug"
