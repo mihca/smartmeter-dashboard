@@ -70,22 +70,33 @@ export default function UploadPage({consumptionPDR, feedinPDR, onConsumptionPDRC
 					)}
 					{ feedinPDR.utcHourFrom && (
 						<>
-							<StatCard title='Netzanbieter Einspeisung' icon={Sun} text={feedinPDR.provider} color='#6366F1' />
+							<StatCard title='Bilanz' icon={Sun} text={round1Digit(feedinPDR.kwh-consumptionPDR.kwh) + " kWh"} color='#6366F1' />
 							<StatCard title='Zeitraum Einspeisung' icon={CalendarFold} text={format(feedinPDR.utcHourFrom, "dd.MM.yyyy") + " - " + format(feedinPDR.utcHourTo-3600000, "dd.MM.yyyy")} sub={round1Digit(feedinPDR.kwh) + " kWh"} color='#8B5CF6' />
 						</>
 					)}
 				</motion.div>
 
 				{/* CHARTS */}
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8'>
-				{ consumptionPDR.hourData && (
-					<QuantityChart title="Bezug nach Monat" hourData={consumptionPDR.hourData}/>
+				<div className={`grid grid-cols-1 gap-5 mb-8 ${(consumptionPDR.hourData && feedinPDR.hourData) ? 'lg:grid-cols-1' : 'lg:grid-cols-2'}`}>
+				{ consumptionPDR.hourData && !feedinPDR.hourData && (
+					<QuantityChart title="Bezug nach Monat" hourData1={consumptionPDR.hourData} name1="Bezug" color1="#a84e09"/>
 				)}
-				{ !consumptionPDR.hourData && (
-					<div className='p-6'/>
+				{ !consumptionPDR.hourData && feedinPDR.hourData && (
+					<>
+						<div className='p-6'/>
+						<QuantityChart title="Einspeisung nach Monat" hourData1={feedinPDR.hourData} name1="Einspeisung" color1="#ffc000"/>
+					</>
 				)}
-				{ feedinPDR.hourData && (
-					<QuantityChart title="Einspeisung nach Monat" hourData={feedinPDR.hourData}/>
+				{ feedinPDR.hourData && consumptionPDR.hourData && (
+					<QuantityChart 
+						title="Vebrauch und Einspeisung nach Monat" 
+						hourData1={consumptionPDR.hourData} 
+						hourData2={feedinPDR.hourData}
+						name1="Bezug"
+						color1="#a84e09"
+						name2="Einspeisung"
+						color2="#ffc000"
+						/>
 				)}
 				</div>
 			</main>

@@ -2,27 +2,41 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { motion } from "framer-motion";
 import { round1Digit } from "../scripts/round";
 
-export default function QuantityChart ({title, hourData}) {
+export default function QuantityChart ({title, hourData1, hourData2, name1, color1, name2, color2}) {
 
-	function groupByMonth(hourData) {
+	function groupByMonth(hourData1, hourData2) {
 
 		let dataByMonth = [];
-		let monthSum = 0.0;
+		let monthSum1 = 0.0;
+		let monthSum2 = 0.0;
 		let month = 0;
 
-		hourData.forEach((hourEntry, idx, array) => {
+		hourData1.forEach((hourEntry1, idx, array) => {
 
-			monthSum += hourEntry.kwh;
+			monthSum1 += hourEntry1.kwh;
+			if (hourData2 && hourData2.length > idx)
+				monthSum2 += hourData2[idx].kwh;
 
-			if (new Date(hourEntry.utcHour).getMonth() != month || (idx === array.length - 1)) {
+			if (new Date(hourEntry1.utcHour).getMonth() != month || (idx === array.length - 1)) {
 					dataByMonth.push ({
 					month: month + 1,
-					kwh: round1Digit(monthSum)
+					kwh1: round1Digit(monthSum1),
+					kwh2: round1Digit(monthSum2)
 				});
-				monthSum = 0.0;
+				monthSum1 = 0.0;
+				monthSum2 = 0.0;
 				month += 1;
 			}
 		});
+
+		// Fill up missing months
+		for (let i = month; i < 12; i++) {
+			dataByMonth.push({
+				month: i + 1,
+				kwh1: 0,
+				kwh2: 0
+			});
+		}
 
 		return dataByMonth;
 	}
@@ -37,7 +51,7 @@ export default function QuantityChart ({title, hourData}) {
 			<h2 className='text-xl font-semibold text-gray-100 mb-4'>{title}</h2>
 			<div style={{ width: "100%", height: 300 }}>
 				<ResponsiveContainer>
-					<BarChart data={groupByMonth(hourData)}>
+					<BarChart data={groupByMonth(hourData1, hourData2)}>
 						<CartesianGrid strokeDasharray='3 3' stroke='#374151' />
 						<XAxis dataKey='month' stroke='#9CA3AF' />
 						<YAxis stroke='#9CA3AF' />
@@ -49,7 +63,10 @@ export default function QuantityChart ({title, hourData}) {
 							itemStyle={{ color: "#E5E7EB" }}
 						/>
 						<Legend />
-						<Bar dataKey='kwh' fill='#F59E0B' />
+						<Bar dataKey='kwh1' fill={color1} name={name1} />
+						{ hourData2 && (
+							<Bar dataKey='kwh2' fill={color2} name={name2}/>
+						)}
 					</BarChart>
 				</ResponsiveContainer>
 			</div>
