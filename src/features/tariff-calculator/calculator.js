@@ -235,10 +235,9 @@ export function calculateNetfee(netfee, days, kwh, bill=undefined) {
     // Handle per hour
     if (days == 0) feePerDay = round2Digits( netfee.netfee_per_day_ct / 24 / 100 );
     const feePerKwh = round2Digits( round1Digit(kwh) * netfee.netfee_per_kwh_ct / 100 );
-    const taxPerKwh = round2Digits( kwh * netfee.tax_per_kwh_ct / 100 );
-    const fee = feePerDay + feePerKwh + taxPerKwh;
-    if (bill) bill.push ({item: "Netzgebühren", value: formatEUR (feePerDay + feePerKwh)});
-    if (bill) bill.push ({item: "Abgaben", value: formatEUR (taxPerKwh)});
+    const fee = feePerDay + feePerKwh ;
+    if (bill) bill.push ({item: "Netzgebühren nach Zeit", value: formatEUR (feePerDay)});
+    if (bill) bill.push ({item: "Netzgebühren nach Verbrauch", value: formatEUR (feePerKwh)});
     return fee;
 }
 
@@ -291,7 +290,7 @@ function daysInMonth (date) {
 }
 
 function calculatePricePerAdditionalKwh (netfee, averageNetPriceEur, withVat) {
-    let priceCt = averageNetPriceEur * 100 + netfee.netfee_per_kwh_ct + netfee.tax_per_kwh_ct;
+    let priceCt = averageNetPriceEur * 100 + netfee.netfee_per_kwh_ct;
     if (withVat) {
         priceCt += vat(priceCt);
     }

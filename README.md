@@ -96,14 +96,12 @@ Aktuell werden nur österreichische Formate und Tarife unterstützt.
     netfee_per_day_ct: 17.0301,
     // Netznutzung Arbeitspreis pro kWh in ct: 5.77
     // Netzverlustentgelt pro kWh in ct: 0.783
-    netfee_per_kwh_ct: 6.553,
     // Elektrizitätsabgabe pro kWh in ct: 0.10
-    tax_per_kwh_ct: 0.10
+    netfee_per_kwh_ct: 6.&53,
 }
 ```
 - `netfee_per_day_ct` umfasst die zeitabhängigen Gebühren pro Tag in ct ohne MwSt
 - `netfee_per_kwh_ct` umfasst die verbrauchsabhängigen Gebühren pro kwh in ct ohne MwSt
-- `tax_per_kwh_ct` umfasst zusätzliche Steuern und Abgaben in ct pro kwh ohne MwSt
 
 # Wichtige Konzepte
 ## Zeitangaben
