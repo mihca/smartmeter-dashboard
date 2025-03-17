@@ -139,5 +139,16 @@ export const TARIFFS_CONSUMPTION = new Map([
             return kwh * 12.90;
         }
     }],
+    ['verbund', {
+        name: 'Verbund 03/25',
+        description: 'Fix Strompreis gültig ab 03/2025 mit 14,30/17,16 ct/kWh',
+        company: 'Verbund',
+        link_url: 'https://www.verbund.com/de-at/privatkunden/strom/verbund-strom-0325',
+        link_pdf: 'https://www.verbund.com/-/media/verbund/privatkunden/strom/stromkennzeichnung/pdfs-primaere-skz/verbund-stromkennzeichnung-wasserkraft-versorgermix.ashx?ori=1',
+        base_fee_yearly_eur: 47.90,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            return kwh * 14.30;
+        }
+    }],
 ]);
 
