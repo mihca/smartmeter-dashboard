@@ -56,6 +56,17 @@ export const TARIFFS_FEEDIN = new Map([
             return kwh * ( market_price_ct - market_price_ct * 0.2 );
         }
     }],
+    ['web.gruenstromlieferant', {
+        name: 'W.E.B-Grünstrom Lieferant',
+        description: 'Börsenstrompreis mit 20% Abschlag',
+        company: 'smartENERGY',
+        link_url: 'https://www.web.energy/at-de/privatkunde/web-gruenstrom-lieferant',
+        link_pdf: 'https://www.web.energy/fileadmin/media/documents/Gruenstrom/W.E.B-Sonnenstrom_Lieferant_.pdf',
+        base_fee_monthly_eur: 3.5,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            return kwh * 4.7;
+        }
+    }],
     ['oemag', {
         name: 'OeMAG',
         description: 'Monatlich angepasster Tarif',
