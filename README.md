@@ -153,8 +153,8 @@ Das Projekt basiert auf React, Javascript, Vite und dem react-admin-dashboard vo
 - [react-admin-dashboard](https://github.com/burakorkmez/react-admin-dashboard) on github
 - [Tutorial Video](https://youtu.be/gK0v_d91epk) on Youtube
 
-## 3rd Party Libraries
-### Tailwind CSS
+## 3rd Party
+### Tailwind CSS (Styling)
 A utility-first CSS framework
 - [Homepage](https://tailwindcss.com/)
 - [CheatSheet](https://nerdcave.com/tailwind-cheat-sheet)
