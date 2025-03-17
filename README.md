@@ -140,7 +140,7 @@ let mdr = {
     ]
 }
 ```
-# Lokale Entwicklung
+# Local Development
 ```
 npm install
 npm run dev
