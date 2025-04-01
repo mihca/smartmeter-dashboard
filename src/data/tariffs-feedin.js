@@ -36,6 +36,7 @@ export const TARIFFS_FEEDIN = new Map([
                 ["2025.1", 12.182],
                 ["2025.2", 11.016],
                 ["2025.3", 9.473],
+                ["2025.4", 4.967],
             ]);
             let key = year + "." + (month+1);
             if (matrix.has(key)) {
