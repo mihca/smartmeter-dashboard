@@ -116,4 +116,26 @@ export const TARIFFS_FEEDIN = new Map([
             return NaN;
         }
     }],
+    ['evn', {
+        name: 'EVN Sonnenstrom',
+        description: 'Monatlich angepasster Tarif',
+        company: 'EVN',
+        link_url: 'https://www.evn.at/home/sonnenstrom/abnahmevertrag-sonnenstrom',
+        base_fee_monthly_eur: 0,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            const matrix = new Map([
+                // year.month: ct/kWh
+                ["2025.1", 8.51],
+                ["2025.2", 8.39],
+                ["2025.3", 7.67],
+                ["2025.4", 5.73],
+            ]);
+            let key = year + "." + (month+1);
+            if (matrix.has(key)) {
+                let price_ct = matrix.get(key);
+                return kwh * price_ct;
+            }
+            return NaN;
+        }
+    }],
 ]);
