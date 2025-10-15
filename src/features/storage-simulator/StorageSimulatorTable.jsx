@@ -17,6 +17,7 @@ const CHARGING_LOSSES = [
 ];
 
 const STORAGE_SIZES = [
+	{ key: "2.56", label: "BYD HVS 2.56 Erweiterung"},
 	{ key: "5.1", label: "BYD HVS 5.1"},
 	{ key: "7.7", label: "BYD HVS 7.7"},
 	{ key: "11.0", label: "BYD HVM 11.0"},
