@@ -166,5 +166,16 @@ export const TARIFFS_CONSUMPTION = new Map([
             return kwh * 14.30;
         }
     }],
+    ['gruenstrom', {
+        name: 'Grünstrom Classic',
+        description: 'Fix Strompreis mit 9,20/11,04 ct/kWh',
+        company: 'Gründwelt',
+        link_url: 'https://bestellung.gruenwelt.at/epo/gruenweltat/frontend/start.vm',
+        link_pdf: '',
+        base_fee_yearly_eur: 72.00,
+        calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
+            return kwh * 9.20;
+        }
+    }],
 ]);
 
