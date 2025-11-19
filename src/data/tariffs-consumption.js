@@ -146,7 +146,7 @@ export const TARIFFS_CONSUMPTION = new Map([
         }
     }],
     ['web.investor', {
-        name: 'WEB Privat investor',
+        name: 'WEB Privat Investor',
         description: 'Fix Strompreis gültig ab 01/2024 mit 12,90/15,48 ct/kWh',
         company: 'W.E.B',
         link_url: 'https://www.web.energy/at-de/privatkunde/gruenstrom-privat',
@@ -170,10 +170,10 @@ export const TARIFFS_CONSUMPTION = new Map([
     ['gruenstrom', {
         name: 'Grünstrom Classic',
         description: 'Fix Strompreis mit 9,20/11,04 ct/kWh',
-        company: 'Gründwelt',
+        company: 'Grünwelt',
         link_url: 'https://bestellung.gruenwelt.at/epo/gruenweltat/frontend/start.vm',
         link_pdf: '',
-        base_fee_yearly_eur: 72.00,
+        base_fee_monthly_eur: 6.00,
         calculate: (year, month, weekday, hour, market_price_ct, kwh) => {
             return kwh * 9.20;
         }
